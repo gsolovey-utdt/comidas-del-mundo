@@ -1,0 +1,45 @@
+food_name,country,food_familiarity,image
+Ramen,Japón,easy,images/foods/ramen.jpg
+Sushi,Japón,easy,images/foods/sushi.jpg
+Paella,España,easy,images/foods/paella.jpg
+Pizza,Italia,easy,images/foods/pizza.jpg
+Croissant,Francia,easy,images/foods/croissant.jpg
+Pretzel,Alemania,medium,images/foods/pretzel.jpg
+Goulash,Hungría,medium,images/foods/goulash.jpg
+Moussaka,Grecia,medium,images/foods/moussaka.jpg
+Couscous,Marruecos,medium,images/foods/couscous.jpg
+Borscht,Ucrania,medium,images/foods/borscht.jpg
+Fish and chips,Reino Unido,easy,images/foods/fish-and-chips.jpg
+Feijoada,Brasil,medium,images/foods/feijoada.jpg
+Empanadas,Argentina,easy,images/foods/empanadas.jpg
+Ceviche,Perú,easy,images/foods/ceviche.jpg
+Tacos,México,easy,images/foods/tacos.jpg
+Poutine,Canadá,medium,images/foods/poutine.jpg
+Hamburguesa,Estados Unidos,easy,images/foods/hamburger.jpg
+Butter chicken,India,medium,images/foods/butter-chicken.jpg
+Pad thai,Tailandia,medium,images/foods/pad-thai.jpg
+Pho,Vietnam,medium,images/foods/pho.jpg
+Kimchi,Corea del Sur,medium,images/foods/kimchi.jpg
+Injera,Etiopía,hard,images/foods/injera.jpg
+Arroz Jollof,Nigeria,hard,images/foods/jollof-rice.jpg
+Mac and cheese,Estados Unidos,easy,images/foods/mac-and-cheese.jpg
+Huacamole,México,easy,images/foods/guacamole.jpg
+Kneidalaj,Israel,hard,images/foods/kneidalaj.jpg
+Knishes,Israel,hard,images/foods/knishes.jpg
+Falafel,Israel,medium,images/foods/falafel.jpg
+Hummus,Israel,medium,images/foods/hummus.jpg
+Shawarma,Turquía,medium,images/foods/shawarma.jpg
+Arepa,Colombia,medium,images/foods/arepa.jpg
+Gefilte fish,Israel,hard,images/foods/gefilte-fish.jpg
+Mbeyú,Paraguay,hard,images/foods/mbeyu.jpg
+Chipá,Paraguay,medium,images/foods/chipa.jpg
+Pupusas,El Salvador,medium,images/foods/pupusas.jpg
+Gallo pinto,Costa Rica,medium,images/foods/gallo-pinto.jpg
+Tamal,México,medium,images/foods/tamal.jpg
+Arenque,Suecia,hard,images/foods/arenque.jpg
+Mapo tofu,China,medium,images/foods/mapo-tofu.jpg
+Chivito,Uruguay,medium,images/foods/chivito.jpg
+Vichyssoise,Francia,hard,images/foods/vichyssoise.jpg
+Chapulines,México,hard,images/foods/chapulines.jpg
+Spring roll,China,medium,images/foods/spring-roll.jpg
+Summer roll,Vietnam,medium,images/foods/summer-roll.jpg
