@@ -347,6 +347,11 @@
       return;
     }
 
+    if (state.mapInstance && typeof state.mapInstance.destroy === "function") {
+      try { state.mapInstance.destroy(); } catch (_) {}
+      state.mapInstance = null;
+    }
+
     refs.countryMap.innerHTML = "";
 
     const markers = [];
@@ -360,9 +365,6 @@
     }
 
     try {
-      if (state.mapInstance && typeof state.mapInstance.destroy === "function") {
-        state.mapInstance.destroy();
-      }
 
       state.mapInstance = new jsVectorMap({
         selector: "#country-map",
