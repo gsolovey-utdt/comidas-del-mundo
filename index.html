@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sabores del Mundo</title>
+    <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-blob blob-a" aria-hidden="true"></div>
+    <div class="bg-blob blob-b" aria-hidden="true"></div>
+    <div class="bg-blob blob-c" aria-hidden="true"></div>
+
+    <main class="app-shell">
+      <section id="screen-start" class="screen is-active">
+        <div class="card start-card">
+          <h1>Sabores del Mundo</h1>
+          <p class="lead">
+            Descubrí comidas típicas de distintos países. Aprendé de comida y
+            del mundo en cada ronda.
+          </p>
+
+          <div class="difficulty-picker">
+            <div class="difficulty-options">
+              <label class="difficulty-option selected">
+                <input type="radio" name="difficulty" value="easy" checked />
+                <span class="difficulty-name">Fácil</span>
+              </label>
+
+              <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="medium" />
+                <span class="difficulty-name">Intermedio</span>
+              </label>
+
+              <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="hard" />
+                <span class="difficulty-name">Difícil</span>
+              </label>
+            </div>
+          </div>
+
+          <button id="start-game-btn" class="btn btn-primary btn-xl">
+            Empezar a jugar
+          </button>
+        </div>
+      </section>
+
+      <section id="screen-game" class="screen" aria-live="polite">
+        <div class="card game-card">
+          <header class="game-header">
+            <span id="level-pill" class="level-pill">Nivel Fácil</span>
+            <span id="lives-label" class="lives-label">Vidas: ❤❤❤</span>
+            <button id="restart-btn" class="btn btn-ghost">Reiniciar</button>
+          </header>
+
+          <div class="meter-wrap">
+            <div class="meter">
+              <div id="progress-fill" class="meter-fill"></div>
+            </div>
+          </div>
+
+          <div class="food-zone">
+            <div class="food-image-wrap">
+              <img
+                id="food-image"
+                src="images/placeholder-food.svg"
+                alt="Ilustración de comida"
+              />
+              <div id="food-placeholder" class="food-placeholder" hidden>
+                <span id="food-placeholder-letter">?</span>
+              </div>
+            </div>
+
+            <h2 id="food-name" class="food-name">Comida</h2>
+          </div>
+
+          <p class="question-text">¿De qué país es esta comida?</p>
+          <div id="options-grid" class="options-grid"></div>
+
+          <footer class="game-footer">
+            <span id="score-label" class="score-label">Puntaje: 0</span>
+          </footer>
+        </div>
+      </section>
+
+      <section id="screen-feedback" class="screen">
+        <div class="card feedback-card">
+          <p id="feedback-badge" class="feedback-badge">¡Correcto!</p>
+          <p id="feedback-answer" class="feedback-answer">
+            La respuesta correcta era Japón.
+          </p>
+          <p id="feedback-fun-fact" class="feedback-fun-fact"></p>
+
+          <div class="feedback-map-wrap">
+            <h3 class="map-title">¿De dónde viene?</h3>
+            <div id="country-map" class="country-map"></div>
+            <p id="map-country-note" class="map-country-note" hidden></p>
+          </div>
+
+          <p id="feedback-level-up" class="feedback-level-up" hidden></p>
+
+          <button id="next-round-btn" class="btn btn-primary btn-xl">
+            Siguiente ronda
+          </button>
+        </div>
+      </section>
+
+      <section id="screen-final" class="screen">
+        <div class="card final-card">
+          <h2>¡Fin del recorrido!</h2>
+          <p id="final-summary" class="final-summary"></p>
+          <p id="final-details" class="final-details"></p>
+          <button id="play-again-btn" class="btn btn-primary btn-xl">
+            Volver a jugar
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script defer src="vendor/jsvectormap/js/jsvectormap.min.js"></script>
+    <script defer src="vendor/jsvectormap/maps/world-merc.js"></script>
+    <script defer src="data/foods.js"></script>
+    <script defer src="app.js"></script>
+  </body>
+</html>
