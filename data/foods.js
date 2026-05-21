@@ -766,6 +766,82 @@
     },
     notes: "Excelente contraste con spring roll.",
   },
+  {
+    food_name: "Wurst",
+    country: "Alemania",
+    type: "country",
+    food_familiarity: "hard",
+    image: "images/foods/wurst.jpg",
+    fun_fact:
+      "Es un tipo de salchicha alemana de la que existen muchas variedades según la región.",
+    extra_fun_facts: [
+      "En Alemania hay muchos puestitos callejeros que las venden con pan y mostaza.",
+      "Suele cocinarse hervida en agua o también a la parrilla.",
+    ],
+    distractors: {
+      easy: ["Argentina", "Brasil"],
+      medium: ["China", "Corea del Sur"],
+      hard: ["Estados Unidos", "Ucrania"],
+    },
+    notes: "Reescribimos el fun_fact para no atarla a Baviera (Wurst es genérico).",
+  },
+  {
+    food_name: "Chucrut",
+    country: "Alemania",
+    type: "country",
+    food_familiarity: "hard",
+    image: "images/foods/chucrut.jpg",
+    fun_fact:
+      "Es una preparación de repollo fermentado con sal y algunos condimentos.",
+    extra_fun_facts: [
+      "Envasado en un frasco puede durar mucho tiempo en la heladera, porque la sal evita que se eche a perder.",
+      "Se usa para acompañar salchichas y otros platos.",
+    ],
+    distractors: {
+      easy: ["Camboya", "Paraguay"],
+      medium: ["Reino Unido", "Guatemala"],
+      hard: ["Nigeria", "Singapur"],
+    },
+    notes: "Imagen muestra el chucrut en frascos (Saurkraut cropped, Commons).",
+  },
+  {
+    food_name: "Schnitzel",
+    country: "Alemania",
+    type: "country",
+    food_familiarity: "hard",
+    image: "images/foods/schnitzel.jpg",
+    fun_fact:
+      "Es una carne fina rebozada en pan rallado, parecida a una milanesa.",
+    extra_fun_facts: [
+      "Puede ser de carne vacuna, de pollo, de pescado o de otros animales.",
+      "Suele servirse con limón para apretar arriba antes de comerla.",
+    ],
+    distractors: {
+      easy: ["Ghana", "Costa Rica"],
+      medium: ["Islandia", "Marruecos"],
+      hard: ["Austria", "República Checa"],
+    },
+    notes: "Origen austríaco (Wiener Schnitzel) pero muy presente en Alemania; en hard Austria es el distractor pedagógico.",
+  },
+  {
+    food_name: "Strudel",
+    country: "Alemania",
+    type: "country",
+    food_familiarity: "medium",
+    image: "images/foods/strudel.jpg",
+    fun_fact:
+      "Es un arrollado de manzana que suele comerse tibio.",
+    extra_fun_facts: [
+      "Hay muchas versiones, algunas llevan nueces y pasas de uva.",
+      "Queda muy bien acompañado con helado de crema.",
+    ],
+    distractors: {
+      easy: ["China", "Japón"],
+      medium: ["Brasil", "Guatemala"],
+      hard: ["Austria", "Hungría"],
+    },
+    notes: "Origen austríaco (Apfelstrudel); en hard Austria/Hungría son distractors creíbles.",
+  },
 ];
 
 
