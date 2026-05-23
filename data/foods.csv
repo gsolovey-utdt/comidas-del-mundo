@@ -1,0 +1,49 @@
+﻿food_name,country,image,answer_label,fun_fact,distractors_easy,distractors_medium,distractors_hard
+Ramen,Japón,images/foods/ramen.jpg,El Ramen es de,Es una sopa de fideos muy popular en Japón y tiene muchas variedades regionales.,Argentina | Canadá,India | Vietnam,China | Corea del Sur
+Sushi,Japón,images/foods/sushi.jpg,El Sushi es de,"Aunque muchos piensan solo en pescado, también hay sushi con verduras o huevo.",Brasil | Marruecos,China | Corea del Sur,Vietnam | Tailandia
+Paella,España,images/foods/paella.jpg,La Paella es de,La paella nació en Valencia y suele cocinarse en una sartén ancha y baja.,Canadá | Japón,Italia | Portugal,Francia | Marruecos
+Pizza,Italia,images/foods/pizza.jpg,La Pizza es de,La pizza moderna se hizo famosa en Nápoles y hoy tiene estilos en todo el mundo.,Suecia | Paraguay,España | Francia,Argentina | Estados Unidos
+Croissant,Francia,images/foods/croissant.jpg,El Croissant es de,Su textura en capas se logra doblando la masa muchas veces con manteca.,México | India,Italia | España,Bélgica | Austria
+Pretzel,Alemania,images/foods/pretzel.jpg,El Pretzel es de,Su forma de lazo es una de las más reconocibles entre los panes del mundo.,Perú | Japón,Polonia | Austria,Suiza | República Checa
+Goulash,Hungría,images/foods/goulash.jpg,El Goulash es de,"Es un guiso con paprika, una especia muy importante en la cocina húngara.",Brasil | Canadá,Polonia | Rumania,Austria | Eslovaquia
+Moussaka,Grecia,images/foods/moussaka.jpg,La Moussaka es de,"Se prepara en capas y suele llevar berenjena, carne y una cobertura cremosa.",México | Japón,Turquía | Italia,Chipre | Bulgaria
+Couscous,Marruecos,images/foods/couscous.jpg,El Couscous es de,Se hace con sémola de trigo en granitos pequeños y se cocina al vapor.,Canadá | Suecia,Argelia | Túnez,Turquía | Egipto
+Borscht,Ucrania,images/foods/borscht.jpg,El Borscht es de,"Su color rojo suele venir de la remolacha, un ingrediente clásico de la receta.",Brasil | Tailandia,Polonia | Rusia,Lituania | Bielorrusia
+Fish and chips,Reino Unido,images/foods/fish-and-chips.jpg,El Fish and chips es de,Es una combinación clásica de pescado rebozado y papas fritas servidas calientes.,India | Marruecos,Irlanda | Estados Unidos,Escocia | Australia
+Feijoada,Brasil,images/foods/feijoada.jpg,La Feijoada es de,Es un guiso con porotos y carne que suele acompañarse con arroz y naranja.,Japón | Suecia,Portugal | Argentina,Angola | Cabo Verde
+Empanadas,Argentina,images/foods/empanadas.jpg,Las Empanadas son de,"En Argentina hay versiones regionales muy distintas, como salteñas o tucumanas.",Japón | Suecia,Chile | Bolivia,Uruguay | Paraguay
+Ceviche,Perú,images/foods/ceviche.jpg,El Ceviche es de,Se prepara con pescado marinado en limón y suele servirse bien fresco.,Alemania | Canadá,Chile | Ecuador,México | Colombia
+Tacos,México,images/foods/tacos.jpg,Los Tacos son de,Pueden llevar muchos rellenos distintos y son una comida muy versátil.,Suecia | Etiopía,Colombia | Perú,Estados Unidos | Guatemala
+Poutine,Canadá,images/foods/poutine.jpg,La Poutine es de,"Nació en Quebec y combina papas fritas, queso en grumos y salsa caliente.",India | Marruecos,Estados Unidos | Reino Unido,Francia | Bélgica
+Hamburguesa,Estados Unidos,images/foods/hamburger.jpg,La Hamburguesa es de,Las hamburguesas se volvieron famosas globalmente gracias a las cadenas de comida rápida.,Marruecos | Japón,Canadá | Alemania,Reino Unido | Australia
+Butter chicken,India,images/foods/butter-chicken.jpg,El Butter chicken es de,Es un plato cremoso y especiado que suele acompañarse con arroz o pan naan.,Chile | Canadá,Pakistán | Bangladesh,Nepal | Reino Unido
+Pad thai,Tailandia,images/foods/pad-thai.jpg,El Pad thai es de,Es un salteado de fideos de arroz muy popular por su mezcla de sabores dulces y ácidos.,Argentina | Suecia,Vietnam | Malasia,Laos | Camboya
+Pho,Vietnam,images/foods/pho.jpg,El Pho es de,Es una sopa aromática con fideos de arroz y hierbas frescas.,Brasil | Canadá,Tailandia | China,Laos | Camboya
+Kimchi,Corea del Sur,images/foods/kimchi.jpg,El Kimchi es de,"Se elabora con vegetales fermentados, especialmente repollo y condimentos picantes.",Uruguay | Marruecos,Japón | Taiwán,Corea del Norte | China
+Injera,Etiopía,images/foods/injera.jpg,La Injera es de,Es un pan esponjoso y ácido que también se usa como base para comer otros platos.,Canadá | Japón,Eritrea | Somalia,Yibuti | Sudán
+Arroz Jollof,Nigeria,images/foods/jollof-rice.jpg,El Arroz Jollof es de,Es un arroz muy popular en África occidental y cada país tiene su versión favorita.,Japón | Canadá,Ghana | Senegal,Sierra Leona | Liberia
+Mac and cheese,Estados Unidos,images/foods/mac-and-cheese.jpg,El Mac and cheese es de,"Es una mezcla cremosa de pasta con queso, muy popular en hogares y restaurantes.",Japón | Marruecos,Canadá | Reino Unido,Australia | Irlanda
+Huacamole,México,images/foods/guacamole.jpg,El Huacamole es de,"Se prepara con palta triturada y suele llevar limón, cebolla y cilantro.",Suecia | India,Perú | Colombia,Guatemala | Estados Unidos
+Kneidalaj,Israel,images/foods/kneidalaj.jpg,Los Kneidalaj son de,Son bolitas tiernas de harina de matzá que suelen servirse en sopa.,Brasil | Canadá,Polonia | Alemania,Líbano | Turquía
+Knishes,Israel,images/foods/knishes.jpg,Los Knishes son de,"Son masas rellenas que pueden llevar papa, cebolla u otros ingredientes.",Argentina | Canadá,Polonia | Hungría,Ucrania | Lituania
+Falafel,Israel,images/foods/falafel.jpg,El Falafel es de,"Son croquetas hechas con legumbres y especias, muy populares en pan pita.",Canadá | Suecia,Turquía | Grecia,Líbano | Jordania
+Hummus,Israel,images/foods/hummus.jpg,El Hummus es de,Es una pasta suave de garbanzos que se come como dip o acompañamiento.,Canadá | Brasil,Grecia | Turquía,Líbano | Siria
+Shawarma,Turquía,images/foods/shawarma.jpg,El Shawarma es de,Se prepara con carne asada en un trompo vertical y se sirve en pan.,México | Suecia,Israel | Grecia,Líbano | Jordania
+Arepa,Colombia,images/foods/arepa.jpg,La Arepa es de,Es una masa redonda de maíz que puede comerse sola o rellena.,Japón | Suecia,Venezuela | Perú,Ecuador | Panamá
+Gefilte fish,Israel,images/foods/gefilte-fish.jpg,El Gefilte fish es de,Es un plato de pescado picado que suele servirse frío.,Brasil | Canadá,Polonia | Alemania,Lituania | Ucrania
+Mbeyú,Paraguay,images/foods/mbeyu.jpg,El Mbeyú es de,"Es una tortilla de almidón de mandioca y queso, muy típica de Paraguay.",Japón | Canadá,Argentina | Uruguay,Bolivia | Brasil
+Chipá,Paraguay,images/foods/chipa.jpg,El Chipá es de,Es un panecillo de almidón y queso muy popular en Paraguay.,Suecia | India,Argentina | Brasil,Bolivia | Uruguay
+Pupusas,El Salvador,images/foods/pupusas.jpg,Las Pupusas son de,"Son tortillas gruesas de maíz rellenas de queso, porotos u otros ingredientes.",Suecia | Canadá,Guatemala | Honduras,Nicaragua | Costa Rica
+Gallo pinto,Costa Rica,images/foods/gallo-pinto.jpg,El Gallo pinto es de,Es una mezcla de arroz y porotos muy común en desayunos costarricenses.,Japón | Suecia,Nicaragua | El Salvador,Panamá | Honduras
+Tamal,México,images/foods/tamal.jpg,El Tamal es de,Se hace con masa de maíz rellena y cocida envuelta en hojas.,Canadá | Suecia,Guatemala | Perú,Colombia | El Salvador
+Arenque,Suecia,images/foods/arenque.jpg,El Arenque es de,El arenque encurtido es muy tradicional en la cocina sueca.,México | Brasil,Noruega | Finlandia,Dinamarca | Islandia
+Mapo tofu,China,images/foods/mapo-tofu.jpg,El Mapo tofu es de,Es un plato picante con tofu y salsa muy popular de la cocina china.,Argentina | Canadá,Japón | Corea del Sur,Taiwán | Singapur
+Chivito,Uruguay,images/foods/chivito.jpg,El Chivito es de,"Es un sándwich uruguayo abundante, con carne y varios acompañamientos.",Japón | Suecia,Argentina | Chile,Paraguay | Brasil
+Vichyssoise,Francia,images/foods/vichyssoise.jpg,La Vichyssoise es de,Es una sopa cremosa de puerro y papa que suele servirse fría.,México | Brasil,España | Italia,Bélgica | Suiza
+Chapulines,México,images/foods/chapulines.jpg,Los Chapulines son de,"Son grillos sazonados, una preparación tradicional en algunas regiones de México.",Suecia | Canadá,Perú | Colombia,Guatemala | El Salvador
+Spring roll,China,images/foods/spring-roll.jpg,El Spring roll es de,Son rollitos de masa rellenos que suelen servirse fritos o al horno.,Argentina | Canadá,Vietnam | Tailandia,Corea del Sur | Singapur
+Summer roll,Vietnam,images/foods/summer-roll.jpg,El Summer roll es de,"Son rollitos frescos envueltos en papel de arroz, generalmente no fritos.",Brasil | Canadá,Tailandia | China,Laos | Camboya
+Wurst,Alemania,images/foods/wurst.jpg,El Wurst es de,Es un tipo de salchicha alemana de la que existen muchas variedades según la región.,Argentina | Brasil,China | Corea del Sur,Estados Unidos | Ucrania
+Chucrut,Alemania,images/foods/chucrut.jpg,El Chucrut es de,Es una preparación de repollo fermentado con sal y algunos condimentos.,Camboya | Paraguay,Reino Unido | Guatemala,Nigeria | Singapur
+Schnitzel,Alemania,images/foods/schnitzel.jpg,El Schnitzel es de,"Es una carne fina rebozada en pan rallado, parecida a una milanesa.",Ghana | Costa Rica,Islandia | Marruecos,Austria | República Checa
+Strudel,Alemania,images/foods/strudel.jpg,El Strudel es de,Es un arrollado de manzana que suele comerse tibio.,China | Japón,Brasil | Guatemala,Austria | Hungría

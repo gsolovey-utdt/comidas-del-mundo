@@ -19,6 +19,8 @@
     <div class="bg-blob blob-c" aria-hidden="true"></div>
 
     <main class="app-shell">
+
+      <!-- ── INICIO ── -->
       <section id="screen-start" class="screen is-active">
         <div class="card start-card">
           <h1>Sabores del Mundo</h1>
@@ -33,17 +35,24 @@
                 <input type="radio" name="difficulty" value="easy" checked />
                 <span class="difficulty-name">Fácil</span>
               </label>
-
               <label class="difficulty-option">
                 <input type="radio" name="difficulty" value="medium" />
                 <span class="difficulty-name">Intermedio</span>
               </label>
-
               <label class="difficulty-option">
                 <input type="radio" name="difficulty" value="hard" />
                 <span class="difficulty-name">Difícil</span>
               </label>
             </div>
+          </div>
+
+          <div class="country-picker">
+            <label for="player-country" class="country-picker-label">
+              ¿De qué país sos?
+            </label>
+            <select id="player-country" class="country-select">
+              <!-- poblado por JS -->
+            </select>
           </div>
 
           <button id="start-game-btn" class="btn btn-primary btn-xl">
@@ -52,6 +61,7 @@
         </div>
       </section>
 
+      <!-- ── JUEGO ── -->
       <section id="screen-game" class="screen" aria-live="polite">
         <div class="card game-card">
           <header class="game-header">
@@ -77,7 +87,6 @@
                 <span id="food-placeholder-letter">?</span>
               </div>
             </div>
-
             <h2 id="food-name" class="food-name">Comida</h2>
           </div>
 
@@ -90,21 +99,24 @@
         </div>
       </section>
 
+      <!-- ── FEEDBACK ── -->
       <section id="screen-feedback" class="screen">
         <div class="card feedback-card">
           <p id="feedback-badge" class="feedback-badge">¡Correcto!</p>
           <p id="feedback-answer" class="feedback-answer">
             La respuesta correcta era Japón.
           </p>
-          <p id="feedback-fun-fact" class="feedback-fun-fact"></p>
 
-          <div class="feedback-map-wrap">
-            <h3 class="map-title">¿De dónde viene?</h3>
-            <div id="country-map" class="country-map"></div>
-            <p id="map-country-note" class="map-country-note" hidden></p>
+          <div class="feedback-body">
+            <div class="feedback-left">
+              <p id="feedback-fun-fact" class="feedback-fun-fact"></p>
+            </div>
+            <div class="feedback-right">
+              <div class="feedback-map-wrap">
+                <div id="country-map" class="country-map"></div>
+              </div>
+            </div>
           </div>
-
-          <p id="feedback-level-up" class="feedback-level-up" hidden></p>
 
           <button id="next-round-btn" class="btn btn-primary btn-xl">
             Siguiente ronda
@@ -112,21 +124,72 @@
         </div>
       </section>
 
+      <!-- ── TRANSICIÓN DE NIVEL ── -->
+      <section id="screen-levelup" class="screen">
+        <div class="card levelup-card">
+          <div class="levelup-stars" aria-hidden="true">⭐ ⭐ ⭐</div>
+          <h2 class="levelup-headline">¡Bien!</h2>
+          <p id="levelup-title" class="levelup-title">¡Pasaste a Intermedio!</p>
+          <p class="levelup-subtitle">Seguí así, vas muy bien 🎉</p>
+          <button id="levelup-next-btn" class="btn btn-primary btn-xl">
+            ¡Vamos!
+          </button>
+        </div>
+      </section>
+
+      <!-- ── COMODÍN ── -->
+      <section id="screen-wildcard" class="screen">
+        <div class="card wildcard-card">
+          <p class="wildcard-badge">¡Oportunidad!</p>
+          <p class="wildcard-subtitle">Respondé bien y ganás una vida extra ❤️</p>
+          <div id="wildcard-question" class="wildcard-question"></div>
+          <div id="wildcard-grid" class="options-grid"></div>
+          <p id="wildcard-result" class="wildcard-result" hidden></p>
+          <button id="wildcard-continue-btn" class="btn btn-primary btn-xl" hidden>
+            Continuar
+          </button>
+        </div>
+      </section>
+
+      <!-- ── FINAL ── -->
       <section id="screen-final" class="screen">
         <div class="card final-card">
           <h2>¡Fin del recorrido!</h2>
           <p id="final-summary" class="final-summary"></p>
           <p id="final-details" class="final-details"></p>
+
+          <div class="creative-writing">
+            <label for="final-text" class="creative-label">
+              ✏️ ¿Cuál es tu comida preferida? ¿Querés contarme con quién la comés o quién la prepara?
+            </label>
+            <textarea
+              id="final-text"
+              class="creative-textarea"
+              rows="4"
+              placeholder="Escribí acá..."
+              maxlength="2000"
+            ></textarea>
+            <button id="save-writeup-btn" class="btn btn-primary">
+              Guardar
+            </button>
+            <p id="writeup-status" class="writeup-status" hidden>
+              ¡Gracias por contarme! 💛
+            </p>
+          </div>
+
           <button id="play-again-btn" class="btn btn-primary btn-xl">
             Volver a jugar
           </button>
         </div>
       </section>
+
     </main>
 
     <script defer src="vendor/jsvectormap/js/jsvectormap.min.js"></script>
     <script defer src="vendor/jsvectormap/maps/world-merc.js"></script>
-    <script defer src="data/foods.js"></script>
-    <script defer src="app.js"></script>
+    <script defer src="data/foods.js?v=2"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
+    <script defer src="app.js?v=5"></script>
   </body>
 </html>

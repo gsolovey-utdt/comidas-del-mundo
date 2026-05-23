@@ -24,8 +24,11 @@ La app es completamente estática: no requiere build, bundler ni servidor. Se de
 | `index.html` | Estructura de pantallas (inicio, juego, feedback, final). Linkea Google Fonts (Patrick Hand + Bangers). |
 | `styles.css` | Estilos, responsive, animaciones. Variables de tema en `:root`. |
 | `app.js` | Toda la lógica del juego |
-| `data/foods.js` | Dataset editable de comidas (`window.FOODS_DATA`) |
+| `data/foods.js` | **Generado** por `scripts/build_foods.py`. Es lo que carga la app (`window.FOODS_DATA`). No editar a mano. |
+| `data/foods.csv` | Fuente de verdad del dataset. Mantenida en Google Sheets y exportada/descargada como CSV. |
 | `data/image-map.json` | Mapeo auxiliar comida → imagen |
+| `scripts/build_foods.py` | Lee `data/foods.csv` (o una URL de Sheets publicado) y regenera `data/foods.js` con validación. |
+| `scripts/foods_to_csv.py` | Bootstrap one-shot: vuelca `data/foods.js` a `data/foods.csv`. Útil sólo para arrancar la planilla. |
 | `images/foods/` | Imágenes de las comidas (JPG 960×660, aspect 16:11) |
 | `images/CREDITS.md` | Atribución de imágenes descargadas de fuentes externas (ej. Wikimedia Commons) |
 | `vendor/jsvectormap/` | Librería local para el mapa mundial |
@@ -54,33 +57,65 @@ La app es completamente estática: no requiere build, bundler ni servidor. Se de
 
 ---
 
-## Dataset (`data/foods.js`)
+## Dataset
 
-Cada objeto en `FOODS_DATA` tiene:
+**Fuente de verdad: Google Sheets → `data/foods.csv` → `data/foods.js` (generado).**
 
-| Campo | Descripción |
-|-------|-------------|
+`data/foods.js` ya no se edita a mano. Se edita en una planilla de Google Sheets, se descarga/publica como CSV, y `scripts/build_foods.py` lo convierte al formato que carga la app.
+
+### Columnas del CSV
+
+| Columna | Descripción |
+|---------|-------------|
 | `food_name` | Nombre de la comida |
-| `country` | País correcto (debe coincidir con una clave normalizada en `COUNTRY_META`) |
-| `type` | Siempre `"country"` por ahora |
-| `food_familiarity` | Familiaridad base: `"easy"`, `"medium"` o `"hard"` |
+| `country` | País correcto (debe normalizar a una clave de `COUNTRY_META` en `app.js`) |
 | `image` | Ruta relativa a la imagen (`images/foods/...`) |
-| `fun_fact` | Dato curioso principal |
-| `extra_fun_facts` | Array de datos curiosos adicionales |
-| `distractors` | Objeto con claves `easy`, `medium`, `hard`; cada una es un array de 2 países |
-| `notes` | Notas internas (no se muestran en el juego) |
+| `fun_fact` | Dato curioso |
+| `distractors_easy` | 2 países separados con ` \| ` |
+| `distractors_medium` | 2 países separados con ` \| ` |
+| `distractors_hard` | 2 países separados con ` \| ` |
 
-**Nota importante:** el campo `country` debe normalizarse a una clave existente en `COUNTRY_META` para que el mapa se renderice. La normalización elimina tildes, pasa a minúsculas y colapsa espacios. Si se agrega un país nuevo, hay que añadirlo también en `COUNTRY_META` con su código ISO y coordenadas.
+El separador es **pipe** (`|`) con espacios opcionales alrededor. Se eligió porque los `fun_facts` ya usan `,` y `;` con frecuencia.
+
+### Validaciones que hace `build_foods.py`
+
+- Cada `country` (correcto) normaliza a una clave de `COUNTRY_META` en `app.js`. Si no está, el script falla pidiendo agregar el país.
+- Cada `distractors_*` tiene exactamente 2 elementos.
+- Ningún distractor es igual al país correcto.
+- Si una imagen del campo `image` no existe en disco, sale un warning (no falla).
+
+### Workflow recomendado
+
+1. **Una sola vez:** importar `data/foods.csv` a un Google Sheet nuevo (Archivo → Importar → Subir → Reemplazar hoja actual, separador "coma"). Usar UTF-8.
+2. Editar en Sheets como cualquier planilla.
+3. Para llevar los cambios al repo, dos opciones equivalentes:
+   - **Descargar:** Archivo → Descargar → CSV → reemplazar `data/foods.csv` localmente.
+   - **Publicar:** Archivo → Compartir → Publicar en la web → CSV → copiar URL → guardar la URL una vez (ver más abajo).
+4. Regenerar `foods.js`:
+   ```bash
+   # con archivo local (default lee data/foods.csv)
+   python scripts/build_foods.py
+
+   # con URL de Sheets publicado
+   python scripts/build_foods.py "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
+
+   # dry-run (sólo valida)
+   python scripts/build_foods.py --dry-run
+   ```
+5. Commitear `data/foods.csv` y `data/foods.js` juntos y pushear.
+
+**Importante:** `data/foods.js` empieza con un comentario `// AUTO-GENERADO`. Si alguien lo edita a mano, el cambio se va a perder en el próximo build. Todo cambio de dataset va en el Sheet → CSV.
 
 ---
 
 ## Agregar una comida nueva
 
-1. Agregar objeto en `data/foods.js` con todos los campos.
-2. Completar los 3 niveles de `distractors`.
+1. Agregar una fila en el Google Sheet con todos los campos (ver tabla arriba).
+2. Completar los 3 niveles de distractors (2 países cada uno, separados con ` | `).
 3. Copiar imagen en `images/foods/` y referenciarla en `image`.
-4. Si el país no está en `COUNTRY_META`, agregarlo en `app.js` con código ISO y coords.
+4. Si el país correcto no está en `COUNTRY_META`, agregarlo en `app.js` con código ISO y coords (ver sección siguiente).
 5. Si el país es visualmente pequeño en el mapa, agregar su ISO a `SMALL_COUNTRY_CODES`.
+6. Bajar el CSV actualizado y correr `python scripts/build_foods.py`.
 
 ---
 
@@ -118,6 +153,26 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 
 ---
 
+## Supabase
+
+**Proyecto:** `irryksaoygdklwtsjsru` (compartido con `two-armed-bandit`)  
+**Schema SQL:** [`supabase/schema.sql`](supabase/schema.sql) — correr una vez en el SQL editor de Supabase.
+
+### Tablas
+
+| Tabla | Contenido |
+|-------|-----------|
+| `sdm_sessions` | Una fila por partida: `session_id` (UUID), `player_country`, `start_level` |
+| `sdm_answers` | Una fila por respuesta (incluye comodines): tiempos de reacción, `is_wildcard`, `wildcard_type` |
+| `sdm_final_writeups` | Texto creativo final (opcional) |
+
+- **Cliente:** UMD vía CDN (`async` para no bloquear scripts diferidos). Inicialización lazy: `getDb()` crea el cliente la primera vez que se necesita.
+- **Estrategia:** fire-and-forget con `saveQuiet()`. Si Supabase no está disponible (offline, CDN lento), el juego continúa sin interrupciones.
+- **RLS:** `anon_insert` policies en las 3 tablas. Sólo inserts desde el browser anónimo.
+- **session_id:** `crypto.randomUUID()` en memoria, no persiste entre recargas.
+
+---
+
 ## Decisiones tomadas
 
 | Fecha | Decisión | Motivo |
@@ -129,6 +184,11 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | 2026-05 | Imágenes nuevas se descargan de Wikimedia Commons | Licencia libre y trazable; atribución obligatoria en `images/CREDITS.md` |
 | 2026-05 | Estética cómic/pop-art (fuentes manuscritas + bordes negros + stickers de feedback) | Inspirada en juegos infantiles tipo wordwall.net; usa Google Fonts (requiere conexión la primera vez) |
 | 2026-05 | Mobile debe caber sin scroll en todas las pantallas | UX: micro-scroll en mobile es muy molesto. Media query ≤560px ajusta paddings, alturas e iconografía para garantizarlo desde 320×568 hasta 390×844. |
+| 2026-05 | El dataset se edita en Google Sheets, no en `foods.js` | Editar JSON-en-JS a mano es incómodo y propenso a errores de comillas/comas. `data/foods.csv` es la fuente de verdad; `scripts/build_foods.py` regenera `foods.js` con validación. Se eligió la variante "build local + commitear ambos archivos" sobre "fetch en runtime" para que la app siga siendo 100% estática y sin dependencias externas. |
+| 2026-05 | Banderas como emoji Unicode en `COUNTRY_META` | Funcionan sin assets extra en todos los navegadores modernos. Cada entrada de `COUNTRY_META` tiene `flag`, `name`, `iso`, `coords`. |
+| 2026-05 | Comodín sólo cuando vidas ∈ {1,2}, probabilidad 20% | Si el jugador tiene 3 vidas no necesita ayuda; si tiene 0 ya perdió. P=20% da una oportunidad razonable sin interrumpir demasiado. |
+| 2026-05 | Supabase `async` (no `defer`) para el CDN | CDN lento bloquea todos los scripts `defer` siguientes. Con `async` el script carga en paralelo sin bloquear `app.js`. El cliente se inicializa lazily con `getDb()`. |
+| 2026-05 | `app.js?v=N` en el script tag | Fuerza cache-bust del browser en actualizaciones; incrementar `N` al deployar cambios significativos. |
 
 ---
 
@@ -140,8 +200,8 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 
 ## Estado actual
 
-**Fase:** Producción / v1.1 live  
-App desplegada en GitHub Pages. Dataset con **48 comidas** de 21 países (5 alemanas tras la iteración de mayo 2026). Estética cómic/pop-art aplicada en mayo 2026.
+**Fase:** Producción / v1.2 (pendiente deploy)  
+App desplegada en GitHub Pages. Dataset con **48 comidas** de **31 países**. En mayo 2026 se agregaron: banderas emoji en botones y mapa, dropdown de país del jugador, pantalla animada de transición de nivel, comodín de vidas (bandera→país o descripción→comida), medición de tiempos de respuesta con Supabase, y texto creativo al final.
 
 ---
 
