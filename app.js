@@ -66,10 +66,73 @@
     uruguay:          { iso: "UY", flag: "🇺🇾", name: "Uruguay",        coords: [-32.5, -55.8 ] },
     turquia:          { iso: "TR", flag: "🇹🇷", name: "Turquía",        coords: [ 39.0,  35.2 ] },
     colombia:         { iso: "CO", flag: "🇨🇴", name: "Colombia",       coords: [  4.6, -74.1 ] },
+
+    // Distractores adicionales (ISO + flag + coords aunque por ahora solo
+    // aparezcan como opciones equivocadas; si pasan a respuesta correcta
+    // el mapa funciona sin cambios).
+    angola:            { iso: "AO", flag: "🇦🇴", name: "Angola",          coords: [-11.2,  17.9 ] },
+    argelia:           { iso: "DZ", flag: "🇩🇿", name: "Argelia",         coords: [ 28.0,   1.7 ] },
+    australia:         { iso: "AU", flag: "🇦🇺", name: "Australia",       coords: [-25.3, 133.8 ] },
+    austria:           { iso: "AT", flag: "🇦🇹", name: "Austria",         coords: [ 47.5,  14.6 ] },
+    bangladesh:        { iso: "BD", flag: "🇧🇩", name: "Bangladesh",      coords: [ 23.7,  90.4 ] },
+    belgica:           { iso: "BE", flag: "🇧🇪", name: "Bélgica",         coords: [ 50.5,   4.5 ] },
+    bielorrusia:       { iso: "BY", flag: "🇧🇾", name: "Bielorrusia",     coords: [ 53.7,  27.9 ] },
+    bolivia:           { iso: "BO", flag: "🇧🇴", name: "Bolivia",         coords: [-16.3, -63.6 ] },
+    bulgaria:          { iso: "BG", flag: "🇧🇬", name: "Bulgaria",        coords: [ 42.7,  25.5 ] },
+    "cabo verde":      { iso: "CV", flag: "🇨🇻", name: "Cabo Verde",      coords: [ 16.5, -23.0 ] },
+    camboya:           { iso: "KH", flag: "🇰🇭", name: "Camboya",         coords: [ 12.6, 104.9 ] },
+    chile:             { iso: "CL", flag: "🇨🇱", name: "Chile",           coords: [-35.7, -71.5 ] },
+    chipre:            { iso: "CY", flag: "🇨🇾", name: "Chipre",          coords: [ 35.1,  33.4 ] },
+    "corea del norte": { iso: "KP", flag: "🇰🇵", name: "Corea del Norte", coords: [ 40.3, 127.5 ] },
+    dinamarca:         { iso: "DK", flag: "🇩🇰", name: "Dinamarca",       coords: [ 56.3,   9.5 ] },
+    ecuador:           { iso: "EC", flag: "🇪🇨", name: "Ecuador",         coords: [ -1.8, -78.2 ] },
+    egipto:            { iso: "EG", flag: "🇪🇬", name: "Egipto",          coords: [ 26.8,  30.8 ] },
+    eritrea:           { iso: "ER", flag: "🇪🇷", name: "Eritrea",         coords: [ 15.2,  39.8 ] },
+    // Escocia comparte ISO con Reino Unido en world_merc (no aparece como
+    // entidad separada); el highlight cubre todo GB y el pin marca la
+    // ubicacion especifica de Escocia.
+    escocia:           { iso: "GB", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", name: "Escocia",         coords: [ 56.5,  -4.2 ] },
+    eslovaquia:        { iso: "SK", flag: "🇸🇰", name: "Eslovaquia",      coords: [ 48.7,  19.7 ] },
+    finlandia:         { iso: "FI", flag: "🇫🇮", name: "Finlandia",       coords: [ 61.9,  25.7 ] },
+    ghana:             { iso: "GH", flag: "🇬🇭", name: "Ghana",           coords: [  7.9,  -1.0 ] },
+    guatemala:         { iso: "GT", flag: "🇬🇹", name: "Guatemala",       coords: [ 15.8, -90.2 ] },
+    honduras:          { iso: "HN", flag: "🇭🇳", name: "Honduras",        coords: [ 15.2, -86.2 ] },
+    irlanda:           { iso: "IE", flag: "🇮🇪", name: "Irlanda",         coords: [ 53.4,  -8.2 ] },
+    islandia:          { iso: "IS", flag: "🇮🇸", name: "Islandia",        coords: [ 64.9, -19.0 ] },
+    jordania:          { iso: "JO", flag: "🇯🇴", name: "Jordania",        coords: [ 30.6,  36.2 ] },
+    laos:              { iso: "LA", flag: "🇱🇦", name: "Laos",            coords: [ 19.9, 102.5 ] },
+    libano:            { iso: "LB", flag: "🇱🇧", name: "Líbano",          coords: [ 33.9,  35.9 ] },
+    liberia:           { iso: "LR", flag: "🇱🇷", name: "Liberia",         coords: [  6.4,  -9.4 ] },
+    lituania:          { iso: "LT", flag: "🇱🇹", name: "Lituania",        coords: [ 55.2,  23.9 ] },
+    malasia:           { iso: "MY", flag: "🇲🇾", name: "Malasia",         coords: [  4.2, 101.9 ] },
+    nepal:             { iso: "NP", flag: "🇳🇵", name: "Nepal",           coords: [ 28.4,  84.1 ] },
+    nicaragua:         { iso: "NI", flag: "🇳🇮", name: "Nicaragua",       coords: [ 12.9, -85.2 ] },
+    noruega:           { iso: "NO", flag: "🇳🇴", name: "Noruega",         coords: [ 60.5,   8.5 ] },
+    pakistan:          { iso: "PK", flag: "🇵🇰", name: "Pakistán",        coords: [ 30.4,  69.3 ] },
+    panama:            { iso: "PA", flag: "🇵🇦", name: "Panamá",          coords: [  8.5, -80.8 ] },
+    polonia:           { iso: "PL", flag: "🇵🇱", name: "Polonia",         coords: [ 51.9,  19.1 ] },
+    portugal:          { iso: "PT", flag: "🇵🇹", name: "Portugal",        coords: [ 39.4,  -8.2 ] },
+    "republica checa": { iso: "CZ", flag: "🇨🇿", name: "República Checa", coords: [ 49.8,  15.5 ] },
+    rumania:           { iso: "RO", flag: "🇷🇴", name: "Rumania",         coords: [ 45.9,  24.9 ] },
+    rusia:             { iso: "RU", flag: "🇷🇺", name: "Rusia",           coords: [ 61.5, 105.3 ] },
+    senegal:           { iso: "SN", flag: "🇸🇳", name: "Senegal",         coords: [ 14.5, -14.4 ] },
+    "sierra leona":    { iso: "SL", flag: "🇸🇱", name: "Sierra Leona",    coords: [  8.5, -11.8 ] },
+    singapur:          { iso: "SG", flag: "🇸🇬", name: "Singapur",        coords: [  1.3, 103.8 ] },
+    siria:             { iso: "SY", flag: "🇸🇾", name: "Siria",           coords: [ 34.8,  38.9 ] },
+    somalia:           { iso: "SO", flag: "🇸🇴", name: "Somalia",         coords: [  5.1,  46.2 ] },
+    sudan:             { iso: "SD", flag: "🇸🇩", name: "Sudán",           coords: [ 12.9,  30.2 ] },
+    suiza:             { iso: "CH", flag: "🇨🇭", name: "Suiza",           coords: [ 46.8,   8.2 ] },
+    taiwan:            { iso: "TW", flag: "🇹🇼", name: "Taiwán",          coords: [ 23.7, 121.0 ] },
+    tunez:             { iso: "TN", flag: "🇹🇳", name: "Túnez",           coords: [ 33.9,   9.6 ] },
+    venezuela:         { iso: "VE", flag: "🇻🇪", name: "Venezuela",       coords: [  6.4, -66.6 ] },
+    yibuti:            { iso: "DJ", flag: "🇩🇯", name: "Yibuti",          coords: [ 11.8,  42.6 ] },
   };
 
   const SMALL_COUNTRY_CODES = new Set([
     "KR", "GB", "IE", "PT", "BE", "NL", "UY", "SV", "CR", "IL",
+    // Nuevos: islas, ciudad-estados, países delgados o difíciles de ver
+    // en la proyección Mercator a escala mundial.
+    "CV", "CY", "LB", "SG", "TW", "DJ", "PA",
   ]);
 
   const state = {
