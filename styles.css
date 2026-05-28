@@ -225,6 +225,10 @@ body {
 .btn-primary {
   background: var(--primary);
   color: var(--ink-black);
+  /* dentro de cards flex-column, evitar que el boton se estire al
+     ancho del container: tomar el ancho de la frase y centrarse. */
+  align-self: center;
+  width: auto;
 }
 
 .btn-primary:hover {
