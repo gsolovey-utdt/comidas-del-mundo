@@ -1005,7 +1005,10 @@ img.emoji {
   }
 
   .feedback-body {
-    flex-direction: column;
+    /* column-reverse: el mapa (feedback-right) queda arriba y el fun_fact
+       (feedback-left) abajo. Visualmente el mapa queda mas cerca del
+       centro vertical del card. */
+    flex-direction: column-reverse;
     gap: 10px;
     margin: 8px 0;
   }
