@@ -127,6 +127,7 @@
     feedbackFunFact:    document.getElementById("feedback-fun-fact"),
     nextRoundBtn:       document.getElementById("next-round-btn"),
     countryMap:         document.getElementById("country-map"),
+    countryMapCaption:  document.getElementById("country-map-caption"),
     levelUpTitle:       document.getElementById("levelup-title"),
     levelUpNextBtn:     document.getElementById("levelup-next-btn"),
     wildcardQuestion:   document.getElementById("wildcard-question"),
@@ -553,6 +554,14 @@
 
   function renderCountryMap(countryName) {
     const meta = COUNTRY_META[normalizeCountry(countryName)];
+
+    if (refs.countryMapCaption) {
+      const flag = getFlag(countryName);
+      refs.countryMapCaption.textContent =
+        "¿Sabías dónde queda " + (flag ? flag + " " : "") + countryName + "?";
+      parseEmoji(refs.countryMapCaption);
+    }
+
     if (!meta || typeof window.jsVectorMap === "undefined") {
       refs.countryMap.textContent =
         "Mapa no disponible para este país en este momento.";

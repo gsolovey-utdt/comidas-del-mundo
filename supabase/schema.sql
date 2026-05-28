@@ -1,4 +1,4 @@
--- Sabores del Mundo — schema Supabase
+-- Comidas del Mundo — schema Supabase
 -- Correr en el SQL editor del proyecto: https://supabase.com/dashboard/project/irryksaoygdklwtsjsru/sql
 
 -- ── Sesiones ──────────────────────────────────────────────────────────────────

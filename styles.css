@@ -541,6 +541,29 @@ body {
   border-radius: 16px;
   border: 2px solid #d7e8f8;
   background: #fbfdff;
+  position: relative;
+}
+
+.country-map-caption {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  margin: 0;
+  z-index: 2;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-black);
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 10px;
+  padding: 4px 8px;
+  pointer-events: none;
+}
+
+.country-map-caption:empty {
+  display: none;
 }
 
 .country-map {
@@ -1045,5 +1068,53 @@ img.emoji {
     font-size: 0.95rem;
     padding: 9px 10px;
     border-width: 2px;
+  }
+
+  /* ── Mobile: caja fija, sin scroll del viewport ── */
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    /* el body ya es grid con place-items:center; reforzamos sin scroll */
+    background-attachment: fixed;
+  }
+
+  .app-shell {
+    width: 100%;
+    height: 100dvh;
+    padding: 12px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .screen.is-active {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .start-card,
+  .game-card,
+  .feedback-card,
+  .levelup-card,
+  .wildcard-card,
+  .final-card {
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }

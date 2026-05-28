@@ -1,4 +1,4 @@
-# CLAUDE.md — Sabores del Mundo
+# CLAUDE.md — Comidas del Mundo
 
 ## Comunicación
 
@@ -8,7 +8,7 @@
 
 ## Descripción del proyecto
 
-**Sabores del Mundo** es una web app educativa y gamificada para niños/as. Muestra una comida (nombre + imagen) y el jugador tiene que elegir el país de origen entre 3 opciones. Tiene 3 niveles de dificultad (Fácil, Intermedio, Difícil), sistema de vidas, puntaje, feedback inmediato con dato curioso, y un mapa mundial que resalta el país correcto.
+**Comidas del Mundo** es una web app educativa y gamificada para niños/as. Muestra una comida (nombre + imagen) y el jugador tiene que elegir el país de origen entre 3 opciones. Tiene 3 niveles de dificultad (Fácil, Intermedio, Difícil), sistema de vidas, puntaje, feedback inmediato con dato curioso, y un mapa mundial que resalta el país correcto.
 
 La app es completamente estática: no requiere build, bundler ni servidor. Se despliega en GitHub Pages.
 

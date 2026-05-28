@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sabores del Mundo</title>
+    <title>Comidas del Mundo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <div class="bg-blob blob-a" aria-hidden="true"></div>
@@ -23,7 +23,7 @@
       <!-- ── INICIO ── -->
       <section id="screen-start" class="screen is-active">
         <div class="card start-card">
-          <h1>Sabores del Mundo</h1>
+          <h1>Comidas del Mundo</h1>
           <p class="lead">
             Descubrí comidas típicas de distintos países. Aprendé de comida y
             del mundo en cada ronda.
@@ -113,6 +113,7 @@
             </div>
             <div class="feedback-right">
               <div class="feedback-map-wrap">
+                <p id="country-map-caption" class="country-map-caption" aria-live="polite"></p>
                 <div id="country-map" class="country-map"></div>
               </div>
             </div>
@@ -190,6 +191,6 @@
     <script defer src="data/foods.js?v=2"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
-    <script defer src="app.js?v=5"></script>
+    <script defer src="app.js?v=7"></script>
   </body>
 </html>

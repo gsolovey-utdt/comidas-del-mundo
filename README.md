@@ -1,4 +1,4 @@
-# Sabores del Mundo - Quiz Infantil
+# Comidas del Mundo - Quiz Infantil
 
 Web app educativa para niños/as donde se muestra una comida y hay que elegir su país correcto entre 3 opciones.
 
