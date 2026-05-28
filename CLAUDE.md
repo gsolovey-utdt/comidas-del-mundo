@@ -189,6 +189,13 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | 2026-05 | Comodín sólo cuando vidas ∈ {1,2}, probabilidad 20% | Si el jugador tiene 3 vidas no necesita ayuda; si tiene 0 ya perdió. P=20% da una oportunidad razonable sin interrumpir demasiado. |
 | 2026-05 | Supabase `async` (no `defer`) para el CDN | CDN lento bloquea todos los scripts `defer` siguientes. Con `async` el script carga en paralelo sin bloquear `app.js`. El cliente se inicializa lazily con `getDb()`. |
 | 2026-05 | `app.js?v=N` en el script tag | Fuerza cache-bust del browser en actualizaciones; incrementar `N` al deployar cambios significativos. |
+| 2026-05 | Imágenes con `object-fit: cover` | Decisión Guillermo: la imagen siempre llena la caja sin bandas blancas. El precio es que imágenes que no sean exactamente 16:11 quedan recortadas desde los bordes. La regla para futuras comidas: respetar el aspect 960×660 (16:11) al recortar. Si por alguna razón hay que aceptar una imagen con otro aspect, ajustar `object-position` puntualmente. |
+
+---
+
+## Pendientes
+
+- **Desktop: caja fija centrada del mismo tamaño en todas las pantallas.** Hoy todo el lock de caja (position fixed, overflow hidden, tamaño uniforme entre las 6 screens) vive dentro de `@media (max-width: 560px)`. Aplicar el mismo patrón para desktop: caja con max-width/max-height fijos (ej. 760×680 o lo que resulte del screen más grande), centrada en viewport, sin scroll de página, y que NO cambie de tamaño entre `start` / `game` / `feedback` / `levelup` / `wildcard` / `final`. Cuando una pantalla tenga poco contenido, dejar espacio en blanco interno (igual que en mobile).
 
 ---
 
@@ -211,5 +218,5 @@ App desplegada en GitHub Pages. Dataset con **48 comidas** de **31 países**. En
 - El deploy es automático al pushear a `main` (GitHub Pages).
 - Los datos están en `data/foods.js`, no en JSON, para poder usar `window.FOODS_DATA` sin servidor.
 - `normalizeCountry()` en `app.js` es la función de lookup: elimina tildes, minúsculas, colapsa espacios. Cualquier país nuevo en el dataset debe pasar esa normalización para matchear con `COUNTRY_META`.
-- Las imágenes en `images/foods/` están normalizadas a **960×660** (aspect 16:11). Al agregar una nueva, recortar al mismo aspect (la CSS hace `object-fit: contain`, así que una imagen con aspect distinto va a tener bandas blancas).
+- Las imágenes en `images/foods/` están normalizadas a **960×660** (aspect 16:11). La CSS de `#food-image` usa `object-fit: cover`, así que la imagen siempre llena la caja `.food-image-wrap` (sin bandas blancas). Si una imagen no respeta el aspect 16:11, va a quedar **recortada** desde los bordes (recorte centrado por default). Al agregar una nueva, mantener 960×660 / 16:11 para evitar perder contenido de la foto. Si necesitás controlar qué parte queda visible al recortar, ajustar `object-position` puntualmente para esa imagen.
 - Si el navegador de preview muestra una versión vieja del CSS tras editar `styles.css`, forzar reload del stylesheet via JS (cambiar `link.href` con un query param `?v=Date.now()`) o reiniciar el server de preview.
