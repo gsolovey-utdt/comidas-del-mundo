@@ -1073,30 +1073,34 @@ img.emoji {
   /* ── Mobile: caja fija, sin scroll del viewport ── */
   html,
   body {
-    height: 100svh;
+    height: 100%;
+    margin: 0;
     overflow: hidden;
     overscroll-behavior: none;
   }
 
   body {
-    /* el body ya es grid con place-items:center; reforzamos sin scroll */
     background-attachment: fixed;
   }
 
+  /* position: fixed + inset:0 ancla al viewport VISUAL real,
+     independiente de como iOS Chrome/Safari traten las toolbars. */
   .app-shell {
-    width: 100%;
-    height: 100svh;
+    position: fixed;
+    inset: 0;
+    width: auto;
     padding: 12px 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
   }
 
   .screen.is-active {
     display: flex;
     width: 100%;
     height: 100%;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
   }
 
