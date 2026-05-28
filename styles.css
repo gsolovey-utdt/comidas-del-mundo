@@ -1114,7 +1114,8 @@ img.emoji {
     display: flex;
     flex-direction: column;
     justify-content: safe center;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: pan-x;
   }
 }
