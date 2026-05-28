@@ -525,18 +525,18 @@ body {
 
 .feedback-body {
   display: flex;
-  gap: 18px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
   margin: 12px 0;
   text-align: left;
 }
 
-.feedback-left {
-  flex: 0 0 42%;
-}
-
+.feedback-left,
 .feedback-right {
-  flex: 1;
+  flex: none;
+  width: 100%;
+  max-width: 540px;
   min-width: 0;
 }
 
@@ -1005,10 +1005,6 @@ img.emoji {
   }
 
   .feedback-body {
-    /* column-reverse: el mapa (feedback-right) queda arriba y el fun_fact
-       (feedback-left) abajo. Visualmente el mapa queda mas cerca del
-       centro vertical del card. */
-    flex-direction: column-reverse;
     gap: 10px;
     margin: 8px 0;
   }
