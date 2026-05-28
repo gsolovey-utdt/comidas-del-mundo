@@ -190,12 +190,13 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | 2026-05 | Supabase `async` (no `defer`) para el CDN | CDN lento bloquea todos los scripts `defer` siguientes. Con `async` el script carga en paralelo sin bloquear `app.js`. El cliente se inicializa lazily con `getDb()`. |
 | 2026-05 | `app.js?v=N` en el script tag | Fuerza cache-bust del browser en actualizaciones; incrementar `N` al deployar cambios significativos. |
 | 2026-05 | Imágenes con `object-fit: cover` | Decisión Guillermo: la imagen siempre llena la caja sin bandas blancas. El precio es que imágenes que no sean exactamente 16:11 quedan recortadas desde los bordes. La regla para futuras comidas: respetar el aspect 960×660 (16:11) al recortar. Si por alguna razón hay que aceptar una imagen con otro aspect, ajustar `object-position` puntualmente. |
+| 2026-05 | Desktop: caja fija 900×680 (`min(900px,92vw)` × `min(680px,92vh)`) igual en las 6 pantallas | Replica el patrón mobile (que ya tenía caja fija) para desktop. El criterio fue: mismo tamaño en `start` / `game` / `feedback` / `levelup` / `wildcard` / `final`, centrado en viewport, sin scroll de página, con espacio en blanco interno si el contenido es chico. Vive en `@media (min-width: 561px)` para no interferir con el bloque mobile (`max-width: 560px`). |
 
 ---
 
 ## Pendientes
 
-- **Desktop: caja fija centrada del mismo tamaño en todas las pantallas.** Hoy todo el lock de caja (position fixed, overflow hidden, tamaño uniforme entre las 6 screens) vive dentro de `@media (max-width: 560px)`. Aplicar el mismo patrón para desktop: caja con max-width/max-height fijos (ej. 760×680 o lo que resulte del screen más grande), centrada en viewport, sin scroll de página, y que NO cambie de tamaño entre `start` / `game` / `feedback` / `levelup` / `wildcard` / `final`. Cuando una pantalla tenga poco contenido, dejar espacio en blanco interno (igual que en mobile).
+_(ninguno por ahora)_
 
 ---
 
