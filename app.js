@@ -858,5 +858,22 @@
     return copy;
   }
 
+  // Re-render the map when orientation changes (landscape ↔ portrait).
+  // jsVectorMap calculates the SVG viewBox from container dimensions at
+  // creation time; rotating the phone changes those dimensions but doesn't
+  // automatically re-render, leaving the map shifted/clipped.
+  let _resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(() => {
+      if (
+        refs.screens.feedback.classList.contains("is-active") &&
+        state.lastAnswer?.question?.correctCountry
+      ) {
+        renderCountryMap(state.lastAnswer.question.correctCountry);
+      }
+    }, 300);
+  });
+
   init();
 })();
