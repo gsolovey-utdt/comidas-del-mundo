@@ -1179,3 +1179,24 @@ img.emoji {
     overflow: hidden;
   }
 }
+
+/* ── Landscape / viewport con poca altura: permitir scroll interno en la caja ── */
+/* Caso tipico: telefono rotado a horizontal. La caja sigue centrada y de
+   tamano fijo, pero el contenido adentro puede scrollearse en lugar de
+   quedar recortado. Va DESPUES de mobile y desktop para tener prioridad
+   sobre los overflow:hidden de ambos bloques. */
+@media (max-height: 500px) {
+  .start-card,
+  .game-card,
+  .feedback-card,
+  .levelup-card,
+  .wildcard-card,
+  .final-card {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+    justify-content: flex-start;
+  }
+}
