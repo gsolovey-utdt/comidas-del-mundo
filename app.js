@@ -1,4 +1,5 @@
 (() => {
+  // ── Supabase ──────────────────────────────────────────────────────────────
   const SUPABASE_URL = "https://irryksaoygdklwtsjsru.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_9zF3s9-hDyRRVi5OqAFP-w_z9Mrx9bt";
   let _db = undefined;
@@ -12,20 +13,71 @@
     try { await promise; } catch (_) {}
   }
 
+  // ── Twemoji ───────────────────────────────────────────────────────────────
   function parseEmoji(el) {
     if (typeof window.twemoji !== "undefined") {
       window.twemoji.parse(el, { folder: "svg", ext: ".svg" });
     }
   }
 
+  // ── Sonido (Web Audio API — sin archivos externos) ────────────────────────
+  const sound = (() => {
+    let ctx = null;
+    let muted = localStorage.getItem("sdm_muted") === "1";
+
+    function getCtx() {
+      if (!ctx) {
+        try { ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch (_) { ctx = null; }
+      }
+      return ctx;
+    }
+
+    function play(notes) {
+      if (muted) return;
+      const c = getCtx();
+      if (!c) return;
+      const t0 = c.currentTime;
+      notes.forEach(({ freq, dur, delay = 0, vol = 0.28, type = "sine" }) => {
+        const osc  = c.createOscillator();
+        const gain = c.createGain();
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t0 + delay);
+        gain.gain.setValueAtTime(0, t0 + delay);
+        gain.gain.linearRampToValueAtTime(vol, t0 + delay + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + delay + dur);
+        osc.start(t0 + delay);
+        osc.stop(t0 + delay + dur + 0.02);
+      });
+    }
+
+    return {
+      correct()     { play([{ freq:523,dur:.12 },{ freq:659,dur:.14,delay:.10 },{ freq:784,dur:.22,delay:.20,vol:.30 }]); },
+      wrong()       { play([{ freq:280,dur:.14,type:"sawtooth",vol:.18 },{ freq:200,dur:.22,type:"sawtooth",delay:.12,vol:.15 }]); },
+      levelUp()     { play([{ freq:523,dur:.10,vol:.24 },{ freq:659,dur:.10,delay:.10,vol:.24 },{ freq:784,dur:.10,delay:.20,vol:.24 },{ freq:1047,dur:.35,delay:.30,vol:.28 }]); },
+      wildcardIn()  { play([{ freq:440,dur:.08,vol:.20 },{ freq:554,dur:.08,delay:.09,vol:.22 },{ freq:659,dur:.08,delay:.18,vol:.22 },{ freq:880,dur:.25,delay:.27,vol:.26 }]); },
+      wildcardWin() { play([{ freq:659,dur:.10,vol:.22 },{ freq:880,dur:.25,delay:.12,vol:.26 }]); },
+      wildcardLose(){ play([{ freq:311,dur:.18,type:"sawtooth",vol:.16 },{ freq:233,dur:.28,type:"sawtooth",delay:.15,vol:.14 }]); },
+      gameOver()    { play([{ freq:392,dur:.20,type:"triangle",vol:.24 },{ freq:311,dur:.20,type:"triangle",delay:.22,vol:.22 },{ freq:233,dur:.45,type:"triangle",delay:.44,vol:.20 }]); },
+      win()         { play([{ freq:523,dur:.09,vol:.24 },{ freq:659,dur:.09,delay:.09,vol:.24 },{ freq:784,dur:.09,delay:.18,vol:.24 },{ freq:1047,dur:.09,delay:.27,vol:.28 },{ freq:1319,dur:.38,delay:.36,vol:.26 }]); },
+      isMuted()     { return muted; },
+      toggleMute()  { muted = !muted; localStorage.setItem("sdm_muted", muted ? "1" : "0"); return muted; },
+    };
+  })();
+
+  // ── Constantes ────────────────────────────────────────────────────────────
   const LEVEL_ORDER = ["easy", "medium", "hard"];
   const LEVEL_LABELS = {
     easy: "Fácil",
     medium: "Intermedio",
     hard: "Difícil",
   };
-  const ROUNDS_PER_LEVEL = 10;
-  const POINTS_PER_HIT = 10;
+  const ROUNDS_PER_LEVEL  = 10;
+  const POINTS_PER_HIT    = 10;
+  const AUTO_ADVANCE_MS   = 4500;   // ms de espera antes de avanzar solo en feedback
+  const ANSWER_REVEAL_MS  = 2000;   // ms que se muestran los colores de botones antes de feedback
   const POSITIVE_FEEDBACK = ["¡Correcto!", "¡Muy bien!", "¡Excelente!", "¡Genial!"];
   const NEGATIVE_FEEDBACK = [
     "¡Ups! No era esa",
@@ -67,9 +119,7 @@
     turquia:          { iso: "TR", flag: "🇹🇷", name: "Turquía",        coords: [ 39.0,  35.2 ] },
     colombia:         { iso: "CO", flag: "🇨🇴", name: "Colombia",       coords: [  4.6, -74.1 ] },
 
-    // Distractores adicionales (ISO + flag + coords aunque por ahora solo
-    // aparezcan como opciones equivocadas; si pasan a respuesta correcta
-    // el mapa funciona sin cambios).
+    // Distractores adicionales
     angola:            { iso: "AO", flag: "🇦🇴", name: "Angola",          coords: [-11.2,  17.9 ] },
     argelia:           { iso: "DZ", flag: "🇩🇿", name: "Argelia",         coords: [ 28.0,   1.7 ] },
     australia:         { iso: "AU", flag: "🇦🇺", name: "Australia",       coords: [-25.3, 133.8 ] },
@@ -88,9 +138,7 @@
     ecuador:           { iso: "EC", flag: "🇪🇨", name: "Ecuador",         coords: [ -1.8, -78.2 ] },
     egipto:            { iso: "EG", flag: "🇪🇬", name: "Egipto",          coords: [ 26.8,  30.8 ] },
     eritrea:           { iso: "ER", flag: "🇪🇷", name: "Eritrea",         coords: [ 15.2,  39.8 ] },
-    // Escocia comparte ISO con Reino Unido en world_merc (no aparece como
-    // entidad separada); el highlight cubre todo GB y el pin marca la
-    // ubicacion especifica de Escocia.
+    // Escocia comparte ISO con Reino Unido en world_merc
     escocia:           { iso: "GB", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", name: "Escocia",         coords: [ 56.5,  -4.2 ] },
     eslovaquia:        { iso: "SK", flag: "🇸🇰", name: "Eslovaquia",      coords: [ 48.7,  19.7 ] },
     finlandia:         { iso: "FI", flag: "🇫🇮", name: "Finlandia",       coords: [ 61.9,  25.7 ] },
@@ -130,11 +178,10 @@
 
   const SMALL_COUNTRY_CODES = new Set([
     "KR", "GB", "IE", "PT", "BE", "NL", "UY", "SV", "CR", "IL",
-    // Nuevos: islas, ciudad-estados, países delgados o difíciles de ver
-    // en la proyección Mercator a escala mundial.
     "CV", "CY", "LB", "SG", "TW", "DJ", "PA",
   ]);
 
+  // ── Estado ────────────────────────────────────────────────────────────────
   const state = {
     startLevel: "easy",
     startLevelIndex: 0,
@@ -159,8 +206,14 @@
     seenFoods: [],
     wildcardType: null,
     wildcardCorrect: null,
+    streak: 0,
   };
 
+  // Timers de módulo
+  let _autoAdvanceTimer   = null;
+  let _restartConfirmTimer = null;
+
+  // ── Referencias DOM ───────────────────────────────────────────────────────
   const refs = {
     screens: {
       start:    document.getElementById("screen-start"),
@@ -170,45 +223,129 @@
       wildcard: document.getElementById("screen-wildcard"),
       final:    document.getElementById("screen-final"),
     },
-    startGameBtn:       document.getElementById("start-game-btn"),
-    playAgainBtn:       document.getElementById("play-again-btn"),
-    restartBtn:         document.getElementById("restart-btn"),
-    difficultyOptions:  Array.from(document.querySelectorAll(".difficulty-option")),
-    difficultyInputs:   Array.from(document.querySelectorAll('input[name="difficulty"]')),
-    playerCountry:      document.getElementById("player-country"),
-    levelPill:          document.getElementById("level-pill"),
-    progressFill:       document.getElementById("progress-fill"),
-    foodImage:          document.getElementById("food-image"),
-    foodPlaceholder:    document.getElementById("food-placeholder"),
+    startGameBtn:         document.getElementById("start-game-btn"),
+    playAgainBtn:         document.getElementById("play-again-btn"),
+    restartBtn:           document.getElementById("restart-btn"),
+    difficultyOptions:    Array.from(document.querySelectorAll(".difficulty-option")),
+    difficultyInputs:     Array.from(document.querySelectorAll('input[name="difficulty"]')),
+    playerCountry:        document.getElementById("player-country"),
+    levelPill:            document.getElementById("level-pill"),
+    progressFill:         document.getElementById("progress-fill"),
+    foodImage:            document.getElementById("food-image"),
+    foodPlaceholder:      document.getElementById("food-placeholder"),
     foodPlaceholderLetter: document.getElementById("food-placeholder-letter"),
-    foodName:           document.getElementById("food-name"),
-    optionsGrid:        document.getElementById("options-grid"),
-    scoreLabel:         document.getElementById("score-label"),
-    livesLabel:         document.getElementById("lives-label"),
-    feedbackBadge:      document.getElementById("feedback-badge"),
-    feedbackAnswer:     document.getElementById("feedback-answer"),
-    feedbackFunFact:    document.getElementById("feedback-fun-fact"),
-    nextRoundBtn:       document.getElementById("next-round-btn"),
-    countryMap:         document.getElementById("country-map"),
-    countryMapCaption:  document.getElementById("country-map-caption"),
-    levelUpTitle:       document.getElementById("levelup-title"),
-    levelUpNextBtn:     document.getElementById("levelup-next-btn"),
-    wildcardQuestion:   document.getElementById("wildcard-question"),
-    wildcardGrid:       document.getElementById("wildcard-grid"),
-    wildcardResult:     document.getElementById("wildcard-result"),
-    wildcardContinueBtn: document.getElementById("wildcard-continue-btn"),
-    finalSummary:       document.getElementById("final-summary"),
-    finalDetails:       document.getElementById("final-details"),
-    finalText:          document.getElementById("final-text"),
-    saveWriteupBtn:     document.getElementById("save-writeup-btn"),
-    writeupStatus:      document.getElementById("writeup-status"),
+    foodName:             document.getElementById("food-name"),
+    optionsGrid:          document.getElementById("options-grid"),
+    scoreLabel:           document.getElementById("score-label"),
+    livesLabel:           document.getElementById("lives-label"),
+    feedbackBadge:        document.getElementById("feedback-badge"),
+    feedbackAnswer:       document.getElementById("feedback-answer"),
+    feedbackFunFact:      document.getElementById("feedback-fun-fact"),
+    nextRoundBtn:         document.getElementById("next-round-btn"),
+    countryMap:           document.getElementById("country-map"),
+    countryMapCaption:    document.getElementById("country-map-caption"),
+    levelUpTitle:         document.getElementById("levelup-title"),
+    levelUpNextBtn:       document.getElementById("levelup-next-btn"),
+    wildcardQuestion:     document.getElementById("wildcard-question"),
+    wildcardGrid:         document.getElementById("wildcard-grid"),
+    wildcardResult:       document.getElementById("wildcard-result"),
+    wildcardContinueBtn:  document.getElementById("wildcard-continue-btn"),
+    finalHeadline:        document.getElementById("final-headline"),
+    finalSummary:         document.getElementById("final-summary"),
+    finalDetails:         document.getElementById("final-details"),
+    finalText:            document.getElementById("final-text"),
+    saveWriteupBtn:       document.getElementById("save-writeup-btn"),
+    writeupStatus:        document.getElementById("writeup-status"),
+    // Nuevos
+    streakPill:           document.getElementById("streak-pill"),
+    streakCount:          document.getElementById("streak-count"),
+    autoAdvanceBar:       document.getElementById("auto-advance-bar"),
+    autoAdvanceFill:      document.getElementById("auto-advance-fill"),
+    soundBtn:             document.getElementById("sound-btn"),
+    finalCard:            document.querySelector(".final-card"),
   };
 
+  // ── Helpers de UI ─────────────────────────────────────────────────────────
   function getFlag(countryName) {
     const meta = COUNTRY_META[normalizeCountry(countryName)];
     return meta?.flag || "";
   }
 
+  /** Muestra un "+N" flotante sobre el score label */
+  function showScoreFloat(points) {
+    const label = refs.scoreLabel;
+    if (!label) return;
+    const rect = label.getBoundingClientRect();
+    const el = document.createElement("div");
+    el.className = "score-float";
+    el.textContent = "+" + points;
+    el.style.left = Math.round(rect.left + rect.width / 2) + "px";
+    el.style.top  = Math.round(rect.top - 4) + "px";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
+  }
+
+  /** Precarga la imagen de la siguiente pregunta */
+  function preloadNextImage() {
+    const next = state.questions[state.roundIndex + 1];
+    if (next?.food?.image) {
+      const img = new Image();
+      img.src = next.food.image;
+    }
+  }
+
+  /** Actualiza visibilidad y texto del streak pill */
+  function updateStreakDisplay() {
+    if (!refs.streakPill || !refs.streakCount) return;
+    if (state.streak >= 2) {
+      refs.streakCount.textContent = state.streak;
+      refs.streakPill.classList.remove("vis-hidden");
+    } else {
+      refs.streakPill.classList.add("vis-hidden");
+    }
+  }
+
+  /** Actualiza el ícono y título del botón de sonido */
+  function updateSoundBtn() {
+    if (!refs.soundBtn) return;
+    const muted = sound.isMuted();
+    refs.soundBtn.textContent = muted ? "🔇" : "🔊";
+    refs.soundBtn.title = muted ? "Sonido silenciado" : "Sonido activado";
+  }
+
+  /** Inicia el temporizador de avance automático en la pantalla de feedback */
+  function startAutoAdvance() {
+    clearAutoAdvance();
+    const { autoAdvanceBar, autoAdvanceFill } = refs;
+    if (!autoAdvanceBar || !autoAdvanceFill) return;
+
+    // Reset sin transición
+    autoAdvanceFill.style.transition = "none";
+    autoAdvanceFill.style.transform  = "scaleX(1)";
+    autoAdvanceBar.hidden = false;
+
+    // Dispara la transición en el siguiente frame de pintura
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        autoAdvanceFill.style.transition = `transform ${AUTO_ADVANCE_MS}ms linear`;
+        autoAdvanceFill.style.transform  = "scaleX(0)";
+      });
+    });
+
+    _autoAdvanceTimer = setTimeout(() => {
+      clearAutoAdvance();
+      continueAfterFeedback();
+    }, AUTO_ADVANCE_MS);
+  }
+
+  /** Cancela el temporizador de avance automático */
+  function clearAutoAdvance() {
+    clearTimeout(_autoAdvanceTimer);
+    _autoAdvanceTimer = null;
+    if (refs.autoAdvanceBar) refs.autoAdvanceBar.hidden = true;
+  }
+
+  // ── Inicialización ────────────────────────────────────────────────────────
   function init() {
     if (!Array.isArray(window.FOODS_DATA) || window.FOODS_DATA.length === 0) {
       refs.startGameBtn.disabled = true;
@@ -220,8 +357,11 @@
 
     refs.startGameBtn.addEventListener("click", startGame);
     refs.playAgainBtn.addEventListener("click", resetToStart);
-    refs.restartBtn.addEventListener("click", resetToStart);
-    refs.nextRoundBtn.addEventListener("click", continueAfterFeedback);
+    refs.restartBtn.addEventListener("click", handleRestartClick);
+    refs.nextRoundBtn.addEventListener("click", () => {
+      clearAutoAdvance();
+      continueAfterFeedback();
+    });
     refs.levelUpNextBtn.addEventListener("click", continueFromLevelUp);
     refs.wildcardContinueBtn.addEventListener("click", continueFromWildcard);
     refs.saveWriteupBtn.addEventListener("click", saveWriteup);
@@ -230,10 +370,38 @@
     );
     refs.foodImage.addEventListener("error", showImagePlaceholder);
     refs.foodImage.addEventListener("load", showLoadedImage);
+
+    if (refs.soundBtn) {
+      refs.soundBtn.addEventListener("click", () => {
+        sound.toggleMute();
+        updateSoundBtn();
+      });
+    }
+    updateSoundBtn();
+
     syncDifficultySelection();
     showScreen("start");
   }
 
+  /** Dos pasos para reiniciar: primer clic pide confirmación, segundo reinicia */
+  function handleRestartClick() {
+    if (refs.restartBtn.dataset.confirming === "1") {
+      clearTimeout(_restartConfirmTimer);
+      _restartConfirmTimer = null;
+      refs.restartBtn.dataset.confirming = "";
+      refs.restartBtn.textContent = "Reiniciar";
+      resetToStart();
+    } else {
+      refs.restartBtn.dataset.confirming = "1";
+      refs.restartBtn.textContent = "¿Seguro? →";
+      _restartConfirmTimer = setTimeout(() => {
+        refs.restartBtn.dataset.confirming = "";
+        refs.restartBtn.textContent = "Reiniciar";
+      }, 2500);
+    }
+  }
+
+  // ── Dropdown de país ──────────────────────────────────────────────────────
   function populateCountryDropdown() {
     const select = refs.playerCountry;
     if (!select) return;
@@ -258,37 +426,44 @@
     }
   }
 
+  // ── Flujo del juego ───────────────────────────────────────────────────────
   function startGame() {
     const selectedLevel =
       refs.difficultyInputs.find((input) => input.checked)?.value || "easy";
     const selectedIndex = LEVEL_ORDER.indexOf(selectedLevel);
 
-    state.startLevel = selectedLevel;
+    state.startLevel      = selectedLevel;
     state.startLevelIndex = selectedIndex >= 0 ? selectedIndex : 0;
-    state.levelIndex = state.startLevelIndex;
-    state.roundIndex = 0;
-    state.levelAnswered = 0;
-    state.score = 0;
-    state.hits = 0;
-    state.answered = 0;
-    state.lives = 3;
-    state.outOfLives = false;
-    state.usedFoodNames = new Set();
-    state.pendingLevelUp = false;
-    state.pendingFinish = false;
-    state.lastAnswer = null;
-    state.sessionId = crypto.randomUUID();
-    state.seenFoods = [];
-    state.wildcardType = null;
+    state.levelIndex      = state.startLevelIndex;
+    state.roundIndex      = 0;
+    state.levelAnswered   = 0;
+    state.score           = 0;
+    state.hits            = 0;
+    state.answered        = 0;
+    state.lives           = 3;
+    state.outOfLives      = false;
+    state.usedFoodNames   = new Set();
+    state.pendingLevelUp  = false;
+    state.pendingFinish   = false;
+    state.lastAnswer      = null;
+    state.sessionId       = crypto.randomUUID();
+    state.seenFoods       = [];
+    state.wildcardType    = null;
     state.wildcardCorrect = null;
-    state.playerCountry = refs.playerCountry?.value || "argentina";
+    state.streak          = 0;
+    state.playerCountry   = refs.playerCountry?.value || "argentina";
+
+    // Cancelar cualquier confirm pendiente de restart
+    clearTimeout(_restartConfirmTimer);
+    refs.restartBtn.dataset.confirming = "";
+    refs.restartBtn.textContent = "Reiniciar";
 
     const db = getDb();
     if (db) {
       saveQuiet(db.from("sdm_sessions").insert([{
-        session_id: state.sessionId,
+        session_id:    state.sessionId,
         player_country: state.playerCountry,
-        start_level: selectedLevel,
+        start_level:   selectedLevel,
       }]));
     }
 
@@ -303,13 +478,10 @@
       (food) => food?.country && food?.distractors?.[levelKey]?.length >= 2
     );
 
-    if (pool.length === 0) {
-      state.questions = [];
-      return;
-    }
+    if (pool.length === 0) { state.questions = []; return; }
 
-    const selected = [];
-    const unusedPool = shuffle(
+    const selected    = [];
+    const unusedPool  = shuffle(
       pool.filter((food) => !state.usedFoodNames.has(getFoodId(food)))
     );
 
@@ -320,10 +492,7 @@
 
     if (selected.length < ROUNDS_PER_LEVEL) {
       const fallbackUnique = shuffle(
-        pool.filter(
-          (food) =>
-            !selected.some((picked) => getFoodId(picked) === getFoodId(food))
-        )
+        pool.filter((food) => !selected.some((p) => getFoodId(p) === getFoodId(food)))
       );
       for (const food of fallbackUnique) {
         if (selected.length >= ROUNDS_PER_LEVEL) break;
@@ -336,8 +505,8 @@
     }
 
     selected.forEach((food) => state.usedFoodNames.add(getFoodId(food)));
-    state.questions = selected.map((food) => createQuestion(food, levelKey));
-    state.roundIndex = 0;
+    state.questions     = selected.map((food) => createQuestion(food, levelKey));
+    state.roundIndex    = 0;
     state.levelAnswered = 0;
   }
 
@@ -351,7 +520,6 @@
     const fallback = getFallbackCountries(food.country, uniqueDistractors, 2);
     const selectedDistractors = shuffle([...uniqueDistractors, ...fallback]).slice(0, 2);
     const options = shuffle([food.country, ...selectedDistractors]);
-
     return { food, level: levelKey, options, correctCountry: food.country };
   }
 
@@ -360,8 +528,7 @@
       new Set(window.FOODS_DATA.map((food) => food.country))
     );
     const available = allCountries.filter(
-      (country) =>
-        country !== correctCountry && !usedDistractors.includes(country)
+      (country) => country !== correctCountry && !usedDistractors.includes(country)
     );
     return shuffle(available).slice(0, needed);
   }
@@ -369,35 +536,34 @@
   function renderQuestion() {
     state.currentQuestion = state.questions[state.roundIndex];
 
-    if (!state.currentQuestion) {
-      showFinal();
-      return;
-    }
+    if (!state.currentQuestion) { showFinal(); return; }
 
     state.questionStartedAt = performance.now();
 
     const { food, level } = state.currentQuestion;
-    refs.levelPill.textContent = "Nivel " + LEVEL_LABELS[level];
+    refs.levelPill.textContent  = "Nivel " + LEVEL_LABELS[level];
     refs.scoreLabel.textContent = "Puntaje: " + String(state.score);
     refs.livesLabel.textContent = "Vidas: " + ("❤️".repeat(state.lives) || "0");
-    refs.foodName.textContent = food.food_name;
+    refs.foodName.textContent   = food.food_name;
     setFoodImage(food.image, food.food_name);
     updateLevelProgress();
+    updateStreakDisplay();
 
     refs.optionsGrid.innerHTML = "";
     state.currentQuestion.options.forEach((option) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "option-btn";
+      button.dataset.country = option;
       const flag = getFlag(option);
       button.textContent = flag ? flag + " " + option : option;
       parseEmoji(button);
-      button.addEventListener("click", () => handleAnswer(option));
+      button.addEventListener("click", () => handleAnswer(option, button));
       refs.optionsGrid.appendChild(button);
     });
   }
 
-  function handleAnswer(selectedCountry) {
+  function handleAnswer(selectedCountry, clickedButton) {
     const question = state.currentQuestion;
     if (!question) return;
 
@@ -405,13 +571,41 @@
     disableOptionButtons();
 
     const isCorrect = selectedCountry === question.correctCountry;
-    state.answered += 1;
+
+    // ── Colores inmediatos en botones ──────────────────────────────────────
+    if (clickedButton) {
+      clickedButton.classList.add(isCorrect ? "option-btn--correct" : "option-btn--wrong");
+    }
+    if (!isCorrect) {
+      // Resaltar cuál era la correcta
+      const allBtns = refs.optionsGrid.querySelectorAll("[data-country]");
+      allBtns.forEach((btn) => {
+        if (btn.dataset.country === question.correctCountry) {
+          btn.classList.add("option-btn--correct");
+        }
+      });
+    }
+
+    // ── Sonido inmediato ───────────────────────────────────────────────────
+    if (isCorrect) {
+      sound.correct();
+    } else {
+      sound.wrong();
+    }
+
+    // ── Actualizar estado ──────────────────────────────────────────────────
+    state.answered      += 1;
     state.levelAnswered += 1;
     if (isCorrect) {
-      state.hits += 1;
+      state.hits  += 1;
       state.score += POINTS_PER_HIT;
+      state.streak += 1;
+      showScoreFloat(POINTS_PER_HIT);
+      updateStreakDisplay();
     } else {
-      state.lives = Math.max(0, state.lives - 1);
+      state.streak  = 0;
+      state.lives   = Math.max(0, state.lives - 1);
+      updateStreakDisplay();
     }
 
     if (!state.seenFoods.some((f) => getFoodId(f) === getFoodId(question.food))) {
@@ -421,58 +615,64 @@
     state.lastAnswer = { isCorrect, selectedCountry, question, reactionTimeMs };
 
     const isLastRoundInLevel = state.roundIndex >= state.questions.length - 1;
-    const hasNextLevel = state.levelIndex < LEVEL_ORDER.length - 1;
-    state.outOfLives = state.lives <= 0;
-    state.pendingLevelUp = !state.outOfLives && isLastRoundInLevel && hasNextLevel;
-    state.pendingFinish = state.outOfLives || (isLastRoundInLevel && !hasNextLevel);
+    const hasNextLevel       = state.levelIndex < LEVEL_ORDER.length - 1;
+    state.outOfLives         = state.lives <= 0;
+    state.pendingLevelUp     = !state.outOfLives && isLastRoundInLevel && hasNextLevel;
+    state.pendingFinish      = state.outOfLives || (isLastRoundInLevel && !hasNextLevel);
+
+    // Precargar imagen de la siguiente pregunta
+    preloadNextImage();
 
     const db = getDb();
     if (db) {
       saveQuiet(db.from("sdm_answers").insert([{
-        session_id: state.sessionId,
-        round_number: state.answered,
-        level: question.level,
-        food_name: question.food.food_name,
+        session_id:      state.sessionId,
+        round_number:    state.answered,
+        level:           question.level,
+        food_name:       question.food.food_name,
         correct_country: question.correctCountry,
         selected_country: selectedCountry,
-        is_correct: isCorrect,
-        is_wildcard: false,
-        wildcard_type: null,
+        is_correct:      isCorrect,
+        is_wildcard:     false,
+        wildcard_type:   null,
         reaction_time_ms: reactionTimeMs,
-        lives_after: state.lives,
+        lives_after:     state.lives,
       }]));
     }
 
-    showFeedback();
+    // Esperar brevemente para que se vean los colores antes de pasar al feedback
+    setTimeout(() => showFeedback(), ANSWER_REVEAL_MS);
   }
 
+  // ── Comodín ───────────────────────────────────────────────────────────────
   function maybeTriggerWildcard() {
     if (state.lives < 1 || state.lives > 2) return false;
     if (Math.random() >= 0.25) return false;
 
     const type = "country_from_flag";
     state.wildcardType = type;
+    sound.wildcardIn();
     renderWildcard(type);
     showScreen("wildcard");
     return true;
   }
 
   function renderWildcard(type) {
-    refs.wildcardResult.hidden = true;
+    refs.wildcardResult.classList.add("vis-hidden");
     refs.wildcardResult.textContent = "";
-    refs.wildcardContinueBtn.hidden = true;
-    refs.wildcardGrid.innerHTML = "";
+    refs.wildcardContinueBtn.classList.add("vis-hidden");
+    refs.wildcardGrid.innerHTML     = "";
 
     if (type === "food_from_description") {
       const currentFoodId = getFoodId(state.currentQuestion.food);
-      const pool = state.seenFoods.filter((f) => getFoodId(f) !== currentFoodId);
-      const correctFood = randomItem(pool.length > 0 ? pool : state.seenFoods);
-      const fact = getRandomFact(correctFood);
+      const pool          = state.seenFoods.filter((f) => getFoodId(f) !== currentFoodId);
+      const correctFood   = randomItem(pool.length > 0 ? pool : state.seenFoods);
+      const fact          = getRandomFact(correctFood);
       state.wildcardCorrect = correctFood.food_name;
 
       refs.wildcardQuestion.innerHTML =
         '<p class="wildcard-fact-label">¿De qué comida habla este dato?</p>' +
-        '<p class="wildcard-fact">“' + escapeHtml(fact) + '”</p>';
+        '<p class="wildcard-fact">"' + escapeHtml(fact) + '"</p>';
 
       const otherFoods = shuffle(
         (window.FOODS_DATA || []).filter((f) => getFoodId(f) !== getFoodId(correctFood))
@@ -488,17 +688,17 @@
       });
 
     } else {
-      const allKeys = Object.keys(COUNTRY_META);
+      const allKeys   = Object.keys(COUNTRY_META);
       const correctKey = randomItem(allKeys);
       const correctMeta = COUNTRY_META[correctKey];
       state.wildcardCorrect = correctMeta.name;
 
       refs.wildcardQuestion.innerHTML = "";
-      const labelEl = document.createElement("p");
-      labelEl.className = "wildcard-fact-label";
+      const labelEl   = document.createElement("p");
+      labelEl.className   = "wildcard-fact-label";
       labelEl.textContent = "¿De qué país es esta bandera?";
       const bigFlagEl = document.createElement("p");
-      bigFlagEl.className = "wildcard-big-flag";
+      bigFlagEl.className   = "wildcard-big-flag";
       bigFlagEl.textContent = correctMeta.flag;
       parseEmoji(bigFlagEl);
       refs.wildcardQuestion.appendChild(labelEl);
@@ -523,11 +723,13 @@
     const isCorrect = selected === state.wildcardCorrect;
 
     if (isCorrect) {
+      sound.wildcardWin();
       state.lives = Math.min(3, state.lives + 1);
-      refs.livesLabel.textContent = "Vidas: " + "❤️".repeat(state.lives);
+      refs.livesLabel.textContent    = "Vidas: " + "❤️".repeat(state.lives);
       refs.wildcardResult.textContent = "¡Correcto! Ganaste una vida ❤️";
-      refs.wildcardResult.className = "wildcard-result wildcard-result--win";
+      refs.wildcardResult.className   = "wildcard-result wildcard-result--win";
     } else {
+      sound.wildcardLose();
       refs.wildcardResult.textContent =
         "¡Casi! No ganaste vida esta vez. Era: " + state.wildcardCorrect;
       refs.wildcardResult.className = "wildcard-result wildcard-result--lose";
@@ -536,34 +738,30 @@
     const db = getDb();
     if (db) {
       saveQuiet(db.from("sdm_answers").insert([{
-        session_id: state.sessionId,
-        round_number: state.answered,
-        level: LEVEL_ORDER[state.levelIndex],
-        food_name: state.currentQuestion?.food?.food_name || "",
-        correct_country: state.wildcardCorrect,
+        session_id:       state.sessionId,
+        round_number:     state.answered,
+        level:            LEVEL_ORDER[state.levelIndex],
+        food_name:        state.currentQuestion?.food?.food_name || "",
+        correct_country:  state.wildcardCorrect,
         selected_country: selected,
-        is_correct: isCorrect,
-        is_wildcard: true,
-        wildcard_type: state.wildcardType,
+        is_correct:       isCorrect,
+        is_wildcard:      true,
+        wildcard_type:    state.wildcardType,
         reaction_time_ms: 0,
-        lives_after: state.lives,
+        lives_after:      state.lives,
       }]));
     }
 
-    refs.wildcardResult.hidden = false;
-    refs.wildcardContinueBtn.hidden = false;
+    refs.wildcardResult.classList.remove("vis-hidden");
+    refs.wildcardContinueBtn.classList.remove("vis-hidden");
   }
 
   function continueFromWildcard() {
-    state.wildcardType = null;
+    state.wildcardType    = null;
     state.wildcardCorrect = null;
 
-    if (state.pendingLevelUp) {
-      showLevelUp();
-      return;
-    }
+    if (state.pendingLevelUp) { showLevelUp(); return; }
 
-    // Re-evaluate outOfLives with current lives (might have recovered via wildcard win)
     state.outOfLives = state.lives <= 0;
     const isLastRoundOfLastLevel =
       state.roundIndex >= state.questions.length - 1 &&
@@ -575,13 +773,14 @@
       return;
     }
 
-    state.outOfLives = false;
+    state.outOfLives    = false;
     state.pendingFinish = false;
-    state.roundIndex += 1;
+    state.roundIndex   += 1;
     renderQuestion();
     showScreen("game");
   }
 
+  // ── Pantalla de feedback ──────────────────────────────────────────────────
   function showFeedback() {
     const answer = state.lastAnswer;
     if (!answer) return;
@@ -594,8 +793,8 @@
     refs.feedbackBadge.classList.remove("good", "bad");
     refs.feedbackBadge.classList.add(answer.isCorrect ? "good" : "bad");
 
-    const flag = getFlag(answer.question.correctCountry);
-    const label = answer.question.food.answer_label || ("Respuesta correcta: ");
+    const flag  = getFlag(answer.question.correctCountry);
+    const label = answer.question.food.answer_label || "Respuesta correcta: ";
     refs.feedbackAnswer.textContent =
       label + " " + (flag ? flag + " " : "") + answer.question.correctCountry;
     parseEmoji(refs.feedbackAnswer);
@@ -626,8 +825,7 @@
     }
 
     if (!meta || typeof window.jsVectorMap === "undefined") {
-      refs.countryMap.textContent =
-        "Mapa no disponible para este país en este momento.";
+      refs.countryMap.textContent = "Mapa no disponible para este país en este momento.";
       return;
     }
 
@@ -653,29 +851,19 @@
         zoomOnScrollSpeed: 0,
         draggable: false,
         regionStyle: {
-          initial: {
-            fill: "#cfe2f3",
-            stroke: "#ffffff",
-            strokeWidth: 0.6,
-          },
-          hover: { fill: "#8ec2ff" },
-          selected: { fill: "#ff8c42" },
-          selectedHover: { fill: "#ff8c42" },
+          initial:      { fill: "#cfe2f3", stroke: "#ffffff", strokeWidth: 0.6 },
+          hover:        { fill: "#8ec2ff" },
+          selected:     { fill: "#ff8c42" },
+          selectedHover:{ fill: "#ff8c42" },
         },
         regionsSelectable: true,
         selectedRegions: [meta.iso],
         markers,
         markerStyle: {
-          initial: {
-            fill: "#ff5f79",
-            stroke: "#ffffff",
-            strokeWidth: 2,
-            r: 4.5,
-          },
-          hover: { fill: "#ff2f53" },
+          initial: { fill: "#ff5f79", stroke: "#ffffff", strokeWidth: 2, r: 4.5 },
+          hover:   { fill: "#ff2f53" },
         },
       });
-
       if (typeof state.mapInstance.updateSize === "function") {
         state.mapInstance.updateSize();
       }
@@ -685,53 +873,82 @@
   }
 
   function continueAfterFeedback() {
+    clearAutoAdvance();   // cancelar si el usuario hizo clic manual
+
     if (maybeTriggerWildcard()) return;
-
-    if (state.pendingLevelUp) {
-      showLevelUp();
-      return;
-    }
-
-    if (state.pendingFinish) {
-      state.pendingFinish = false;
-      showFinal();
-      return;
-    }
+    if (state.pendingLevelUp)  { showLevelUp(); return; }
+    if (state.pendingFinish)   { state.pendingFinish = false; showFinal(); return; }
 
     state.roundIndex += 1;
     renderQuestion();
     showScreen("game");
   }
 
+  // ── Transición de nivel ───────────────────────────────────────────────────
   function showLevelUp() {
     const nextLevel = LEVEL_ORDER[state.levelIndex + 1];
     const nextLabel = LEVEL_LABELS[nextLevel];
     if (refs.levelUpTitle) {
       refs.levelUpTitle.textContent = "¡Pasaste a " + nextLabel + "!";
     }
+    sound.levelUp();
     showScreen("levelup");
   }
 
   function continueFromLevelUp() {
-    state.levelIndex += 1;
+    state.levelIndex    += 1;
     state.pendingLevelUp = false;
     buildQuestionsForCurrentLevel();
     renderQuestion();
     showScreen("game");
   }
 
+  // ── Pantalla final ────────────────────────────────────────────────────────
   function showFinal() {
-    refs.finalSummary.textContent = "Puntaje final: " + String(state.score) + " puntos";
-    refs.finalDetails.textContent = "";
+    const won      = !state.outOfLives;
+    const accuracy = state.answered > 0
+      ? Math.round((state.hits / state.answered) * 100)
+      : 0;
 
-    if (refs.finalText) refs.finalText.value = "";
-    if (refs.finalText) refs.finalText.hidden = false;
+    // Clase de color según resultado
+    if (refs.finalCard) {
+      refs.finalCard.classList.toggle("final-card--win",     won);
+      refs.finalCard.classList.toggle("final-card--gameover", !won);
+    }
+
+    // Titular
+    if (refs.finalHeadline) {
+      refs.finalHeadline.textContent = won
+        ? "¡Lo lograste! 🏆"
+        : "¡Se acabaron las vidas! 😢";
+    }
+
+    // Resumen
+    refs.finalSummary.textContent = won
+      ? "¡Completaste todos los niveles!"
+      : "Pero llegaste muy lejos, ¡buen intento!";
+
+    // Detalles numéricos
+    refs.finalDetails.textContent =
+      "Puntaje: " + state.score + " pts · " +
+      state.hits + "/" + state.answered + " aciertos (" + accuracy + "%)";
+
+    if (refs.finalText)      refs.finalText.value  = "";
+    if (refs.finalText)      refs.finalText.hidden  = false;
     if (refs.saveWriteupBtn) refs.saveWriteupBtn.hidden = false;
-    if (refs.writeupStatus) refs.writeupStatus.hidden = true;
+    if (refs.writeupStatus)  refs.writeupStatus.hidden  = true;
+
+    // Sonido de resultado
+    if (won) { sound.win(); } else { sound.gameOver(); }
+
+    // Ocultar streak
+    state.streak = 0;
+    updateStreakDisplay();
 
     showScreen("final");
   }
 
+  // ── Escritura creativa ────────────────────────────────────────────────────
   function saveWriteup() {
     const text = refs.finalText?.value?.trim() || "";
     if (!text) {
@@ -744,68 +961,58 @@
     if (db && state.sessionId) {
       saveQuiet(db.from("sdm_final_writeups").insert([{
         session_id: state.sessionId,
-        text: text.slice(0, 2000),
-        hits: state.hits,
-        rounds: state.answered,
+        text:       text.slice(0, 2000),
+        hits:       state.hits,
+        rounds:     state.answered,
         out_of_lives: state.outOfLives,
       }]));
     }
 
-    if (refs.finalText) refs.finalText.hidden = true;
-    if (refs.saveWriteupBtn) refs.saveWriteupBtn.hidden = true;
-    if (refs.writeupStatus) refs.writeupStatus.hidden = false;
+    if (refs.finalText)      refs.finalText.hidden      = true;
+    if (refs.saveWriteupBtn) refs.saveWriteupBtn.hidden  = true;
+    if (refs.writeupStatus)  refs.writeupStatus.hidden   = false;
   }
 
+  // ── Imagen de comida ──────────────────────────────────────────────────────
   function setFoodImage(imagePath, foodName) {
     const hasImagePath = typeof imagePath === "string" && imagePath.trim() !== "";
     refs.foodPlaceholderLetter.textContent = getFirstLetter(foodName);
 
-    if (!hasImagePath) {
-      showImagePlaceholder();
-      return;
-    }
+    if (!hasImagePath) { showImagePlaceholder(); return; }
 
-    refs.foodImage.hidden = false;
+    refs.foodImage.hidden      = false;
     refs.foodPlaceholder.hidden = true;
-    refs.foodImage.src = imagePath;
-    refs.foodImage.alt = "Imagen de " + foodName;
+    refs.foodImage.src  = imagePath;
+    refs.foodImage.alt  = "Imagen de " + foodName;
   }
 
   function showImagePlaceholder() {
-    refs.foodImage.hidden = true;
+    refs.foodImage.hidden      = true;
     refs.foodPlaceholder.hidden = false;
   }
 
   function showLoadedImage() {
-    refs.foodImage.hidden = false;
+    refs.foodImage.hidden      = false;
     refs.foodPlaceholder.hidden = true;
   }
 
+  // ── Utilidades ────────────────────────────────────────────────────────────
   function getFirstLetter(value) {
     if (typeof value !== "string" || value.trim() === "") return "?";
     return value.trim().charAt(0).toUpperCase();
   }
 
   function disableOptionButtons() {
-    const buttons = refs.optionsGrid.querySelectorAll("button");
-    buttons.forEach((button) => { button.disabled = true; });
+    refs.optionsGrid.querySelectorAll("button").forEach((btn) => { btn.disabled = true; });
   }
 
   function updateLevelProgress() {
-    const ratio = Math.max(
-      0,
-      Math.min(1, state.levelAnswered / ROUNDS_PER_LEVEL)
-    );
+    const ratio = Math.max(0, Math.min(1, state.levelAnswered / ROUNDS_PER_LEVEL));
     refs.progressFill.style.width = String(ratio * 100) + "%";
   }
 
-  function getRandomFact(food) {
-    return food.fun_fact || "";
-  }
-
-  function getFoodId(food) {
-    return String(food?.food_name || "").trim().toLowerCase();
-  }
+  function getRandomFact(food) { return food.fun_fact || ""; }
+  function getFoodId(food)     { return String(food?.food_name || "").trim().toLowerCase(); }
 
   function normalizeCountry(value) {
     return String(value || "")
@@ -825,6 +1032,8 @@
   }
 
   function resetToStart() {
+    clearAutoAdvance();
+    state.streak = 0;
     showScreen("start");
   }
 
@@ -845,9 +1054,7 @@
     return (LEVEL_ORDER.length - state.startLevelIndex) * ROUNDS_PER_LEVEL;
   }
 
-  function randomItem(items) {
-    return items[Math.floor(Math.random() * items.length)];
-  }
+  function randomItem(items) { return items[Math.floor(Math.random() * items.length)]; }
 
   function shuffle(array) {
     const copy = [...array];
@@ -858,10 +1065,7 @@
     return copy;
   }
 
-  // Re-render the map when orientation changes (landscape ↔ portrait).
-  // jsVectorMap calculates the SVG viewBox from container dimensions at
-  // creation time; rotating the phone changes those dimensions but doesn't
-  // automatically re-render, leaving the map shifted/clipped.
+  // Re-renderizar el mapa al rotar el dispositivo
   let _resizeTimer = null;
   window.addEventListener("resize", () => {
     clearTimeout(_resizeTimer);

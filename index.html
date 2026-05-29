@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Comidas del Mundo</title>
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1a6a9f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Comidas del Mundo" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+    <!-- Open Graph / compartir -->
+    <meta name="description" content="Juego educativo: adiviná de qué país es cada comida típica del mundo. ¡3 niveles de dificultad!" />
+    <meta property="og:title" content="Comidas del Mundo 🌍" />
+    <meta property="og:description" content="Adiviná de qué país es cada comida típica. ¡3 niveles de dificultad!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gsolovey-utdt.github.io/comidas-del-mundo/" />
+    <meta property="og:image" content="https://gsolovey-utdt.github.io/comidas-del-mundo/images/foods/sushi.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,7 +25,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
-    <link rel="stylesheet" href="styles.css?v=12" />
+    <link rel="stylesheet" href="styles.css?v=13" />
   </head>
   <body>
     <div class="bg-blob blob-a" aria-hidden="true"></div>
@@ -66,7 +80,9 @@
         <div class="card game-card">
           <header class="game-header">
             <span id="level-pill" class="level-pill">Nivel Fácil</span>
+            <span id="streak-pill" class="streak-pill vis-hidden">🔥 ×<span id="streak-count">2</span></span>
             <span id="lives-label" class="lives-label">Vidas: ❤❤❤</span>
+            <button id="sound-btn" class="btn btn-ghost btn-icon" title="Sonido activado">🔊</button>
             <button id="restart-btn" class="btn btn-ghost">Reiniciar</button>
           </header>
 
@@ -122,6 +138,9 @@
           <button id="next-round-btn" class="btn btn-primary btn-xl">
             Siguiente ronda
           </button>
+          <div id="auto-advance-bar" class="auto-advance-bar" hidden>
+            <div id="auto-advance-fill" class="auto-advance-fill"></div>
+          </div>
         </div>
       </section>
 
@@ -145,8 +164,8 @@
           <p class="wildcard-subtitle">Respondé bien y ganás una vida extra ❤️</p>
           <div id="wildcard-question" class="wildcard-question"></div>
           <div id="wildcard-grid" class="options-grid"></div>
-          <p id="wildcard-result" class="wildcard-result" hidden></p>
-          <button id="wildcard-continue-btn" class="btn btn-primary btn-xl" hidden>
+          <p id="wildcard-result" class="wildcard-result vis-hidden"></p>
+          <button id="wildcard-continue-btn" class="btn btn-primary btn-xl vis-hidden">
             Continuar
           </button>
         </div>
@@ -155,7 +174,7 @@
       <!-- ── FINAL ── -->
       <section id="screen-final" class="screen">
         <div class="card final-card">
-          <h2>¡Fin del recorrido!</h2>
+          <h2 id="final-headline">¡Fin del recorrido!</h2>
           <p id="final-summary" class="final-summary"></p>
           <p id="final-details" class="final-details"></p>
 
@@ -196,5 +215,14 @@
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "654200a8331a40eb9d7d42c459a5d9d9"}'></script>
     <!-- End Cloudflare Web Analytics -->
+
+    <!-- Service Worker -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>
