@@ -196,7 +196,12 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 
 ## Pendientes
 
-_(ninguno por ahora)_
+Ideas surgidas de una revisión de diseño (mayo 2026), en orden de impacto estimado:
+
+- **Streak con consecuencias**: la racha 🔥 actual es solo decorativa. Podría dar puntos bonus a partir de 3 aciertos consecutivos, o activar un efecto visual especial.
+- **Modo "click en el mapa"**: en lugar de 3 botones de texto, mostrar el mapa mundi y que el jugador haga clic directamente en el país. Recall puro, más educativo. Sería un 4º nivel de dificultad natural.
+- **Auto-advance más lento / pausable**: 4.5s puede ser poco para lectores lentos. Considerar 6–7s o permitir pausar el timer con un botón explícito.
+- **Share card con canvas**: generar una imagen sharable con puntaje + países visitados, sin backend. Ideal para que padres muestren lo que aprendió su hijo.
 
 ---
 
@@ -208,8 +213,8 @@ _(ninguno por ahora)_
 
 ## Estado actual
 
-**Fase:** Producción / v1.2 (pendiente deploy)  
-App desplegada en GitHub Pages. Dataset con **48 comidas** de **31 países**. En mayo 2026 se agregaron: banderas emoji en botones y mapa, dropdown de país del jugador, pantalla animada de transición de nivel, comodín de vidas (bandera→país o descripción→comida), medición de tiempos de respuesta con Supabase, y texto creativo al final.
+**Fase:** Producción / v1.3 (pendiente deploy)  
+App desplegada en GitHub Pages. Dataset con **48 comidas** de **31 países**. En mayo 2026 se agregaron: banderas emoji en botones y mapa, dropdown de país del jugador, pantalla animada de transición de nivel, comodín de vidas (bandera→país o descripción→comida), medición de tiempos de respuesta con Supabase, y texto creativo al final. En v1.3: vidas iniciales aumentadas de 3 a 5; pantalla final convertida en carrusel de 4 páginas (resultado → colección de comidas aprendidas → mapa de países visitados → texto creativo).
 
 ---
 

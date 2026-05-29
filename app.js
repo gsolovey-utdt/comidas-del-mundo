@@ -192,7 +192,7 @@
     score: 0,
     hits: 0,
     answered: 0,
-    lives: 3,
+    lives: 5,
     outOfLives: false,
     usedFoodNames: new Set(),
     currentQuestion: null,
@@ -207,11 +207,14 @@
     wildcardType: null,
     wildcardCorrect: null,
     streak: 0,
+    correctFoodNames: new Set(),
   };
 
   // Timers de módulo
   let _autoAdvanceTimer   = null;
   let _restartConfirmTimer = null;
+  let _finalCurrentPage   = 0;
+  let _finalMapInstance   = null;
 
   // ── Referencias DOM ───────────────────────────────────────────────────────
   const refs = {
@@ -262,6 +265,7 @@
     autoAdvanceBar:       document.getElementById("auto-advance-bar"),
     autoAdvanceFill:      document.getElementById("auto-advance-fill"),
     soundBtn:             document.getElementById("sound-btn"),
+    finalNextBtn:         document.getElementById("final-next-btn"),
     finalCard:            document.querySelector(".final-card"),
   };
 
@@ -365,6 +369,7 @@
     refs.levelUpNextBtn.addEventListener("click", continueFromLevelUp);
     refs.wildcardContinueBtn.addEventListener("click", continueFromWildcard);
     refs.saveWriteupBtn.addEventListener("click", saveWriteup);
+    if (refs.finalNextBtn) refs.finalNextBtn.addEventListener("click", advanceFinalPage);
     refs.difficultyInputs.forEach((input) =>
       input.addEventListener("change", syncDifficultySelection)
     );
@@ -440,7 +445,7 @@
     state.score           = 0;
     state.hits            = 0;
     state.answered        = 0;
-    state.lives           = 3;
+    state.lives           = 5;
     state.outOfLives      = false;
     state.usedFoodNames   = new Set();
     state.pendingLevelUp  = false;
@@ -451,6 +456,7 @@
     state.wildcardType    = null;
     state.wildcardCorrect = null;
     state.streak          = 0;
+    state.correctFoodNames = new Set();
     state.playerCountry   = refs.playerCountry?.value || "argentina";
 
     // Cancelar cualquier confirm pendiente de restart
@@ -600,6 +606,7 @@
       state.hits  += 1;
       state.score += POINTS_PER_HIT;
       state.streak += 1;
+      state.correctFoodNames.add(getFoodId(question.food));
       showScoreFloat(POINTS_PER_HIT);
       updateStreakDisplay();
     } else {
@@ -724,7 +731,7 @@
 
     if (isCorrect) {
       sound.wildcardWin();
-      state.lives = Math.min(3, state.lives + 1);
+      state.lives = Math.min(5, state.lives + 1);
       refs.livesLabel.textContent    = "Vidas: " + "❤️".repeat(state.lives);
       refs.wildcardResult.textContent = "¡Correcto! Ganaste una vida ❤️";
       refs.wildcardResult.className   = "wildcard-result wildcard-result--win";
@@ -910,6 +917,12 @@
       ? Math.round((state.hits / state.answered) * 100)
       : 0;
 
+    // Destruir mapa final previo si existe
+    if (_finalMapInstance && typeof _finalMapInstance.destroy === "function") {
+      try { _finalMapInstance.destroy(); } catch (_) {}
+      _finalMapInstance = null;
+    }
+
     // Clase de color según resultado
     if (refs.finalCard) {
       refs.finalCard.classList.toggle("final-card--win",     won);
@@ -933,8 +946,8 @@
       "Puntaje: " + state.score + " pts · " +
       state.hits + "/" + state.answered + " aciertos (" + accuracy + "%)";
 
+    // Reset textarea
     if (refs.finalText)      refs.finalText.value  = "";
-    if (refs.finalText)      refs.finalText.hidden  = false;
     if (refs.saveWriteupBtn) refs.saveWriteupBtn.hidden = false;
     if (refs.writeupStatus)  refs.writeupStatus.hidden  = true;
 
@@ -945,7 +958,141 @@
     state.streak = 0;
     updateStreakDisplay();
 
+    // Poblar la grilla de comidas y arrancar en página 0
+    renderFoodsGrid();
+    showFinalPage(0);
+
     showScreen("final");
+  }
+
+  function advanceFinalPage() {
+    showFinalPage(_finalCurrentPage + 1);
+  }
+
+  function showFinalPage(n) {
+    const TOTAL = 4;
+    _finalCurrentPage = Math.min(n, TOTAL - 1);
+
+    // Mostrar solo la página activa
+    for (let i = 0; i < TOTAL; i++) {
+      const page = document.getElementById("final-page-" + i);
+      if (page) page.hidden = (i !== _finalCurrentPage);
+    }
+
+    // Actualizar dots
+    document.querySelectorAll(".final-dot").forEach((dot, i) => {
+      dot.classList.toggle("final-dot--active", i === _finalCurrentPage);
+    });
+
+    // Renderizar mapa al llegar a la página 2
+    if (_finalCurrentPage === 2) renderFinalMap("final-map");
+
+    // Alternar botones de navegación
+    const isLast = _finalCurrentPage === TOTAL - 1;
+    if (refs.finalNextBtn) refs.finalNextBtn.hidden = isLast;
+    if (refs.playAgainBtn) refs.playAgainBtn.hidden = !isLast;
+  }
+
+  function renderFoodsGrid() {
+    const grid  = document.getElementById("final-foods-grid");
+    const title = document.getElementById("final-foods-title");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+    const n = state.seenFoods.length;
+
+    if (title) {
+      title.textContent = n === 1
+        ? "¡Hoy aprendiste sobre 1 comida!"
+        : "¡Hoy aprendiste sobre " + n + " comidas!";
+    }
+
+    state.seenFoods.forEach((food) => {
+      const meta      = COUNTRY_META[normalizeCountry(food.country)] || {};
+      const isCorrect = state.correctFoodNames.has(getFoodId(food));
+
+      const card = document.createElement("div");
+      card.className = "food-card" + (isCorrect ? " food-card--correct" : "");
+
+      const img = document.createElement("img");
+      img.src     = food.image || "";
+      img.alt     = food.food_name;
+      img.loading = "lazy";
+
+      const nameEl = document.createElement("div");
+      nameEl.className   = "food-card-name";
+      nameEl.textContent = food.food_name;
+
+      const countryEl = document.createElement("div");
+      countryEl.className   = "food-card-country";
+      countryEl.textContent = (meta.flag ? meta.flag + " " : "") + (meta.name || food.country);
+
+      card.appendChild(img);
+      card.appendChild(nameEl);
+      card.appendChild(countryEl);
+      grid.appendChild(card);
+    });
+  }
+
+  function renderFinalMap(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Recolectar ISOs únicos y markers de países pequeños
+    const isoSet  = new Set();
+    const markers = [];
+    const seenSmall = new Set();
+
+    state.seenFoods.forEach((food) => {
+      const meta = COUNTRY_META[normalizeCountry(food.country)];
+      if (!meta) return;
+      isoSet.add(meta.iso);
+      if (SMALL_COUNTRY_CODES.has(meta.iso) && Array.isArray(meta.coords) && !seenSmall.has(meta.iso)) {
+        seenSmall.add(meta.iso);
+        markers.push({ name: meta.name || food.country, coords: meta.coords });
+      }
+    });
+
+    if (typeof window.jsVectorMap === "undefined") {
+      container.textContent = "Mapa no disponible.";
+      return;
+    }
+
+    if (_finalMapInstance && typeof _finalMapInstance.destroy === "function") {
+      try { _finalMapInstance.destroy(); } catch (_) {}
+      _finalMapInstance = null;
+    }
+    container.innerHTML = "";
+
+    try {
+      _finalMapInstance = new jsVectorMap({
+        selector: "#" + containerId,
+        map: "world_merc",
+        backgroundColor: "transparent",
+        zoomButtons: false,
+        zoomOnScroll: false,
+        zoomOnScrollSpeed: 0,
+        draggable: false,
+        regionStyle: {
+          initial:       { fill: "#cfe2f3", stroke: "#ffffff", strokeWidth: 0.6 },
+          hover:         { fill: "#8ec2ff" },
+          selected:      { fill: "#ff8c42" },
+          selectedHover: { fill: "#ff8c42" },
+        },
+        regionsSelectable: true,
+        selectedRegions: Array.from(isoSet),
+        markers,
+        markerStyle: {
+          initial: { fill: "#ff5f79", stroke: "#ffffff", strokeWidth: 2, r: 4.5 },
+          hover:   { fill: "#ff2f53" },
+        },
+      });
+      if (typeof _finalMapInstance.updateSize === "function") {
+        _finalMapInstance.updateSize();
+      }
+    } catch (_) {
+      container.textContent = "No se pudo renderizar el mapa.";
+    }
   }
 
   // ── Escritura creativa ────────────────────────────────────────────────────
@@ -1065,7 +1212,7 @@
     return copy;
   }
 
-  // Re-renderizar el mapa al rotar el dispositivo
+  // Re-renderizar mapas al rotar el dispositivo
   let _resizeTimer = null;
   window.addEventListener("resize", () => {
     clearTimeout(_resizeTimer);
@@ -1075,6 +1222,11 @@
         state.lastAnswer?.question?.correctCountry
       ) {
         renderCountryMap(state.lastAnswer.question.correctCountry);
+      } else if (
+        refs.screens.final.classList.contains("is-active") &&
+        _finalCurrentPage === 2
+      ) {
+        renderFinalMap("final-map");
       }
     }, 300);
   });

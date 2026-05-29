@@ -25,7 +25,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
   </head>
   <body>
     <div class="bg-blob blob-a" aria-hidden="true"></div>
@@ -174,32 +174,60 @@
       <!-- ── FINAL ── -->
       <section id="screen-final" class="screen">
         <div class="card final-card">
-          <h2 id="final-headline">¡Fin del recorrido!</h2>
-          <p id="final-summary" class="final-summary"></p>
-          <p id="final-details" class="final-details"></p>
 
-          <div class="creative-writing">
-            <label for="final-text" class="creative-label">
-              ✏️ ¿Cuál es tu comida preferida? ¿Querés contarme con quién la comés o quién la prepara?
-            </label>
-            <textarea
-              id="final-text"
-              class="creative-textarea"
-              rows="4"
-              placeholder="Escribí acá..."
-              maxlength="2000"
-            ></textarea>
-            <button id="save-writeup-btn" class="btn btn-primary">
-              Guardar
-            </button>
-            <p id="writeup-status" class="writeup-status" hidden>
-              ¡Gracias por contarme! 💛
-            </p>
+          <!-- Dots de navegación -->
+          <div class="final-dots" id="final-dots">
+            <span class="final-dot final-dot--active"></span>
+            <span class="final-dot"></span>
+            <span class="final-dot"></span>
+            <span class="final-dot"></span>
           </div>
 
-          <button id="play-again-btn" class="btn btn-primary btn-xl">
-            Volver a jugar
-          </button>
+          <!-- Página 0: resultado -->
+          <div class="final-page" id="final-page-0">
+            <h2 id="final-headline">¡Fin del recorrido!</h2>
+            <p id="final-summary" class="final-summary"></p>
+            <p id="final-details" class="final-details"></p>
+          </div>
+
+          <!-- Página 1: colección de comidas -->
+          <div class="final-page" id="final-page-1" hidden>
+            <h3 class="final-section-title" id="final-foods-title">¡Hoy aprendiste sobre estas comidas!</h3>
+            <div class="foods-grid" id="final-foods-grid"></div>
+          </div>
+
+          <!-- Página 2: mapa mundial -->
+          <div class="final-page" id="final-page-2" hidden>
+            <h3 class="final-section-title">¡Aprendiste sobre las comidas de todos estos países!</h3>
+            <div id="final-map" class="final-map"></div>
+          </div>
+
+          <!-- Página 3: escritura creativa -->
+          <div class="final-page" id="final-page-3" hidden>
+            <div class="creative-writing">
+              <label for="final-text" class="creative-label">
+                ✏️ ¿Cuál es tu comida preferida? ¿Querés contarme con quién la comés o quién la prepara?
+              </label>
+              <textarea
+                id="final-text"
+                class="creative-textarea"
+                rows="4"
+                placeholder="Escribí acá..."
+                maxlength="2000"
+              ></textarea>
+              <button id="save-writeup-btn" class="btn btn-primary">
+                Guardar
+              </button>
+              <p id="writeup-status" class="writeup-status" hidden>
+                ¡Gracias por contarme! 💛
+              </p>
+            </div>
+          </div>
+
+          <!-- Navegación del carrusel -->
+          <button id="final-next-btn" class="btn btn-primary btn-xl">Siguiente →</button>
+          <button id="play-again-btn" class="btn btn-primary btn-xl" hidden>Volver a jugar</button>
+
         </div>
       </section>
 
@@ -210,7 +238,7 @@
     <script defer src="data/foods.js?v=2"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
-    <script defer src="app.js?v=9"></script>
+    <script defer src="app.js?v=10"></script>
 
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "654200a8331a40eb9d7d42c459a5d9d9"}'></script>

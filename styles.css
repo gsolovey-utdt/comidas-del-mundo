@@ -1104,6 +1104,36 @@ img.emoji {
     border-width: 2px;
   }
 
+  .final-dots {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .final-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .final-section-title {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+
+  .foods-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+
+  .food-card-name {
+    font-size: 0.72rem;
+    padding: 3px 4px 1px;
+  }
+
+  .food-card-country {
+    font-size: 0.65rem;
+    padding: 0 4px 4px;
+  }
+
   /* ── Mobile: caja fija, sin scroll del viewport ── */
   html,
   body {
@@ -1250,6 +1280,128 @@ img.emoji {
 
 .final-card--gameover {
   background: rgba(255, 218, 225, 0.97) !important;
+}
+
+/* ── Pantalla final: carrusel de páginas ── */
+.final-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.final-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c8dff0;
+  border: 2px solid var(--ink-black);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.final-dot--active {
+  background: var(--primary);
+  transform: scale(1.3);
+}
+
+.final-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+#final-page-0 {
+  justify-content: center;
+  text-align: center;
+}
+
+.final-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+  letter-spacing: 0.04em;
+  color: var(--ink-black);
+  text-shadow: 1px 1px 0 rgba(255, 140, 66, 0.35);
+  margin: 0 0 12px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+/* ── Colección de comidas ── */
+.foods-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 2px 2px 6px;
+  touch-action: pan-y;
+}
+
+.food-card {
+  position: relative;
+  background: #fff8e7;
+  border: 2px solid var(--ink-black);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 var(--ink-black);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.food-card img {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  display: block;
+}
+
+.food-card-name {
+  font-family: var(--font-hand);
+  font-size: 0.82rem;
+  color: var(--ink-black);
+  padding: 4px 6px 2px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.food-card-country {
+  font-family: var(--font-hand);
+  font-size: 0.75rem;
+  color: #4a6a8a;
+  padding: 0 6px 6px;
+  text-align: center;
+}
+
+.food-card--correct::after {
+  content: "✓";
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  background: #2bbf6f;
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 2px solid var(--ink-black);
+  line-height: 1;
+}
+
+/* ── Mapa final (página 2) ── */
+.final-map {
+  flex: 1;
+  min-height: 180px;
+  border-radius: 12px;
+  background: #eff7ff;
+  overflow: hidden;
 }
 
 /* ── Desktop / tablet (>560px): caja fija del mismo tamano en todas las pantallas ── */
