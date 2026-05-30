@@ -289,6 +289,16 @@
     setTimeout(() => el.remove(), 1700);
   }
 
+  function showLastLifeWarning() {
+    const card = document.querySelector(".game-card");
+    if (!card) return;
+    const el = document.createElement("div");
+    el.className = "last-life-warning";
+    el.textContent = "¡Te queda una última vida!";
+    card.appendChild(el);
+    setTimeout(() => el.remove(), ANSWER_REVEAL_MS);
+  }
+
   /** Precarga la imagen de la siguiente pregunta */
   function preloadNextImage() {
     const next = state.questions[state.roundIndex + 1];
@@ -549,7 +559,7 @@
     const { food, level } = state.currentQuestion;
     refs.levelPill.textContent  = "Nivel " + LEVEL_LABELS[level];
     refs.scoreLabel.textContent = "Puntaje: " + String(state.score);
-    refs.livesLabel.textContent = "Vidas: " + ("❤️".repeat(state.lives) || "0");
+    refs.livesLabel.textContent = "❤️".repeat(state.lives) || "💔";
     refs.foodName.textContent   = food.food_name;
     setFoodImage(food.image, food.food_name);
     updateLevelProgress();
@@ -612,6 +622,7 @@
     } else {
       state.streak  = 0;
       state.lives   = Math.max(0, state.lives - 1);
+      if (state.lives === 1) showLastLifeWarning();
       updateStreakDisplay();
     }
 
@@ -732,7 +743,7 @@
     if (isCorrect) {
       sound.wildcardWin();
       state.lives = Math.min(5, state.lives + 1);
-      refs.livesLabel.textContent    = "Vidas: " + "❤️".repeat(state.lives);
+      refs.livesLabel.textContent    = "❤️".repeat(state.lives);
       refs.wildcardResult.textContent = "¡Correcto! Ganaste una vida ❤️";
       refs.wildcardResult.className   = "wildcard-result wildcard-result--win";
     } else {

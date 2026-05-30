@@ -255,15 +255,25 @@ body {
   max-width: 860px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
 }
 
 .game-header {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    "level streak lives"
+    "sound .      restart";
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 6px 8px;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
 }
+
+#level-pill  { grid-area: level; }
+#streak-pill { grid-area: streak; justify-self: center; }
+#lives-label { grid-area: lives; min-width: 120px; justify-content: flex-end; }
+#sound-btn   { grid-area: sound; }
+#restart-btn { grid-area: restart; justify-self: end; }
 
 .lives-label {
   display: inline-flex;
@@ -942,10 +952,10 @@ img.emoji {
   }
 
   .game-header {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 6px;
+    gap: 5px 6px;
   }
+
+  #lives-label { min-width: 95px; }
 
   .lives-label,
   .level-pill,
@@ -1227,6 +1237,32 @@ img.emoji {
   100% { transform: translateX(-50%) translateY(-100px); opacity: 0; }
 }
 
+/* ── Warning de última vida ── */
+.last-life-warning {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: #ff4444;
+  color: #fff;
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 14px 20px;
+  border-radius: 26px 26px 0 0;
+  text-align: center;
+  pointer-events: none;
+  animation: last-life-flash 2s ease-out forwards;
+}
+
+@keyframes last-life-flash {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ── Racha ── */
 .streak-pill {
   display: inline-flex;
@@ -1339,6 +1375,7 @@ img.emoji {
   min-height: 0;
   padding: 2px 2px 6px;
   touch-action: pan-y;
+  align-items: start;
 }
 
 .food-card {
@@ -1354,7 +1391,7 @@ img.emoji {
 
 .food-card img {
   width: 100%;
-  aspect-ratio: 16 / 11;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
 }
@@ -1400,7 +1437,7 @@ img.emoji {
   flex: 1;
   min-height: 180px;
   border-radius: 12px;
-  background: #eff7ff;
+  background: #ffffff;
   overflow: hidden;
 }
 
