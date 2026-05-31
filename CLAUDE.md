@@ -202,6 +202,9 @@ Ideas surgidas de una revisión de diseño (mayo 2026), en orden de impacto esti
 - **Modo "click en el mapa"**: en lugar de 3 botones de texto, mostrar el mapa mundi y que el jugador haga clic directamente en el país. Recall puro, más educativo. Sería un 4º nivel de dificultad natural.
 - **Auto-advance más lento / pausable**: 4.5s puede ser poco para lectores lentos. Considerar 6–7s o permitir pausar el timer con un botón explícito.
 - **Share card con canvas**: generar una imagen sharable con puntaje + países visitados, sin backend. Ideal para que padres muestren lo que aprendió su hijo.
+- **Rediseño de pantalla de inicio**: evaluar si la selección de nivel pertenece al inicio o puede moverse (ej. preguntarlo antes de la primera ronda). Explorar agregar imágenes atractivas de comidas o personas comiendo en distintos países — tipo carrusel o collage — para darle más vida visual antes de empezar. Requiere conseguir imágenes de buena calidad.
+- **Revisión de imágenes de comidas**: auditar todo el set en `images/foods/` por (1) aspect ratio — deben ser 960×660 (16:11) para no quedar recortadas con `object-fit: cover` — y (2) calidad visual general (nitidez, encuadre, iluminación). Reemplazar las que no cumplan.
+- **Micro-reacomodo al cargar la pantalla de juego** (detectado 2026-05-31): al entrar por primera vez a la pantalla de juego, el contenido se desplaza ~6px hacia arriba cuando terminan de cargar las fuentes de Google (Bangers / Patrick Hand) y el navegador reflowa con las métricas reales. Es un único salto al cargar (no en cada respuesta; se confirmó que ocurre igual sin responder). Mitigación posible: precargar las fuentes (`<link rel="preload">` de los `.woff2`) y/o `font-display: optional`, o reservar el alto con `size-adjust`/fallback metrics. Bajo impacto; revisar cuando se toque el tema fuentes.
 
 ---
 

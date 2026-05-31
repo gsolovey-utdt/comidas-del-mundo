@@ -25,7 +25,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=20" />
   </head>
   <body>
     <div class="bg-blob blob-a" aria-hidden="true"></div>
@@ -38,12 +38,18 @@
       <section id="screen-start" class="screen is-active">
         <div class="card start-card">
           <h1>Comidas del Mundo</h1>
+
+          <div class="start-carousel" aria-hidden="true">
+            <div class="start-carousel-slot"><img src="images/start/empanadas.png" alt=""></div>
+            <div class="start-carousel-slot"><img src="images/start/mapotofu.png" alt=""></div>
+            <div class="start-carousel-slot"><img src="images/start/borsh.png" alt=""></div>
+          </div>
+
           <p class="lead">
-            Descubrí comidas típicas de distintos países. Aprendé de comida y
-            del mundo en cada ronda.
+            Descubrí comidas típicas del mundo en cada ronda.
           </p>
 
-          <div class="difficulty-picker">
+          <div class="difficulty-picker difficulty-compact">
             <div class="difficulty-options">
               <label class="difficulty-option selected">
                 <input type="radio" name="difficulty" value="easy" checked />
@@ -80,9 +86,10 @@
         <div class="card game-card">
           <header class="game-header">
             <span id="level-pill" class="level-pill">Nivel Fácil</span>
-            <span id="streak-pill" class="streak-pill vis-hidden">🔥 ×<span id="streak-count">2</span></span>
+            <span id="score-label" class="score-label">Puntaje: 0</span>
             <span id="lives-label" class="lives-label">❤️❤️❤️❤️❤️</span>
             <button id="sound-btn" class="btn btn-ghost btn-icon" title="Sonido activado">🔊</button>
+            <span id="streak-pill" class="streak-pill vis-hidden">🔥 ×<span id="streak-count">2</span></span>
             <button id="restart-btn" class="btn btn-ghost">Reiniciar</button>
           </header>
 
@@ -106,22 +113,23 @@
             <h2 id="food-name" class="food-name">Comida</h2>
           </div>
 
-          <p class="question-text">¿De qué país es esta comida?</p>
+          <div class="question-slot">
+            <div id="answer-flash" class="feedback-badge answer-flash" hidden></div>
+            <p class="question-text">¿De qué país es esta comida?</p>
+          </div>
           <div id="options-grid" class="options-grid"></div>
-
-          <footer class="game-footer">
-            <span id="score-label" class="score-label">Puntaje: 0</span>
-          </footer>
         </div>
       </section>
 
       <!-- ── FEEDBACK ── -->
       <section id="screen-feedback" class="screen">
         <div class="card feedback-card">
-          <p id="feedback-badge" class="feedback-badge">¡Correcto!</p>
-          <p id="feedback-answer" class="feedback-answer">
-            La respuesta correcta era Japón.
-          </p>
+          <div class="feedback-head">
+            <img id="feedback-image" class="feedback-image" alt="" />
+            <p id="feedback-answer" class="feedback-answer">
+              La respuesta correcta era Japón.
+            </p>
+          </div>
 
           <div class="feedback-body">
             <div class="feedback-left">
@@ -238,7 +246,7 @@
     <script defer src="data/foods.js?v=2"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
-    <script defer src="app.js?v=11"></script>
+    <script defer src="app.js?v=15"></script>
 
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "654200a8331a40eb9d7d42c459a5d9d9"}'></script>

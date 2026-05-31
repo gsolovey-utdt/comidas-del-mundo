@@ -145,6 +145,52 @@ body {
   line-height: 1.5;
 }
 
+/* === CARRUSEL DE INICIO === */
+.start-carousel {
+  display: flex;
+  gap: 10px;
+  margin: 0 0 18px;
+  height: 170px;
+  flex-shrink: 0;
+}
+
+.start-carousel-slot {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 3px solid var(--ink-black);
+  box-shadow: var(--sticker-shadow);
+  transition: opacity 0.6s ease;
+}
+
+.start-carousel-slot.fading {
+  opacity: 0;
+}
+
+.start-carousel-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Difficulty picker compacto (en pantalla de inicio con carrusel) */
+.difficulty-compact .difficulty-options {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 400px;
+  margin: 0 auto 12px;
+  gap: 8px;
+}
+
+.difficulty-compact .difficulty-option {
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.difficulty-compact .difficulty-name {
+  font-size: 1.1rem;
+}
+
 .difficulty-picker h2 {
   margin: 10px 0 12px;
   font-size: 1.3rem;
@@ -261,18 +307,19 @@ body {
 .game-header {
   display: grid;
   grid-template-areas:
-    "level streak lives"
-    "sound .      restart";
-  grid-template-columns: auto 1fr auto;
+    "level score  lives"
+    "sound streak restart";
+  grid-template-columns: 1fr auto 1fr;
   grid-template-rows: auto auto;
   gap: 6px 8px;
   align-items: center;
 }
 
-#level-pill  { grid-area: level; }
+#level-pill  { grid-area: level; justify-self: start; }
+#score-label { grid-area: score; justify-self: center; }
 #streak-pill { grid-area: streak; justify-self: center; }
-#lives-label { grid-area: lives; min-width: 120px; justify-content: flex-end; }
-#sound-btn   { grid-area: sound; }
+#lives-label { grid-area: lives; justify-content: flex-end; justify-self: end; }
+#sound-btn   { grid-area: sound; justify-self: start; }
 #restart-btn { grid-area: restart; justify-self: end; }
 
 .lives-label {
@@ -402,6 +449,35 @@ body {
   color: var(--ink-black);
 }
 
+/* Slot que aloja la pregunta y, tras responder, el cartel ✓/✗.
+   Ambos se apilan en la misma celda (grid-area 1/1) y el min-height
+   reserva el alto del cartel para que no haya salto de layout. */
+.question-slot {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  margin: 6px 0 14px;
+}
+
+.question-slot > * {
+  grid-area: 1 / 1;
+}
+
+.question-slot .question-text {
+  margin: 0;
+}
+
+#answer-flash {
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Mientras el cartel está visible, ocultar la pregunta de fondo
+   (sigue ocupando su lugar para no alterar el alto del slot). */
+#answer-flash:not([hidden]) ~ .question-text {
+  visibility: hidden;
+}
+
 .options-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
@@ -442,26 +518,19 @@ body {
   cursor: not-allowed;
 }
 
-.game-footer {
-  margin-top: 14px;
-  display: flex;
-  justify-content: center;
-}
-
-
 .feedback-badge {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  border-radius: 14px;
-  border: 3px solid var(--ink-black);
-  padding: 12px 22px 12px 18px;
+  gap: 8px;
+  border-radius: 12px;
+  border: 2px solid var(--ink-black);
+  padding: 5px 13px 5px 10px;
   font-family: var(--font-display);
   letter-spacing: 0.05em;
   font-weight: 400;
   margin: 0 auto 16px;
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  box-shadow: var(--sticker-shadow);
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  box-shadow: 2px 2px 0 var(--ink-black);
   animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-origin: center;
 }
@@ -469,10 +538,10 @@ body {
 .feedback-badge::before {
   display: inline-grid;
   place-items: center;
-  width: 1.6em;
-  height: 1.6em;
+  width: 1.4em;
+  height: 1.4em;
   border-radius: 50%;
-  border: 3px solid var(--ink-black);
+  border: 2px solid var(--ink-black);
   font-family: var(--font-hand);
   font-size: 1.1em;
   font-weight: 700;
@@ -534,6 +603,33 @@ body {
   margin-top: 4px;
   margin-bottom: 12px;
   color: #1c3f5e;
+}
+
+/* Encabezado del feedback: foto de la comida + texto de la respuesta */
+.feedback-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.feedback-image {
+  width: 150px;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 3px solid var(--ink-black);
+  box-shadow: var(--sticker-shadow);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.feedback-head .feedback-answer {
+  margin: 0;
+  text-align: left;
+  max-width: 380px;
 }
 
 .feedback-fun-fact {
@@ -930,7 +1026,13 @@ img.emoji {
 
   .lead {
     font-size: 1.1rem;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
+  }
+
+  .start-carousel {
+    height: 110px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .difficulty-options {
@@ -954,8 +1056,6 @@ img.emoji {
   .game-header {
     gap: 5px 6px;
   }
-
-  #lives-label { min-width: 95px; }
 
   .lives-label,
   .level-pill,
@@ -1018,10 +1118,6 @@ img.emoji {
     box-shadow: 2px 2px 0 var(--ink-black);
   }
 
-  .game-footer {
-    margin-top: 8px;
-  }
-
   .score-label {
     padding: 4px 12px;
     font-size: 0.95rem;
@@ -1029,15 +1125,25 @@ img.emoji {
   }
 
   .feedback-badge {
-    padding: 8px 16px 8px 12px;
+    padding: 4px 11px 4px 8px;
     margin-bottom: 10px;
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-size: clamp(0.8rem, 3.5vw, 0.95rem);
     border-width: 2px;
   }
 
   .feedback-answer {
     font-size: 1.2rem;
     margin-bottom: 8px;
+  }
+
+  .feedback-head {
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .feedback-image {
+    width: 96px;
+    border-width: 2px;
   }
 
   .feedback-fun-fact {
@@ -1129,20 +1235,8 @@ img.emoji {
     margin-bottom: 8px;
   }
 
-  .foods-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 7px;
-  }
-
-  .food-card-name {
-    font-size: 0.72rem;
-    padding: 3px 4px 1px;
-  }
-
-  .food-card-country {
-    font-size: 0.65rem;
-    padding: 0 4px 4px;
-  }
+  /* (Los overrides mobile de .foods-grid / .food-card-* viven más abajo,
+     DESPUÉS de las reglas base, para ganar por orden de fuente.) */
 
   /* ── Mobile: caja fija, sin scroll del viewport ── */
   html,
@@ -1240,18 +1334,21 @@ img.emoji {
 /* ── Warning de última vida ── */
 .last-life-warning {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
   background: #ff4444;
   color: #fff;
   font-family: var(--font-hand);
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 14px 20px;
-  border-radius: 26px 26px 0 0;
+  padding: 6px 16px;
+  border: 2px solid var(--ink-black);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--ink-black);
   text-align: center;
+  white-space: nowrap;
   pointer-events: none;
   animation: last-life-flash 2s ease-out forwards;
 }
@@ -1365,33 +1462,73 @@ img.emoji {
   text-align: center;
 }
 
-/* ── Colección de comidas ── */
+/* ── Colección de comidas (tarjetas flip + scroll horizontal) ── */
+/* 2 filas; entran ~4 columnas (8 tarjetas) en pantalla y el resto se ve
+   scrolleando horizontalmente. grid-auto-flow:column va llenando columnas
+   hacia la derecha; grid-auto-columns fija el ancho para que entren 4. */
 .foods-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 30px) / 4);
   gap: 10px;
-  overflow-y: auto;
   flex: 1;
   min-height: 0;
-  padding: 2px 2px 6px;
-  touch-action: pan-y;
-  align-items: start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 2px 12px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
 .food-card {
   position: relative;
-  background: #fff8e7;
+  scroll-snap-align: start;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+  min-height: 0;
+  cursor: pointer;
+  perspective: 800px;
+}
+
+/* Contenedor que rota 180° al hacer click (state .flipped en el JS). */
+.food-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.food-card.flipped .food-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Las dos caras ocupan todo el cuadro y comparten el look de sticker. */
+.food-card-front,
+.food-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   border: 2px solid var(--ink-black);
   border-radius: 12px;
   box-shadow: 2px 2px 0 var(--ink-black);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: #fff8e7;
 }
 
-.food-card img {
+/* Sólo la foto (hijo directo del front) llena la caja; la bandera emoji vive
+   dentro de .food-card-country y mantiene su tamaño 1em (regla img.emoji). */
+.food-card-front > img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  flex: 1;
+  min-height: 0;
   object-fit: cover;
   display: block;
 }
@@ -1402,8 +1539,9 @@ img.emoji {
   color: var(--ink-black);
   padding: 4px 6px 2px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .food-card-country {
@@ -1412,9 +1550,31 @@ img.emoji {
   color: #4a6a8a;
   padding: 0 6px 6px;
   text-align: center;
+  flex-shrink: 0;
 }
 
-.food-card--correct::after {
+/* Dorso: dato curioso de la comida. */
+.food-card-back {
+  transform: rotateY(180deg);
+  background: #eaf4ff;
+  padding: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Los fun_facts son cortos (máx ~90 caracteres), así que entran de sobra:
+   nada de scroll/max-height. El dato ocupa todo el ancho y se centra. */
+.food-card-fact {
+  width: 100%;
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  line-height: 1.32;
+  color: #2b4f70;
+  text-align: center;
+}
+
+/* Tilde de "acertaste": va sobre la cara frontal (se oculta al dar vuelta). */
+.food-card--correct .food-card-front::after {
   content: "✓";
   position: absolute;
   top: 4px;
@@ -1430,6 +1590,38 @@ img.emoji {
   font-weight: 700;
   border: 2px solid var(--ink-black);
   line-height: 1;
+  z-index: 2;
+}
+
+/* Overrides mobile de la colección. Van acá (después de las reglas base) a
+   propósito: el bloque @media (max-width:560px) de más arriba está ANTES que
+   estas reglas base, así que perdería por orden de fuente. */
+@media (max-width: 560px) {
+  /* Columnas más anchas (~2,3 visibles, asoma la siguiente para invitar a
+     scrollear) y alto de fila acotado para que no queden tarjetas finitas y
+     altísimas en pantallas largas. */
+  .foods-grid {
+    grid-auto-columns: calc((100% - 16px) / 2.3);
+    grid-template-rows: repeat(2, minmax(0, 220px));
+    align-content: center;
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+
+  .food-card-name {
+    font-size: 0.74rem;
+    padding: 3px 4px 1px;
+  }
+
+  .food-card-country {
+    font-size: 0.66rem;
+    padding: 0 4px 4px;
+  }
+
+  .food-card-fact {
+    font-size: 0.82rem;
+    line-height: 1.28;
+  }
 }
 
 /* ── Mapa final (página 2) ── */
@@ -1437,8 +1629,26 @@ img.emoji {
   flex: 1;
   min-height: 180px;
   border-radius: 12px;
-  background: #ffffff;
+  background: #cfe9ff;
   overflow: hidden;
+}
+
+/* Tooltip del mapa (jsVectorMap): lo pisamos para que tenga el look cómic
+   del resto de la app en vez del recuadro azul por defecto. styles.css se
+   carga después de jsvectormap.min.css, así que gana por orden de fuente.
+   No tocamos position/display para no romper el posicionamiento interno. */
+.jvm-tooltip {
+  border-radius: 10px;
+  background-color: #fff8e7;
+  color: var(--ink-black);
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 2px solid var(--ink-black);
+  box-shadow: 2px 2px 0 var(--ink-black);
+  padding: 5px 12px;
+  z-index: 9999;
 }
 
 /* ── Desktop / tablet (>560px): caja fija del mismo tamano en todas las pantallas ── */
@@ -1519,6 +1729,30 @@ img.emoji {
     min-width: 0;
     overflow: hidden;
   }
+
+  /* Pantalla de juego: dentro de la caja fija de 680px las opciones
+     quedaban pegadas al borde inferior. Comprimimos imagen y márgenes
+     (sin tocar el min-height del question-slot, que reserva el alto del
+     cartel ✓/✗) para que todo entre centrado y con aire. */
+  .game-card .food-image-wrap {
+    width: min(330px, 78vw);
+  }
+
+  .game-card .meter-wrap {
+    margin-top: 10px;
+  }
+
+  .game-card .food-zone {
+    margin: 10px auto 2px;
+  }
+
+  .game-card .food-name {
+    margin: 8px 0 0;
+  }
+
+  .game-card .question-slot {
+    margin: 4px 0 10px;
+  }
 }
 
 /* ── Landscape / viewport con poca altura: permitir scroll interno en la caja ── */
@@ -1539,5 +1773,11 @@ img.emoji {
     touch-action: pan-y;
     overscroll-behavior: contain;
     justify-content: flex-start;
+  }
+
+  .start-carousel {
+    height: 80px;
+    gap: 6px;
+    margin-bottom: 10px;
   }
 }

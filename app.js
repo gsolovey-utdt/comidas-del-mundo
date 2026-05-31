@@ -85,6 +85,9 @@
     "No pasa nada, seguí intentando",
     "Esta vez no, pero vamos bien",
   ];
+  // Mensaje para cuando una respuesta incorrecta termina el juego (se acaban
+  // las vidas): no debe alentar a "seguir intentando" porque ya no se puede.
+  const GAMEOVER_FEEDBACK = "¡Ups! No era esa";
 
   const COUNTRY_META = {
     japon:            { iso: "JP", flag: "🇯🇵", name: "Japón",          coords: [36.2,  138.25] },
@@ -181,6 +184,22 @@
     "CV", "CY", "LB", "SG", "TW", "DJ", "PA",
   ]);
 
+  // Lookup inverso ISO → meta, para los tooltips del mapa (mostrar el nombre
+  // en español). Si dos países comparten ISO en world_merc (p. ej. Reino
+  // Unido y Escocia comparten GB), gana el primero que aparece en COUNTRY_META.
+  const ISO_TO_META = {};
+  Object.values(COUNTRY_META).forEach((m) => {
+    if (m.iso && !ISO_TO_META[m.iso]) ISO_TO_META[m.iso] = m;
+  });
+
+  /** Handler de jsVectorMap: reemplaza el nombre del país (inglés, del mapa)
+   *  por el nombre en español de COUNTRY_META. Los países que no están en el
+   *  dataset conservan el nombre por defecto. */
+  function setSpanishRegionTooltip(event, tooltip, code) {
+    const meta = ISO_TO_META[code];
+    if (meta && meta.name) tooltip.text(meta.name);
+  }
+
   // ── Estado ────────────────────────────────────────────────────────────────
   const state = {
     startLevel: "easy",
@@ -241,8 +260,9 @@
     optionsGrid:          document.getElementById("options-grid"),
     scoreLabel:           document.getElementById("score-label"),
     livesLabel:           document.getElementById("lives-label"),
-    feedbackBadge:        document.getElementById("feedback-badge"),
+    feedbackImage:        document.getElementById("feedback-image"),
     feedbackAnswer:       document.getElementById("feedback-answer"),
+    answerFlash:          document.getElementById("answer-flash"),
     feedbackFunFact:      document.getElementById("feedback-fun-fact"),
     nextRoundBtn:         document.getElementById("next-round-btn"),
     countryMap:           document.getElementById("country-map"),
@@ -297,6 +317,22 @@
     el.textContent = "¡Te queda una última vida!";
     card.appendChild(el);
     setTimeout(() => el.remove(), ANSWER_REVEAL_MS);
+  }
+
+  /** Muestra el cartel genérico (✓/✗ + frase) sobre la pantalla de juego,
+   *  durante la ventana de revelado de colores, antes de pasar a feedback. */
+  function showAnswerFlash(isCorrect, gameOver) {
+    if (!refs.answerFlash) return;
+    refs.answerFlash.textContent = isCorrect
+      ? randomItem(POSITIVE_FEEDBACK)
+      : (gameOver ? GAMEOVER_FEEDBACK : randomItem(NEGATIVE_FEEDBACK));
+    refs.answerFlash.classList.remove("good", "bad");
+    refs.answerFlash.classList.add(isCorrect ? "good" : "bad");
+    refs.answerFlash.hidden = false;
+  }
+
+  function hideAnswerFlash() {
+    if (refs.answerFlash) refs.answerFlash.hidden = true;
   }
 
   /** Precarga la imagen de la siguiente pregunta */
@@ -380,6 +416,7 @@
     refs.wildcardContinueBtn.addEventListener("click", continueFromWildcard);
     refs.saveWriteupBtn.addEventListener("click", saveWriteup);
     if (refs.finalNextBtn) refs.finalNextBtn.addEventListener("click", advanceFinalPage);
+    document.addEventListener("keydown", handleFinalKeydown);
     refs.difficultyInputs.forEach((input) =>
       input.addEventListener("change", syncDifficultySelection)
     );
@@ -554,12 +591,14 @@
 
     if (!state.currentQuestion) { showFinal(); return; }
 
+    hideAnswerFlash();
     state.questionStartedAt = performance.now();
 
     const { food, level } = state.currentQuestion;
     refs.levelPill.textContent  = "Nivel " + LEVEL_LABELS[level];
     refs.scoreLabel.textContent = "Puntaje: " + String(state.score);
-    refs.livesLabel.textContent = "❤️".repeat(state.lives) || "💔";
+    refs.livesLabel.textContent = state.lives + " ❤️";
+    parseEmoji(refs.livesLabel);
     refs.foodName.textContent   = food.food_name;
     setFoodImage(food.image, food.food_name);
     updateLevelProgress();
@@ -608,6 +647,12 @@
     } else {
       sound.wrong();
     }
+
+    // ── Cartel genérico sobre la pantalla de juego (✓/✗ + frase) ────────────
+    // state.lives todavía no se descontó: si es ≤1 y la respuesta es incorrecta,
+    // esta jugada deja al jugador sin vidas (game over) → no alentar a seguir.
+    const willEndGame = !isCorrect && state.lives <= 1;
+    showAnswerFlash(isCorrect, willEndGame);
 
     // ── Actualizar estado ──────────────────────────────────────────────────
     state.answered      += 1;
@@ -743,7 +788,8 @@
     if (isCorrect) {
       sound.wildcardWin();
       state.lives = Math.min(5, state.lives + 1);
-      refs.livesLabel.textContent    = "❤️".repeat(state.lives);
+      refs.livesLabel.textContent    = state.lives + " ❤️";
+      parseEmoji(refs.livesLabel);
       refs.wildcardResult.textContent = "¡Correcto! Ganaste una vida ❤️";
       refs.wildcardResult.className   = "wildcard-result wildcard-result--win";
     } else {
@@ -803,13 +849,17 @@
     const answer = state.lastAnswer;
     if (!answer) return;
 
-    const phrase = answer.isCorrect
-      ? randomItem(POSITIVE_FEEDBACK)
-      : randomItem(NEGATIVE_FEEDBACK);
-
-    refs.feedbackBadge.textContent = phrase;
-    refs.feedbackBadge.classList.remove("good", "bad");
-    refs.feedbackBadge.classList.add(answer.isCorrect ? "good" : "bad");
+    // Foto de la comida (ya precargada) junto al texto de la respuesta
+    if (refs.feedbackImage) {
+      const imgPath = answer.question.food.image;
+      if (imgPath) {
+        refs.feedbackImage.src    = imgPath;
+        refs.feedbackImage.alt    = answer.question.food.food_name || "";
+        refs.feedbackImage.hidden = false;
+      } else {
+        refs.feedbackImage.hidden = true;
+      }
+    }
 
     const flag  = getFlag(answer.question.correctCountry);
     const label = answer.question.food.answer_label || "Respuesta correcta: ";
@@ -868,13 +918,15 @@
         zoomOnScroll: false,
         zoomOnScrollSpeed: 0,
         draggable: false,
+        showTooltip: true,
+        onRegionTooltipShow: setSpanishRegionTooltip,
         regionStyle: {
-          initial:      { fill: "#cfe2f3", stroke: "#ffffff", strokeWidth: 0.6 },
-          hover:        { fill: "#8ec2ff" },
+          initial:      { fill: "#7eb1dd", stroke: "#ffffff", strokeWidth: 0.6 },
+          hover:        { fill: "#7eb1dd" },
           selected:     { fill: "#ff8c42" },
           selectedHover:{ fill: "#ff8c42" },
         },
-        regionsSelectable: true,
+        regionsSelectable: false,
         selectedRegions: [meta.iso],
         markers,
         markerStyle: {
@@ -980,9 +1032,24 @@
     showFinalPage(_finalCurrentPage + 1);
   }
 
+  /** Navegación del carrusel final con las flechas del teclado.
+   *  Ignora las flechas si el foco está en un campo de texto (escritura creativa). */
+  function handleFinalKeydown(e) {
+    if (!refs.screens.final.classList.contains("is-active")) return;
+    const tag = (document.activeElement?.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      showFinalPage(_finalCurrentPage + 1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      showFinalPage(_finalCurrentPage - 1);
+    }
+  }
+
   function showFinalPage(n) {
     const TOTAL = 4;
-    _finalCurrentPage = Math.min(n, TOTAL - 1);
+    _finalCurrentPage = Math.max(0, Math.min(n, TOTAL - 1));
 
     // Mostrar solo la página activa
     for (let i = 0; i < TOTAL; i++) {
@@ -1004,6 +1071,64 @@
     if (refs.playAgainBtn) refs.playAgainBtn.hidden = !isLast;
   }
 
+  /** Crea una tarjeta-flip vacía (se rellena con fillFoodCard). Al hacer
+   *  click se da vuelta y muestra el dato curioso en el dorso. */
+  function buildFoodCardSkeleton() {
+    const card = document.createElement("div");
+    card.className = "food-card";
+
+    const inner = document.createElement("div");
+    inner.className = "food-card-inner";
+
+    // Cara frontal: foto + nombre + país
+    const front = document.createElement("div");
+    front.className = "food-card-front";
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    const nameEl = document.createElement("div");
+    nameEl.className = "food-card-name";
+    const countryEl = document.createElement("div");
+    countryEl.className = "food-card-country";
+    front.appendChild(img);
+    front.appendChild(nameEl);
+    front.appendChild(countryEl);
+
+    // Dorso: dato curioso
+    const back = document.createElement("div");
+    back.className = "food-card-back";
+    const factEl = document.createElement("div");
+    factEl.className = "food-card-fact";
+    back.appendChild(factEl);
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    card.appendChild(inner);
+
+    card.addEventListener("click", () => card.classList.toggle("flipped"));
+    return card;
+  }
+
+  /** Rellena una tarjeta con los datos de una comida. */
+  function fillFoodCard(card, food) {
+    const meta      = COUNTRY_META[normalizeCountry(food.country)] || {};
+    const isCorrect = state.correctFoodNames.has(getFoodId(food));
+    card.dataset.foodId = getFoodId(food);
+    card.classList.toggle("food-card--correct", isCorrect);
+    card.classList.remove("flipped");
+
+    const img = card.querySelector(".food-card-front img");
+    img.src = food.image || "";
+    img.alt = food.food_name;
+
+    card.querySelector(".food-card-name").textContent = food.food_name;
+
+    const countryEl = card.querySelector(".food-card-country");
+    countryEl.textContent = (meta.flag ? meta.flag + " " : "") + (meta.name || food.country);
+    parseEmoji(countryEl);
+
+    card.querySelector(".food-card-fact").textContent = food.fun_fact || "";
+  }
+
   function renderFoodsGrid() {
     const grid  = document.getElementById("final-foods-grid");
     const title = document.getElementById("final-foods-title");
@@ -1018,29 +1143,11 @@
         : "¡Hoy aprendiste sobre " + n + " comidas!";
     }
 
+    // Mostramos TODAS las comidas vistas. En pantalla entran ~8 (4×2); el
+    // resto se ve scrolleando horizontalmente (ver .foods-grid en styles.css).
     state.seenFoods.forEach((food) => {
-      const meta      = COUNTRY_META[normalizeCountry(food.country)] || {};
-      const isCorrect = state.correctFoodNames.has(getFoodId(food));
-
-      const card = document.createElement("div");
-      card.className = "food-card" + (isCorrect ? " food-card--correct" : "");
-
-      const img = document.createElement("img");
-      img.src     = food.image || "";
-      img.alt     = food.food_name;
-      img.loading = "lazy";
-
-      const nameEl = document.createElement("div");
-      nameEl.className   = "food-card-name";
-      nameEl.textContent = food.food_name;
-
-      const countryEl = document.createElement("div");
-      countryEl.className   = "food-card-country";
-      countryEl.textContent = (meta.flag ? meta.flag + " " : "") + (meta.name || food.country);
-
-      card.appendChild(img);
-      card.appendChild(nameEl);
-      card.appendChild(countryEl);
+      const card = buildFoodCardSkeleton();
+      fillFoodCard(card, food);
       grid.appendChild(card);
     });
   }
@@ -1079,18 +1186,20 @@
       _finalMapInstance = new jsVectorMap({
         selector: "#" + containerId,
         map: "world_merc",
-        backgroundColor: "transparent",
+        backgroundColor: "#cfe9ff",
         zoomButtons: false,
         zoomOnScroll: false,
         zoomOnScrollSpeed: 0,
         draggable: false,
+        showTooltip: true,
+        onRegionTooltipShow: setSpanishRegionTooltip,
         regionStyle: {
-          initial:       { fill: "#cfe2f3", stroke: "#ffffff", strokeWidth: 0.6 },
-          hover:         { fill: "#8ec2ff" },
+          initial:       { fill: "#ffffff", stroke: "#9fc4e3", strokeWidth: 0.6 },
+          hover:         { fill: "#eaf3fb" },
           selected:      { fill: "#ff8c42" },
           selectedHover: { fill: "#ff8c42" },
         },
-        regionsSelectable: true,
+        regionsSelectable: false,
         selectedRegions: Array.from(isoSet),
         markers,
         markerStyle: {
@@ -1241,6 +1350,47 @@
       }
     }, 300);
   });
+
+  // Carrusel de pantalla de inicio (grilla de 3 platos random)
+  (function () {
+    const CAROUSEL_IMAGES = [
+      "images/start/strudell.png",
+      "images/start/arenque.png",
+      "images/start/mapotofu.png",
+      "images/start/chipa.png",
+      "images/start/hamburguesa.png",
+      "images/start/borsh.png",
+      "images/start/empanadas.png",
+      "images/start/summer-rolls.png",
+    ];
+    const slots = document.querySelectorAll(".start-carousel-slot");
+    if (!slots.length) return;
+    const N = slots.length;
+
+    function pickRandom(exclude) {
+      const pool = CAROUSEL_IMAGES.filter((x) => !exclude.includes(x));
+      const result = [];
+      const copy = [...pool];
+      for (let i = 0; i < N && copy.length; i++) {
+        const idx = Math.floor(Math.random() * copy.length);
+        result.push(copy.splice(idx, 1)[0]);
+      }
+      return result;
+    }
+
+    // Arrancar con selección random (no las mismas del HTML)
+    let current = pickRandom([]);
+    current.forEach((src, i) => slots[i].querySelector("img").src = src);
+
+    setInterval(() => {
+      slots.forEach((s) => s.classList.add("fading"));
+      setTimeout(() => {
+        current = pickRandom(current);
+        current.forEach((src, i) => slots[i].querySelector("img").src = src);
+        slots.forEach((s) => s.classList.remove("fading"));
+      }, 650);
+    }, 4000);
+  })();
 
   init();
 })();
