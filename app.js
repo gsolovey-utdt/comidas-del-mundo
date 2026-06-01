@@ -1051,12 +1051,19 @@
 
   // ── Touch swipe para navegación del carrusel en mobile ──
   let _touchStartX = 0;
+  let _touchStartTarget = null;
   function handleFinalTouchStart(e) {
     if (!refs.screens.final.classList.contains("is-active")) return;
     _touchStartX = e.changedTouches[0].clientX;
+    _touchStartTarget = e.target;
   }
   function handleFinalTouchEnd(e) {
     if (!refs.screens.final.classList.contains("is-active")) return;
+    // Si el touch comenzó en la grilla de fotos, permitir solo su scroll horizontal,
+    // no cambiar de página del carrusel
+    if (_touchStartTarget?.closest?.(".foods-grid")) {
+      return;
+    }
     const touchEndX = e.changedTouches[0].clientX;
     const diff = _touchStartX - touchEndX;
     // Si el swipe horizontal es ≥ 50px, avanzar o retroceder
