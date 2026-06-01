@@ -417,6 +417,8 @@
     refs.saveWriteupBtn.addEventListener("click", saveWriteup);
     if (refs.finalNextBtn) refs.finalNextBtn.addEventListener("click", advanceFinalPage);
     document.addEventListener("keydown", handleFinalKeydown);
+    document.addEventListener("touchstart", handleFinalTouchStart, false);
+    document.addEventListener("touchend", handleFinalTouchEnd, false);
     refs.difficultyInputs.forEach((input) =>
       input.addEventListener("change", syncDifficultySelection)
     );
@@ -1044,6 +1046,28 @@
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
       showFinalPage(_finalCurrentPage - 1);
+    }
+  }
+
+  // ── Touch swipe para navegación del carrusel en mobile ──
+  let _touchStartX = 0;
+  function handleFinalTouchStart(e) {
+    if (!refs.screens.final.classList.contains("is-active")) return;
+    _touchStartX = e.changedTouches[0].clientX;
+  }
+  function handleFinalTouchEnd(e) {
+    if (!refs.screens.final.classList.contains("is-active")) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = _touchStartX - touchEndX;
+    // Si el swipe horizontal es ≥ 50px, avanzar o retroceder
+    if (Math.abs(diff) >= 50) {
+      if (diff > 0) {
+        // Swipe a la izquierda → avanzar
+        showFinalPage(_finalCurrentPage + 1);
+      } else {
+        // Swipe a la derecha → retroceder
+        showFinalPage(_finalCurrentPage - 1);
+      }
     }
   }
 
