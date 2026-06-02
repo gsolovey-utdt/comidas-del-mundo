@@ -1571,8 +1571,8 @@ img.emoji {
 .food-card-fact {
   width: 100%;
   font-family: var(--font-hand);
-  font-size: 0.95rem;
-  line-height: 1.32;
+  font-size: 1.1rem;
+  line-height: 1.38;
   color: #2b4f70;
   text-align: center;
 }

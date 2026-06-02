@@ -907,7 +907,7 @@
     refs.countryMap.innerHTML = "";
 
     const markers = [];
-    if (SMALL_COUNTRY_CODES.has(meta.iso) && Array.isArray(meta.coords)) {
+    if (Array.isArray(meta.coords)) {
       markers.push({ name: countryName, coords: meta.coords });
     }
 
@@ -932,13 +932,48 @@
         selectedRegions: [meta.iso],
         markers,
         markerStyle: {
-          initial: { fill: "#ff5f79", stroke: "#ffffff", strokeWidth: 2, r: 4.5 },
-          hover:   { fill: "#ff2f53" },
+          initial: { fill: "#e03050", stroke: "#ffffff", strokeWidth: 0, r: 1 },
+          hover:   { fill: "#e03050" },
         },
       });
       if (typeof state.mapInstance.updateSize === "function") {
         state.mapInstance.updateSize();
       }
+      // Ping de radar: dos anillos concéntricos que se expanden y desvanecen
+      requestAnimationFrame(() => {
+        const markerEl = refs.countryMap.querySelector(".jvm-marker");
+        if (!markerEl) return;
+        const cx = parseFloat(markerEl.getAttribute("cx"));
+        const cy = parseFloat(markerEl.getAttribute("cy"));
+        markerEl.style.display = "none";
+        const transformGroup = refs.countryMap.querySelector("svg > g");
+        const scaleMatch = transformGroup && transformGroup.getAttribute("transform").match(/scale\(([\d.]+)\)/);
+        const invScale = scaleMatch ? 1 / parseFloat(scaleMatch[1]) : 1;
+        const ns = "http://www.w3.org/2000/svg";
+        const g = document.createElementNS(ns, "g");
+        g.setAttribute("pointer-events", "none");
+        g.setAttribute("transform", `translate(${cx},${cy}) scale(${invScale}) translate(${-cx},${-cy})`);
+        [0, 0.8].forEach(delay => {
+          const ring = document.createElementNS(ns, "circle");
+          ring.setAttribute("cx", cx); ring.setAttribute("cy", cy);
+          ring.setAttribute("r", "2");
+          ring.setAttribute("fill", "none");
+          ring.setAttribute("stroke", "#ff8c42"); ring.setAttribute("stroke-width", "1.5");
+          const animR = document.createElementNS(ns, "animate");
+          animR.setAttribute("attributeName", "r");
+          animR.setAttribute("from", "2"); animR.setAttribute("to", "18");
+          animR.setAttribute("dur", "1.6s"); animR.setAttribute("begin", delay + "s");
+          animR.setAttribute("repeatCount", "indefinite"); animR.setAttribute("calcMode", "ease-out");
+          const animO = document.createElementNS(ns, "animate");
+          animO.setAttribute("attributeName", "stroke-opacity");
+          animO.setAttribute("from", "0.85"); animO.setAttribute("to", "0");
+          animO.setAttribute("dur", "1.6s"); animO.setAttribute("begin", delay + "s");
+          animO.setAttribute("repeatCount", "indefinite");
+          ring.appendChild(animR); ring.appendChild(animO);
+          g.appendChild(ring);
+        });
+        markerEl.parentNode.appendChild(g);
+      });
     } catch (error) {
       refs.countryMap.textContent = "No se pudo renderizar el mapa.";
     }
@@ -1223,7 +1258,11 @@
         zoomOnScrollSpeed: 0,
         draggable: false,
         showTooltip: true,
-        onRegionTooltipShow: setSpanishRegionTooltip,
+        onRegionTooltipShow: function(event, tooltip, code) {
+          if (!isoSet.has(code)) { tooltip.hide(); return; }
+          const meta = ISO_TO_META[code];
+          if (meta && meta.name) tooltip.text(meta.name);
+        },
         regionStyle: {
           initial:       { fill: "#ffffff", stroke: "#9fc4e3", strokeWidth: 0.6 },
           hover:         { fill: "#eaf3fb" },
@@ -1385,14 +1424,54 @@
   // Carrusel de pantalla de inicio (grilla de 3 platos random)
   (function () {
     const CAROUSEL_IMAGES = [
-      "images/start/strudell.png",
-      "images/start/arenque.png",
-      "images/start/mapotofu.png",
-      "images/start/chipa.png",
-      "images/start/hamburguesa.png",
-      "images/start/borsh.png",
-      "images/start/empanadas.png",
-      "images/start/summer-rolls.png",
+      "images/foods/arenque.jpg",
+      "images/foods/arepa.jpg",
+      "images/foods/borscht.jpg",
+      "images/foods/butter-chicken.jpg",
+      "images/foods/ceviche.jpg",
+      "images/foods/chapulines.jpg",
+      "images/foods/chipa.jpg",
+      "images/foods/chivito.jpg",
+      "images/foods/chucrut.jpg",
+      "images/foods/couscous.jpg",
+      "images/foods/croissant.jpg",
+      "images/foods/empanadas.jpg",
+      "images/foods/falafel.jpg",
+      "images/foods/feijoada.jpg",
+      "images/foods/fish-and-chips.jpg",
+      "images/foods/gallo-pinto.jpg",
+      "images/foods/gefilte-fish.jpg",
+      "images/foods/goulash.jpg",
+      "images/foods/guacamole.jpg",
+      "images/foods/hamburger.jpg",
+      "images/foods/hummus.jpg",
+      "images/foods/injera.jpg",
+      "images/foods/jollof-rice.jpg",
+      "images/foods/kimchi.jpg",
+      "images/foods/kneidalaj.jpg",
+      "images/foods/knishes.jpg",
+      "images/foods/mac-and-cheese.jpg",
+      "images/foods/mapo-tofu.jpg",
+      "images/foods/mbeyu.jpg",
+      "images/foods/moussaka.jpg",
+      "images/foods/pad-thai.jpg",
+      "images/foods/paella.jpg",
+      "images/foods/pho.jpg",
+      "images/foods/pizza.jpg",
+      "images/foods/poutine.jpg",
+      "images/foods/pretzel.jpg",
+      "images/foods/pupusas.jpg",
+      "images/foods/ramen.jpg",
+      "images/foods/schnitzel.jpg",
+      "images/foods/shawarma.jpg",
+      "images/foods/spring-roll.jpg",
+      "images/foods/strudel.jpg",
+      "images/foods/summer-roll.jpg",
+      "images/foods/sushi.jpg",
+      "images/foods/tacos.jpg",
+      "images/foods/tamal.jpg",
+      "images/foods/vichyssoise.jpg",
+      "images/foods/wurst.jpg",
     ];
     const slots = document.querySelectorAll(".start-carousel-slot");
     if (!slots.length) return;
