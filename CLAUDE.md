@@ -199,6 +199,9 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | 2026-06 | Inicio en desktop: compresión para 4 niveles | La 4ª opción agregó una 2ª fila al picker y empujaba "Empezar a jugar" fuera de la caja fija de 680 px (se recortaba). En `@media (min-width:561px)` se comprimió el `.start-card` (carrusel 170→100 px, menos márgenes en lead/picker/country-picker). Verificado: entra completo hasta ventanas de ~700 px de alto. |
 | 2026-06 | Colección final centrada con `justify-content: safe center` | Con pocas comidas la grilla (`grid-auto-flow: column`) quedaba pegada a la izquierda. `safe center` centra cuando no desborda y cae a `start` cuando hay muchas, preservando el scroll horizontal hasta la primera tarjeta. |
 | 2026-06 | Timeout guarda centinela `"(sin respuesta)"` en `selected_country` | La columna es `NOT NULL`; el timeout no tiene país elegido. En vez de migrar la tabla, se guarda un centinela legible (`selectedCountry \|\| "(sin respuesta)"` en el insert de `sdm_answers`). Evita que la fila de timeout se rechace en silencio. |
+| 2026-06 | Level-up por nivel + opción de terminar | Al completar cada nivel (que tenga uno siguiente) se felicita por **ese** nivel específico (`showLevelUp` usa `LEVEL_ORDER[state.levelIndex]`, el recién completado) y se ofrecen dos botones: seguir al siguiente nivel o **terminar y ver lo aprendido** (`finishFromLevelUp` → `showFinal`). El último nivel no tiene siguiente, así que va directo al final. |
+| 2026-06 | Resumen final preciso | Antes decía siempre "¡Completaste todos los niveles!" aunque el jugador hubiera arrancado en un nivel avanzado o terminado antes. Ahora: game over → mensaje de game over; `completedAll` (arrancó en el primero **y** llegó al último) → "todos los niveles"; en otro caso → "¡Completaste el nivel [X]!". |
+| 2026-06 | Racha eliminada; puntaje al centro-abajo del header | La pastilla de racha 🔥 (decorativa) se sacó por completo (HTML, CSS, `state.streak`, `updateStreakDisplay`). El `#score-label` se movió a la celda central de la fila inferior del grid del header (donde estaba la racha). |
 | 2026-06 | 5ª página final: sugerir un país | Desplegable con **todos** los países del mundo (`ALL_COUNTRIES_ES` en `app.js`, ~191); los que ya tienen comida (detectados normalizando contra `FOODS_DATA`) aparecen deshabilitados con "✓ (ya está)". Se guarda en `sdm_suggestions` (fire-and-forget). Se eligió "todos marcando los presentes" sobre "solo los faltantes" para que el chico vea el panorama completo. |
 
 ---
@@ -207,8 +210,7 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 
 Ideas surgidas de una revisión de diseño (mayo 2026), en orden de impacto estimado:
 
-- **Streak con consecuencias**: la racha 🔥 actual es solo decorativa. Podría dar puntos bonus a partir de 3 aciertos consecutivos, o activar un efecto visual especial.
-- **Modo "click en el mapa"**: en lugar de 3 botones de texto, mostrar el mapa mundi y que el jugador haga clic directamente en el país. Recall puro, más educativo. Sería un 4º nivel de dificultad natural.
+- **Modo "click en el mapa"**: en lugar de 3 botones de texto, mostrar el mapa mundi y que el jugador haga clic directamente en el país. Recall puro, más educativo. Sería otro nivel de dificultad.
 - **Auto-advance más lento / pausable**: 4.5s puede ser poco para lectores lentos. Considerar 6–7s o permitir pausar el timer con un botón explícito.
 - **Share card con canvas**: generar una imagen sharable con puntaje + países visitados, sin backend. Ideal para que padres muestren lo que aprendió su hijo.
 - **Rediseño de pantalla de inicio**: evaluar si la selección de nivel pertenece al inicio o puede moverse (ej. preguntarlo antes de la primera ronda). Explorar agregar imágenes atractivas de comidas o personas comiendo en distintos países — tipo carrusel o collage — para darle más vida visual antes de empezar. Requiere conseguir imágenes de buena calidad.

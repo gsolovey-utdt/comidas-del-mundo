@@ -271,7 +271,6 @@
     seenFoods: [],
     wildcardType: null,
     wildcardCorrect: null,
-    streak: 0,
     correctFoodNames: new Set(),
   };
 
@@ -316,6 +315,7 @@
     countryMapCaption:    document.getElementById("country-map-caption"),
     levelUpTitle:         document.getElementById("levelup-title"),
     levelUpNextBtn:       document.getElementById("levelup-next-btn"),
+    levelUpFinishBtn:     document.getElementById("levelup-finish-btn"),
     wildcardQuestion:     document.getElementById("wildcard-question"),
     wildcardGrid:         document.getElementById("wildcard-grid"),
     wildcardResult:       document.getElementById("wildcard-result"),
@@ -330,8 +330,6 @@
     suggestBtn:           document.getElementById("suggest-country-btn"),
     suggestStatus:        document.getElementById("suggest-status"),
     // Nuevos
-    streakPill:           document.getElementById("streak-pill"),
-    streakCount:          document.getElementById("streak-count"),
     autoAdvanceBar:       document.getElementById("auto-advance-bar"),
     autoAdvanceFill:      document.getElementById("auto-advance-fill"),
     questionTimerBar:     document.getElementById("question-timer-bar"),
@@ -395,17 +393,6 @@
     if (next?.food?.image) {
       const img = new Image();
       img.src = next.food.image;
-    }
-  }
-
-  /** Actualiza visibilidad y texto del streak pill */
-  function updateStreakDisplay() {
-    if (!refs.streakPill || !refs.streakCount) return;
-    if (state.streak >= 2) {
-      refs.streakCount.textContent = state.streak;
-      refs.streakPill.classList.remove("vis-hidden");
-    } else {
-      refs.streakPill.classList.add("vis-hidden");
     }
   }
 
@@ -517,6 +504,7 @@
       continueAfterFeedback();
     });
     refs.levelUpNextBtn.addEventListener("click", continueFromLevelUp);
+    if (refs.levelUpFinishBtn) refs.levelUpFinishBtn.addEventListener("click", finishFromLevelUp);
     refs.wildcardContinueBtn.addEventListener("click", continueFromWildcard);
     refs.saveWriteupBtn.addEventListener("click", saveWriteup);
     if (refs.suggestBtn) refs.suggestBtn.addEventListener("click", saveSuggestion);
@@ -662,7 +650,6 @@
     state.seenFoods       = [];
     state.wildcardType    = null;
     state.wildcardCorrect = null;
-    state.streak          = 0;
     state.correctFoodNames = new Set();
     state.playerCountry   = refs.playerCountry?.value || "argentina";
 
@@ -768,7 +755,6 @@
     refs.foodName.textContent   = food.food_name;
     setFoodImage(food.image, food.food_name);
     updateLevelProgress();
-    updateStreakDisplay();
 
     refs.optionsGrid.innerHTML = "";
     state.currentQuestion.options.forEach((option) => {
@@ -834,15 +820,11 @@
     if (isCorrect) {
       state.hits  += 1;
       state.score += POINTS_PER_HIT;
-      state.streak += 1;
       state.correctFoodNames.add(getFoodId(question.food));
       showScoreFloat(POINTS_PER_HIT);
-      updateStreakDisplay();
     } else {
-      state.streak  = 0;
       state.lives   = Math.max(0, state.lives - 1);
       if (state.lives === 1) showLastLifeWarning();
-      updateStreakDisplay();
     }
 
     if (!state.seenFoods.some((f) => getFoodId(f) === getFoodId(question.food))) {
@@ -1167,10 +1149,15 @@
 
   // ── Transición de nivel ───────────────────────────────────────────────────
   function showLevelUp() {
-    const nextLevel = LEVEL_ORDER[state.levelIndex + 1];
-    const nextLabel = LEVEL_LABELS[nextLevel];
+    // En este punto state.levelIndex es el nivel recién completado; el próximo
+    // es levelIndex + 1 (existe porque pendingLevelUp implica que hay siguiente).
+    const completedLabel = LEVEL_LABELS[LEVEL_ORDER[state.levelIndex]];
+    const nextLabel      = LEVEL_LABELS[LEVEL_ORDER[state.levelIndex + 1]];
     if (refs.levelUpTitle) {
-      refs.levelUpTitle.textContent = "¡Pasaste a " + nextLabel + "!";
+      refs.levelUpTitle.textContent = "¡Completaste el nivel " + completedLabel + "!";
+    }
+    if (refs.levelUpNextBtn && nextLabel) {
+      refs.levelUpNextBtn.textContent = "Seguir al nivel " + nextLabel + " →";
     }
     sound.levelUp();
     showScreen("levelup");
@@ -1184,9 +1171,23 @@
     showScreen("game");
   }
 
+  /** Desde la transición de nivel, el jugador elige terminar la partida
+   *  (sin haber perdido) para ver lo que aprendió y dejar su mensaje. */
+  function finishFromLevelUp() {
+    state.pendingLevelUp = false;
+    clearAutoAdvance();
+    clearQuestionCountdown();
+    showFinal();
+  }
+
   // ── Pantalla final ────────────────────────────────────────────────────────
   function showFinal() {
     const won      = !state.outOfLives;
+    // "Todos los niveles" solo si arrancó en el primero y llegó al último.
+    const completedAll = won
+      && state.levelIndex === LEVEL_ORDER.length - 1
+      && state.startLevelIndex === 0;
+    const completedLabel = LEVEL_LABELS[LEVEL_ORDER[state.levelIndex]];
     const accuracy = state.answered > 0
       ? Math.round((state.hits / state.answered) * 100)
       : 0;
@@ -1205,15 +1206,17 @@
 
     // Titular
     if (refs.finalHeadline) {
-      refs.finalHeadline.textContent = won
-        ? "¡Lo lograste! 🏆"
-        : "¡Se acabaron las vidas! 😢";
+      refs.finalHeadline.textContent = !won
+        ? "¡Se acabaron las vidas! 😢"
+        : (completedAll ? "¡Lo lograste! 🏆" : "¡Muy bien! 🌟");
     }
 
     // Resumen
-    refs.finalSummary.textContent = won
-      ? "¡Completaste todos los niveles!"
-      : "Pero llegaste muy lejos, ¡buen intento!";
+    refs.finalSummary.textContent = !won
+      ? "Pero llegaste muy lejos, ¡buen intento!"
+      : (completedAll
+          ? "¡Completaste todos los niveles!"
+          : "¡Completaste el nivel " + completedLabel + "!");
 
     // Detalles numéricos
     refs.finalDetails.textContent =
@@ -1233,10 +1236,6 @@
 
     // Sonido de resultado
     if (won) { sound.win(); } else { sound.gameOver(); }
-
-    // Ocultar streak
-    state.streak = 0;
-    updateStreakDisplay();
 
     // Poblar la grilla de comidas y arrancar en página 0
     renderFoodsGrid();
@@ -1551,7 +1550,6 @@
   function resetToStart() {
     clearAutoAdvance();
     clearQuestionCountdown();
-    state.streak = 0;
     showScreen("start");
   }
 
