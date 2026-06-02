@@ -11,9 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="Comidas del Mundo" />
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
     <!-- Open Graph / compartir -->
-    <meta name="description" content="Juego educativo: adiviná de qué país es cada comida típica del mundo. ¡3 niveles de dificultad!" />
+    <meta name="description" content="Juego educativo: adiviná de qué país es cada comida típica del mundo. ¡4 niveles de dificultad!" />
     <meta property="og:title" content="Comidas del Mundo 🌍" />
-    <meta property="og:description" content="Adiviná de qué país es cada comida típica. ¡3 niveles de dificultad!" />
+    <meta property="og:description" content="Adiviná de qué país es cada comida típica. ¡4 niveles de dificultad!" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://gsolovey-utdt.github.io/comidas-del-mundo/" />
     <meta property="og:image" content="https://gsolovey-utdt.github.io/comidas-del-mundo/images/foods/sushi.jpg" />
@@ -63,6 +63,10 @@
                 <input type="radio" name="difficulty" value="hard" />
                 <span class="difficulty-name">Difícil</span>
               </label>
+              <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="flash" />
+                <span class="difficulty-name">Relámpago ⚡</span>
+              </label>
             </div>
           </div>
 
@@ -97,6 +101,10 @@
             <div class="meter">
               <div id="progress-fill" class="meter-fill"></div>
             </div>
+          </div>
+
+          <div id="question-timer-bar" class="timer-bar is-off">
+            <div id="question-timer-fill" class="timer-fill"></div>
           </div>
 
           <div class="food-zone">
@@ -189,6 +197,7 @@
             <span class="final-dot"></span>
             <span class="final-dot"></span>
             <span class="final-dot"></span>
+            <span class="final-dot"></span>
           </div>
 
           <!-- Página 0: resultado -->
@@ -232,6 +241,22 @@
             </div>
           </div>
 
+          <!-- Página 4: sugerir un país nuevo -->
+          <div class="final-page" id="final-page-4" hidden>
+            <div class="suggest-country">
+              <label for="suggest-country-select" class="creative-label">
+                🌍 ¿Te gustaría aprender sobre la comida de otro país? ¡Elegilo de la lista y lo vamos a agregar pronto!
+              </label>
+              <select id="suggest-country-select" class="country-select"></select>
+              <button id="suggest-country-btn" class="btn btn-primary">
+                Enviar
+              </button>
+              <p id="suggest-status" class="writeup-status" hidden>
+                ¡Anotado! Lo vamos a agregar pronto 🌟
+              </p>
+            </div>
+          </div>
+
           <!-- Navegación del carrusel -->
           <button id="final-next-btn" class="btn btn-primary btn-xl">Siguiente →</button>
           <button id="play-again-btn" class="btn btn-primary btn-xl" hidden>Volver a jugar</button>
@@ -246,7 +271,7 @@
     <script defer src="data/foods.js?v=2"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
-    <script defer src="app.js?v=15"></script>
+    <script defer src="app.js?v=18"></script>
 
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "654200a8331a40eb9d7d42c459a5d9d9"}'></script>

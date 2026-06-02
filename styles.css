@@ -108,7 +108,9 @@ body {
 
 .screen.is-active {
   display: block;
-  animation: fade-in 0.35s ease;
+  /* Sin animación de opacidad: al cambiar de pantalla la caja debe
+     mantenerse visible (mismo tamaño/posición) sin "pestañear" a
+     transparente. Ver decisión 2026-06. */
 }
 
 .card {
@@ -176,8 +178,8 @@ body {
 
 /* Difficulty picker compacto (en pantalla de inicio con carrusel) */
 .difficulty-compact .difficulty-options {
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 400px;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 320px;
   margin: 0 auto 12px;
   gap: 8px;
 }
@@ -945,6 +947,31 @@ img.emoji {
   animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ── Sugerir un país (última página del final) ── */
+.suggest-country {
+  margin: 16px auto 24px;
+  max-width: 620px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.suggest-country .creative-label {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.suggest-country .country-select {
+  width: 100%;
+  max-width: 360px;
+}
+
+.suggest-country .country-select.shake {
+  animation: shake 0.35s ease;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -1410,6 +1437,35 @@ img.emoji {
   transform: scaleX(1);
 }
 
+/* ── Cuenta regresiva por pregunta (nivel Relámpago) ── */
+/* La barra reserva su lugar SIEMPRE que el nivel sea cronometrado: aunque el
+   tiempo se agote o el jugador responda (la barra queda en 0), el riel sigue
+   ocupando su alto, así nada se desplaza. En niveles sin tiempo se aplica
+   `.is-off` (display:none) y no reserva espacio. */
+.timer-bar {
+  width: 100%;
+  height: 12px;
+  margin-top: 8px;
+  background: #ffe2dc;
+  border: 2px solid var(--ink-black);
+  border-radius: 999px;
+  box-shadow: var(--sticker-shadow);
+  overflow: hidden;
+}
+
+.timer-bar.is-off {
+  display: none;
+}
+
+.timer-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ff4d4f, #ff8c42);
+  border-radius: inherit;
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
 /* ── Pantalla final: victoria vs game-over ── */
 .final-card--win {
   background: rgba(210, 255, 230, 0.97) !important;
@@ -1484,6 +1540,10 @@ img.emoji {
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+  /* Pocas comidas: centrar las columnas en vez de pegarlas a la izquierda.
+     `safe` cae a `start` cuando hay muchas y desbordan, así el scroll
+     horizontal sigue alcanzando la primera tarjeta. */
+  justify-content: safe center;
 }
 
 .food-card {
@@ -1756,6 +1816,39 @@ img.emoji {
 
   .game-card .question-slot {
     margin: 4px 0 10px;
+  }
+
+  /* Pantalla de inicio: con 4 niveles (2 filas) el contenido crecía y el
+     botón "Empezar a jugar" quedaba recortado bajo el borde de la caja fija
+     de 680px. Comprimimos carrusel, lead y márgenes para que todo entre
+     centrado con aire. */
+  .start-card {
+    padding: 22px 28px;
+  }
+
+  .start-card h1 {
+    margin: 2px 0 10px;
+  }
+
+  .start-card .start-carousel {
+    height: 100px;
+    margin-bottom: 10px;
+  }
+
+  .start-card .lead {
+    margin-bottom: 8px;
+  }
+
+  .start-card .difficulty-compact .difficulty-options {
+    margin-bottom: 8px;
+  }
+
+  .start-card .country-picker {
+    margin: 10px 0 12px;
+  }
+
+  .start-card #start-game-btn {
+    margin-top: 4px;
   }
 }
 

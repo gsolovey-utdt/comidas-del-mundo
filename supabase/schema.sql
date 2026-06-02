@@ -37,10 +37,19 @@ create table if not exists sdm_final_writeups (
   created_at   timestamptz default now()
 );
 
+-- ── Sugerencias de países a agregar ───────────────────────────────────────────
+create table if not exists sdm_suggestions (
+  id           uuid    default gen_random_uuid() primary key,
+  session_id   uuid    references sdm_sessions(session_id),
+  country      text    not null,
+  created_at   timestamptz default now()
+);
+
 -- ── Row Level Security ────────────────────────────────────────────────────────
 alter table sdm_sessions     enable row level security;
 alter table sdm_answers      enable row level security;
 alter table sdm_final_writeups enable row level security;
+alter table sdm_suggestions  enable row level security;
 
 create policy anon_insert_sessions
   on sdm_sessions for insert to anon with check (true);
@@ -50,5 +59,8 @@ create policy anon_insert_answers
 
 create policy anon_insert_writeups
   on sdm_final_writeups for insert to anon with check (true);
+
+create policy anon_insert_suggestions
+  on sdm_suggestions for insert to anon with check (true);
 
 -- Para leer datos desde un admin futuro, agregar policies de select para service_role.

@@ -8,7 +8,7 @@
 
 ## Descripción del proyecto
 
-**Comidas del Mundo** es una web app educativa y gamificada para niños/as. Muestra una comida (nombre + imagen) y el jugador tiene que elegir el país de origen entre 3 opciones. Tiene 3 niveles de dificultad (Fácil, Intermedio, Difícil), sistema de vidas, puntaje, feedback inmediato con dato curioso, y un mapa mundial que resalta el país correcto.
+**Comidas del Mundo** es una web app educativa y gamificada para niños/as. Muestra una comida (nombre + imagen) y el jugador tiene que elegir el país de origen entre 3 opciones. Tiene 4 niveles de dificultad (Fácil, Intermedio, Difícil, Relámpago), sistema de vidas, puntaje, feedback inmediato con dato curioso, y un mapa mundial que resalta el país correcto.
 
 La app es completamente estática: no requiere build, bundler ni servidor. Se despliega en GitHub Pages.
 
@@ -51,7 +51,8 @@ La app es completamente estática: no requiere build, bundler ni servidor. Se de
 |-----------|-------------|--------------|
 | `ROUNDS_PER_LEVEL` | Rondas por nivel | 10 |
 | `POINTS_PER_HIT` | Puntos por acierto | 10 |
-| `LEVEL_ORDER` | Orden de niveles | `["easy", "medium", "hard"]` |
+| `LEVEL_ORDER` | Orden de niveles | `["easy", "medium", "hard", "flash"]` |
+| `LEVELS` | Config por nivel: `{ label, distractors, timeLimitMs }`. `flash` reusa distractores `hard` + límite de 3000 ms por pregunta | ver `app.js` |
 | `COUNTRY_META` | ISO + coordenadas por país | ver `app.js` |
 | `SMALL_COUNTRY_CODES` | Países marcados con pin en vez de región coloreada | `KR, GB, IE, PT, BE, NL, UY, SV, CR, IL` |
 
@@ -165,6 +166,7 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | `sdm_sessions` | Una fila por partida: `session_id` (UUID), `player_country`, `start_level` |
 | `sdm_answers` | Una fila por respuesta (incluye comodines): tiempos de reacción, `is_wildcard`, `wildcard_type` |
 | `sdm_final_writeups` | Texto creativo final (opcional) |
+| `sdm_suggestions` | Sugerencias de países a agregar (una fila por envío): `session_id`, `country`. **Requiere correr el SQL nuevo de `schema.sql` una vez** para que persista. |
 
 - **Cliente:** UMD vía CDN (`async` para no bloquear scripts diferidos). Inicialización lazy: `getDb()` crea el cliente la primera vez que se necesita.
 - **Estrategia:** fire-and-forget con `saveQuiet()`. Si Supabase no está disponible (offline, CDN lento), el juego continúa sin interrupciones.
@@ -191,6 +193,13 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | 2026-05 | `app.js?v=N` en el script tag | Fuerza cache-bust del browser en actualizaciones; incrementar `N` al deployar cambios significativos. |
 | 2026-05 | Imágenes con `object-fit: cover` | Decisión Guillermo: la imagen siempre llena la caja sin bandas blancas. El precio es que imágenes que no sean exactamente 16:11 quedan recortadas desde los bordes. La regla para futuras comidas: respetar el aspect 960×660 (16:11) al recortar. Si por alguna razón hay que aceptar una imagen con otro aspect, ajustar `object-position` puntualmente. |
 | 2026-05 | Desktop: caja fija 900×680 (`min(900px,92vw)` × `min(680px,92vh)`) igual en las 6 pantallas | Replica el patrón mobile (que ya tenía caja fija) para desktop. El criterio fue: mismo tamaño en `start` / `game` / `feedback` / `levelup` / `wildcard` / `final`, centrado en viewport, sin scroll de página, con espacio en blanco interno si el contenido es chico. Vive en `@media (min-width: 561px)` para no interferir con el bloque mobile (`max-width: 560px`). |
+| 2026-06 | 4º nivel "Relámpago" ⚡ (3 s por pregunta) | Idea del hijo de Guillermo. Se agregó como nivel nuevo (no reemplaza Difícil). **Reusa los distractores de `hard`** (no toca el dataset); la dificultad extra viene 100% del reloj. Timeout = error (pierde vida, revela la correcta, mensaje "⏱️ ¡Se acabó el tiempo!"). Para no romper el lookup `food.distractors[levelKey]` se introdujo el mapa `LEVELS` que desacopla la clave de nivel de la clave de distractores y agrega `timeLimitMs`. La barra de cuenta regresiva (`#question-timer-bar`) replica el patrón de `#auto-advance-bar` (transición `scaleX`). **Capacidad:** una partida completa pasa de 30 a 40 rondas; con 48 comidas y `usedFoodNames` activo no hay repeticiones (40 < 48), pero el margen quedó ajustado: subir `ROUNDS_PER_LEVEL` o agregar otro nivel empezaría a repetir comidas. |
+| 2026-06 | Sin animación de opacidad al cambiar de pantalla | `.screen.is-active` tenía `animation: fade-in` (opacity 0→1). En las transiciones (ej. juego → feedback) la caja nueva aparecía desde transparente = "pestañeo" donde la caja clara desaparecía un instante. Se quitó la animación: como en desktop las 6 cajas comparten tamaño/posición, ahora la caja se mantiene visible y sólo cambia el contenido. |
+| 2026-06 | La barra de tiempo reserva su lugar (no desplaza el layout) | Mismo principio que el `min-height` del `.question-slot` (que reserva el alto del cartel ✓/✗). La barra del nivel Relámpago no se oculta con `display:none` al vaciarse/responder (eso desplazaba el texto de arriba): el riel queda presente y vacío durante el revelado. En niveles sin tiempo se aplica `.is-off` (`display:none`) y entonces sí no ocupa lugar. La barra arranca con `is-off` en el HTML y `startQuestionCountdown` la togglea según `timeLimitMs`. |
+| 2026-06 | Inicio en desktop: compresión para 4 niveles | La 4ª opción agregó una 2ª fila al picker y empujaba "Empezar a jugar" fuera de la caja fija de 680 px (se recortaba). En `@media (min-width:561px)` se comprimió el `.start-card` (carrusel 170→100 px, menos márgenes en lead/picker/country-picker). Verificado: entra completo hasta ventanas de ~700 px de alto. |
+| 2026-06 | Colección final centrada con `justify-content: safe center` | Con pocas comidas la grilla (`grid-auto-flow: column`) quedaba pegada a la izquierda. `safe center` centra cuando no desborda y cae a `start` cuando hay muchas, preservando el scroll horizontal hasta la primera tarjeta. |
+| 2026-06 | Timeout guarda centinela `"(sin respuesta)"` en `selected_country` | La columna es `NOT NULL`; el timeout no tiene país elegido. En vez de migrar la tabla, se guarda un centinela legible (`selectedCountry \|\| "(sin respuesta)"` en el insert de `sdm_answers`). Evita que la fila de timeout se rechace en silencio. |
+| 2026-06 | 5ª página final: sugerir un país | Desplegable con **todos** los países del mundo (`ALL_COUNTRIES_ES` en `app.js`, ~191); los que ya tienen comida (detectados normalizando contra `FOODS_DATA`) aparecen deshabilitados con "✓ (ya está)". Se guarda en `sdm_suggestions` (fire-and-forget). Se eligió "todos marcando los presentes" sobre "solo los faltantes" para que el chico vea el panorama completo. |
 
 ---
 

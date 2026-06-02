@@ -9,7 +9,7 @@ La app está pensada para ser:
 
 ## Qué incluye hoy
 
-- Pantalla inicial con selección de dificultad (`Fácil`, `Intermedio`, `Difícil`)
+- Pantalla inicial con selección de dificultad (`Fácil`, `Intermedio`, `Difícil`, `Relámpago`)
 - 10 rondas por nivel
 - Progresión automática al siguiente nivel al completar el actual
 - Sistema de vidas (`3`)
@@ -41,6 +41,8 @@ Cada comida tiene:
 - 2 distractores para `hard`
 
 La misma comida puede aparecer en distintos niveles cambiando solo los distractores.
+
+El nivel `Relámpago` reutiliza los distractores de `hard` y agrega un **límite de 3 segundos por pregunta**: si se acaba el tiempo, cuenta como error (se pierde una vida). No requiere distractores propios en el dataset.
 
 Además, el juego intenta evitar repetir comidas entre niveles mientras haya suficientes disponibles en el dataset.
 

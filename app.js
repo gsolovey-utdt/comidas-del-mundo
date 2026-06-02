@@ -68,12 +68,19 @@
   })();
 
   // ── Constantes ────────────────────────────────────────────────────────────
-  const LEVEL_ORDER = ["easy", "medium", "hard"];
-  const LEVEL_LABELS = {
-    easy: "Fácil",
-    medium: "Intermedio",
-    hard: "Difícil",
+  const LEVEL_ORDER = ["easy", "medium", "hard", "flash"];
+  // Config por nivel: etiqueta visible, qué set de distractores usa y, si > 0,
+  // el límite de tiempo por pregunta en ms (0 = sin límite).
+  const LEVELS = {
+    easy:   { label: "Fácil",      distractors: "easy",   timeLimitMs: 0    },
+    medium: { label: "Intermedio", distractors: "medium", timeLimitMs: 0    },
+    hard:   { label: "Difícil",    distractors: "hard",   timeLimitMs: 0    },
+    flash:  { label: "Relámpago",  distractors: "hard",   timeLimitMs: 3000 },
   };
+  // Acceso rápido a la etiqueta (retrocompatibilidad con usos previos).
+  const LEVEL_LABELS = Object.fromEntries(
+    Object.entries(LEVELS).map(([key, cfg]) => [key, cfg.label])
+  );
   const ROUNDS_PER_LEVEL  = 10;
   const POINTS_PER_HIT    = 10;
   const AUTO_ADVANCE_MS   = 4500;   // ms de espera antes de avanzar solo en feedback
@@ -88,6 +95,45 @@
   // Mensaje para cuando una respuesta incorrecta termina el juego (se acaban
   // las vidas): no debe alentar a "seguir intentando" porque ya no se puede.
   const GAMEOVER_FEEDBACK = "¡Ups! No era esa";
+
+  // Lista maestra de países (nombres en español) para el desplegable de
+  // "sugerí un país" en la pantalla final. Los que ya tienen comida en el
+  // juego se detectan normalizando contra FOODS_DATA y se marcan con ✓.
+  const ALL_COUNTRIES_ES = [
+    "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Arabia Saudita",
+    "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+    "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benín",
+    "Bielorrusia", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil",
+    "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Cabo Verde",
+    "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre",
+    "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil",
+    "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Dominica", "Ecuador", "Egipto",
+    "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia",
+    "España", "Estados Unidos", "Estonia", "Etiopía", "Filipinas", "Finlandia",
+    "Fiyi", "Francia", "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia",
+    "Guatemala", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial", "Guyana", "Haití",
+    "Honduras", "Hungría", "India", "Indonesia", "Irak", "Irán", "Irlanda",
+    "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia", "Jamaica",
+    "Japón", "Jordania", "Kazajistán", "Kenia", "Kirguistán", "Kiribati",
+    "Kuwait", "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia",
+    "Liechtenstein", "Lituania", "Luxemburgo", "Madagascar", "Malasia", "Malaui",
+    "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México",
+    "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+    "Myanmar", "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria",
+    "Noruega", "Nueva Zelanda", "Omán", "Países Bajos", "Pakistán", "Palaos",
+    "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal",
+    "Reino Unido", "República Centroafricana", "República Checa",
+    "República del Congo", "República Democrática del Congo",
+    "República Dominicana", "Ruanda", "Rumania", "Rusia", "Samoa",
+    "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas",
+    "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles",
+    "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Suazilandia",
+    "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+    "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga",
+    "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu", "Ucrania",
+    "Uganda", "Uruguay", "Uzbekistán", "Vanuatu", "Venezuela", "Vietnam", "Yemen",
+    "Yibuti", "Zambia", "Zimbabue",
+  ];
 
   const COUNTRY_META = {
     japon:            { iso: "JP", flag: "🇯🇵", name: "Japón",          coords: [36.2,  138.25] },
@@ -231,6 +277,7 @@
 
   // Timers de módulo
   let _autoAdvanceTimer   = null;
+  let _questionTimer      = null;
   let _restartConfirmTimer = null;
   let _finalCurrentPage   = 0;
   let _finalMapInstance   = null;
@@ -279,11 +326,16 @@
     finalText:            document.getElementById("final-text"),
     saveWriteupBtn:       document.getElementById("save-writeup-btn"),
     writeupStatus:        document.getElementById("writeup-status"),
+    suggestCountry:       document.getElementById("suggest-country-select"),
+    suggestBtn:           document.getElementById("suggest-country-btn"),
+    suggestStatus:        document.getElementById("suggest-status"),
     // Nuevos
     streakPill:           document.getElementById("streak-pill"),
     streakCount:          document.getElementById("streak-count"),
     autoAdvanceBar:       document.getElementById("auto-advance-bar"),
     autoAdvanceFill:      document.getElementById("auto-advance-fill"),
+    questionTimerBar:     document.getElementById("question-timer-bar"),
+    questionTimerFill:    document.getElementById("question-timer-fill"),
     soundBtn:             document.getElementById("sound-btn"),
     finalNextBtn:         document.getElementById("final-next-btn"),
     finalCard:            document.querySelector(".final-card"),
@@ -321,11 +373,13 @@
 
   /** Muestra el cartel genérico (✓/✗ + frase) sobre la pantalla de juego,
    *  durante la ventana de revelado de colores, antes de pasar a feedback. */
-  function showAnswerFlash(isCorrect, gameOver) {
+  function showAnswerFlash(isCorrect, gameOver, isTimeout) {
     if (!refs.answerFlash) return;
     refs.answerFlash.textContent = isCorrect
       ? randomItem(POSITIVE_FEEDBACK)
-      : (gameOver ? GAMEOVER_FEEDBACK : randomItem(NEGATIVE_FEEDBACK));
+      : (isTimeout
+          ? "⏱️ ¡Se acabó el tiempo!"
+          : (gameOver ? GAMEOVER_FEEDBACK : randomItem(NEGATIVE_FEEDBACK)));
     refs.answerFlash.classList.remove("good", "bad");
     refs.answerFlash.classList.add(isCorrect ? "good" : "bad");
     refs.answerFlash.hidden = false;
@@ -395,6 +449,56 @@
     if (refs.autoAdvanceBar) refs.autoAdvanceBar.hidden = true;
   }
 
+  /** Inicia la cuenta regresiva por pregunta (nivel Relámpago). */
+  function startQuestionCountdown(timeLimitMs) {
+    clearTimeout(_questionTimer);
+    _questionTimer = null;
+    const { questionTimerBar, questionTimerFill } = refs;
+    if (!questionTimerBar || !questionTimerFill) return;
+
+    if (!timeLimitMs || timeLimitMs <= 0) {
+      // Nivel sin tiempo: la barra no ocupa lugar.
+      questionTimerBar.classList.add("is-off");
+      return;
+    }
+
+    // Nivel cronometrado: el riel ocupa lugar y la barra arranca llena.
+    questionTimerBar.classList.remove("is-off");
+    questionTimerFill.style.transition = "none";
+    questionTimerFill.style.transform  = "scaleX(1)";
+
+    // Dispara la transición en el siguiente frame de pintura
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        questionTimerFill.style.transition = `transform ${timeLimitMs}ms linear`;
+        questionTimerFill.style.transform  = "scaleX(0)";
+      });
+    });
+
+    _questionTimer = setTimeout(() => {
+      _questionTimer = null;
+      handleTimeout();
+    }, timeLimitMs);
+  }
+
+  /** Detiene la cuenta regresiva (respuesta dada o tiempo agotado).
+   *  No oculta el riel: lo deja vacío para no desplazar el layout durante el
+   *  revelado. La barra se vuelve a ocultar/mostrar en el próximo renderQuestion. */
+  function clearQuestionCountdown() {
+    clearTimeout(_questionTimer);
+    _questionTimer = null;
+    if (refs.questionTimerFill) {
+      refs.questionTimerFill.style.transition = "none";
+      refs.questionTimerFill.style.transform  = "scaleX(0)";
+    }
+  }
+
+  /** Se acabó el tiempo: cuenta como respuesta incorrecta. */
+  function handleTimeout() {
+    if (!state.currentQuestion) return;
+    handleAnswer(null, null, true);
+  }
+
   // ── Inicialización ────────────────────────────────────────────────────────
   function init() {
     if (!Array.isArray(window.FOODS_DATA) || window.FOODS_DATA.length === 0) {
@@ -415,6 +519,7 @@
     refs.levelUpNextBtn.addEventListener("click", continueFromLevelUp);
     refs.wildcardContinueBtn.addEventListener("click", continueFromWildcard);
     refs.saveWriteupBtn.addEventListener("click", saveWriteup);
+    if (refs.suggestBtn) refs.suggestBtn.addEventListener("click", saveSuggestion);
     if (refs.finalNextBtn) refs.finalNextBtn.addEventListener("click", advanceFinalPage);
     document.addEventListener("keydown", handleFinalKeydown);
     document.addEventListener("touchstart", handleFinalTouchStart, false);
@@ -480,6 +585,59 @@
     }
   }
 
+  /** Llena el desplegable de "sugerí un país". Los países que ya tienen
+   *  comida en el juego aparecen deshabilitados y marcados con ✓. */
+  function populateSuggestionDropdown() {
+    const select = refs.suggestCountry;
+    if (!select) return;
+    select.innerHTML = "";
+
+    const present = new Set(
+      window.FOODS_DATA.map((f) => normalizeCountry(f.country))
+    );
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Elegí un país…";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.appendChild(placeholder);
+
+    ALL_COUNTRIES_ES
+      .slice()
+      .sort((a, b) => a.localeCompare(b, "es"))
+      .forEach((name) => {
+        const already = present.has(normalizeCountry(name));
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = already ? name + "  ✓ (ya está)" : name;
+        opt.disabled = already;
+        select.appendChild(opt);
+      });
+  }
+
+  /** Guarda la sugerencia de país en Supabase (fire-and-forget). */
+  function saveSuggestion() {
+    const country = refs.suggestCountry?.value || "";
+    if (!country) {
+      refs.suggestCountry?.classList.add("shake");
+      setTimeout(() => refs.suggestCountry?.classList.remove("shake"), 400);
+      return;
+    }
+
+    const db = getDb();
+    if (db && state.sessionId) {
+      saveQuiet(db.from("sdm_suggestions").insert([{
+        session_id: state.sessionId,
+        country:    country,
+      }]));
+    }
+
+    if (refs.suggestCountry)  refs.suggestCountry.disabled = true;
+    if (refs.suggestBtn)      refs.suggestBtn.hidden       = true;
+    if (refs.suggestStatus)   refs.suggestStatus.hidden    = false;
+  }
+
   // ── Flujo del juego ───────────────────────────────────────────────────────
   function startGame() {
     const selectedLevel =
@@ -508,6 +666,10 @@
     state.correctFoodNames = new Set();
     state.playerCountry   = refs.playerCountry?.value || "argentina";
 
+    // Cancelar cualquier temporizador pendiente de una partida anterior
+    clearAutoAdvance();
+    clearQuestionCountdown();
+
     // Cancelar cualquier confirm pendiente de restart
     clearTimeout(_restartConfirmTimer);
     refs.restartBtn.dataset.confirming = "";
@@ -529,8 +691,9 @@
 
   function buildQuestionsForCurrentLevel() {
     const levelKey = LEVEL_ORDER[state.levelIndex];
+    const distractorKey = LEVELS[levelKey].distractors;
     const pool = window.FOODS_DATA.filter(
-      (food) => food?.country && food?.distractors?.[levelKey]?.length >= 2
+      (food) => food?.country && food?.distractors?.[distractorKey]?.length >= 2
     );
 
     if (pool.length === 0) { state.questions = []; return; }
@@ -566,8 +729,9 @@
   }
 
   function createQuestion(food, levelKey) {
-    const levelDistractors = Array.isArray(food.distractors?.[levelKey])
-      ? [...food.distractors[levelKey]]
+    const distractorKey = LEVELS[levelKey].distractors;
+    const levelDistractors = Array.isArray(food.distractors?.[distractorKey])
+      ? [...food.distractors[distractorKey]]
       : [];
     const uniqueDistractors = Array.from(
       new Set(levelDistractors.filter((country) => country !== food.country))
@@ -618,16 +782,24 @@
       button.addEventListener("click", () => handleAnswer(option, button));
       refs.optionsGrid.appendChild(button);
     });
+
+    // Cuenta regresiva (sólo niveles con timeLimitMs > 0, ej. Relámpago)
+    startQuestionCountdown(LEVELS[level].timeLimitMs);
   }
 
-  function handleAnswer(selectedCountry, clickedButton) {
+  function handleAnswer(selectedCountry, clickedButton, isTimeout = false) {
     const question = state.currentQuestion;
     if (!question) return;
 
-    const reactionTimeMs = Math.round(performance.now() - state.questionStartedAt);
+    // El jugador respondió (o se acabó el tiempo): cancelar la cuenta regresiva.
+    clearQuestionCountdown();
+
+    const reactionTimeMs = isTimeout
+      ? (LEVELS[question.level]?.timeLimitMs || 0)
+      : Math.round(performance.now() - state.questionStartedAt);
     disableOptionButtons();
 
-    const isCorrect = selectedCountry === question.correctCountry;
+    const isCorrect = !isTimeout && selectedCountry === question.correctCountry;
 
     // ── Colores inmediatos en botones ──────────────────────────────────────
     if (clickedButton) {
@@ -654,7 +826,7 @@
     // state.lives todavía no se descontó: si es ≤1 y la respuesta es incorrecta,
     // esta jugada deja al jugador sin vidas (game over) → no alentar a seguir.
     const willEndGame = !isCorrect && state.lives <= 1;
-    showAnswerFlash(isCorrect, willEndGame);
+    showAnswerFlash(isCorrect, willEndGame, isTimeout);
 
     // ── Actualizar estado ──────────────────────────────────────────────────
     state.answered      += 1;
@@ -696,7 +868,9 @@
         level:           question.level,
         food_name:       question.food.food_name,
         correct_country: question.correctCountry,
-        selected_country: selectedCountry,
+        // En timeout no hay país elegido; la columna es NOT NULL, así que
+        // guardamos un centinela legible en vez de null.
+        selected_country: selectedCountry || "(sin respuesta)",
         is_correct:      isCorrect,
         is_wildcard:     false,
         wildcard_type:   null,
@@ -1051,6 +1225,12 @@
     if (refs.saveWriteupBtn) refs.saveWriteupBtn.hidden = false;
     if (refs.writeupStatus)  refs.writeupStatus.hidden  = true;
 
+    // Reset sugerencia de país
+    populateSuggestionDropdown();
+    if (refs.suggestCountry) refs.suggestCountry.disabled = false;
+    if (refs.suggestBtn)     refs.suggestBtn.hidden       = false;
+    if (refs.suggestStatus)  refs.suggestStatus.hidden    = true;
+
     // Sonido de resultado
     if (won) { sound.win(); } else { sound.gameOver(); }
 
@@ -1114,7 +1294,7 @@
   }
 
   function showFinalPage(n) {
-    const TOTAL = 4;
+    const TOTAL = 5;
     _finalCurrentPage = Math.max(0, Math.min(n, TOTAL - 1));
 
     // Mostrar solo la página activa
@@ -1370,6 +1550,7 @@
 
   function resetToStart() {
     clearAutoAdvance();
+    clearQuestionCountdown();
     state.streak = 0;
     showScreen("start");
   }
