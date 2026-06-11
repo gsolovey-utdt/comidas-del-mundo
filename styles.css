@@ -944,6 +944,17 @@ img.emoji {
   animation: shake 0.35s ease;
 }
 
+.contact-hint {
+  margin: 18px 0 0;
+  font-size: 0.82rem;
+  color: #888;
+  text-align: center;
+}
+.contact-hint a {
+  color: #888;
+  text-decoration: underline;
+}
+
 .writeup-status {
   margin: 10px 0 0;
   font-size: 1.15rem;
