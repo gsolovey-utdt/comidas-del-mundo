@@ -25,7 +25,22 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
-    <link rel="stylesheet" href="styles.css?v=20" />
+    <link rel="stylesheet" href="styles.css?v=21" />
+    <script>
+      // iOS Safari/Chrome: 100vh mide el viewport máximo (sin chrome visible),
+      // no el área visible real. window.innerHeight siempre es el área visible.
+      // Seteamos --app-h y --card-h antes del primer paint para evitar salto.
+      (function () {
+        function updateVH() {
+          var h = window.innerHeight;
+          var r = document.documentElement;
+          r.style.setProperty('--app-h', h + 'px');
+          r.style.setProperty('--card-h', Math.min(680, Math.round(h * 0.92)) + 'px');
+        }
+        updateVH();
+        window.addEventListener('resize', updateVH, { passive: true });
+      }());
+    </script>
   </head>
   <body>
     <div class="bg-blob blob-a" aria-hidden="true"></div>

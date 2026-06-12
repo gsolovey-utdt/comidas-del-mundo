@@ -1737,7 +1737,8 @@ img.emoji {
     width: 100%;
     max-width: none;
     height: 100vh;
-    height: 100svh; /* iOS Safari: usa el viewport con chrome visible, no el máximo */
+    height: 100svh;
+    height: var(--app-h, 100svh); /* JS fix: viewport visible real en iOS */
     padding: 24px;
     display: flex;
     align-items: center;
@@ -1764,7 +1765,8 @@ img.emoji {
   .final-card {
     width: min(900px, 92vw);
     height: min(680px, 92vh);
-    height: min(680px, 92svh); /* iOS Safari: small viewport height */
+    height: min(680px, 92svh);
+    height: var(--card-h, min(680px, 92svh)); /* JS fix: calculado desde window.innerHeight */
     max-width: 900px;
     max-height: 680px;
     margin: 0;
