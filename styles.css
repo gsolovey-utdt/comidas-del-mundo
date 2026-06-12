@@ -1737,6 +1737,7 @@ img.emoji {
     width: 100%;
     max-width: none;
     height: 100vh;
+    height: 100svh; /* iOS Safari: usa el viewport con chrome visible, no el máximo */
     padding: 24px;
     display: flex;
     align-items: center;
@@ -1763,6 +1764,7 @@ img.emoji {
   .final-card {
     width: min(900px, 92vw);
     height: min(680px, 92vh);
+    height: min(680px, 92svh); /* iOS Safari: small viewport height */
     max-width: 900px;
     max-height: 680px;
     margin: 0;
@@ -1803,6 +1805,10 @@ img.emoji {
      quedaban pegadas al borde inferior. Comprimimos imagen y márgenes
      (sin tocar el min-height del question-slot, que reserva el alto del
      cartel ✓/✗) para que todo entre centrado y con aire. */
+  .game-card {
+    padding: 14px 20px; /* menos padding vertical que el base (20px) para que entre en viewports cortos (iPad) */
+  }
+
   .game-card .food-image-wrap {
     width: min(330px, 78vw);
   }
