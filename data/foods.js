@@ -216,7 +216,7 @@ window.FOODS_DATA = [
     country: "Japón",
     image: "images/foods/sushi.jpg",
     answer_label: "El sushi es de",
-    fun_fact: "¿Sabías que aunque muchos piensan solo en pescado, también hay sushi con verduras, hongos o huevo?",
+    fun_fact: "Aunque muchos piensan solo en pescado, también hay sushi con verduras, hongos o huevo.",
   },
   {
     food_name: "Couscous",
