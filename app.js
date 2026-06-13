@@ -69,13 +69,18 @@
 
   // ── Constantes ────────────────────────────────────────────────────────────
   const LEVEL_ORDER = ["easy", "medium", "hard", "flash"];
-  // Config por nivel: etiqueta visible, qué set de distractores usa y, si > 0,
-  // el límite de tiempo por pregunta en ms (0 = sin límite).
+  // Config por nivel. La dificultad se escalona por PISTAS, no por distractores:
+  //   showName  → se muestra el nombre de la comida
+  //   showFlags → las opciones de país llevan bandera
+  // timeLimitMs > 0 agrega cuenta regresiva por pregunta (0 = sin límite).
+  // Los distractores ya NO dependen del nivel: se generan por continente
+  // (1 del mismo continente + 1 de otro) en createQuestion()/pickDistractors().
   const LEVELS = {
-    easy:   { label: "Fácil",      distractors: "easy",   timeLimitMs: 0    },
-    medium: { label: "Intermedio", distractors: "medium", timeLimitMs: 0    },
-    hard:   { label: "Difícil",    distractors: "hard",   timeLimitMs: 0    },
-    flash:  { label: "Relámpago",  distractors: "hard",   timeLimitMs: 3000 },
+    easy:   { label: "Fácil",      showName: true,  showFlags: true,  timeLimitMs: 0    },
+    medium: { label: "Intermedio", showName: true,  showFlags: false, timeLimitMs: 0    },
+    hard:   { label: "Difícil",    showName: false, showFlags: false, timeLimitMs: 0    },
+    // Relámpago: todas las pistas (= Fácil); la dificultad viene 100% del reloj.
+    flash:  { label: "Relámpago",  showName: true,  showFlags: true,  timeLimitMs: 4000 },
   };
   // Acceso rápido a la etiqueta (retrocompatibilidad con usos previos).
   const LEVEL_LABELS = Object.fromEntries(
@@ -83,6 +88,8 @@
   );
   const ROUNDS_PER_LEVEL  = 10;
   const POINTS_PER_HIT    = 10;
+  const AGE_MIN           = 1;     // edad aceptada en el inicio (obligatoria)
+  const AGE_MAX           = 120;
   const AUTO_ADVANCE_MS   = 4500;   // ms de espera antes de avanzar solo en feedback
   const ANSWER_REVEAL_MS  = 2000;   // ms que se muestran los colores de botones antes de feedback
   const POSITIVE_FEEDBACK = ["¡Correcto!", "¡Muy bien!", "¡Excelente!", "¡Genial!"];
@@ -223,6 +230,23 @@
     tunez:             { iso: "TN", flag: "🇹🇳", name: "Túnez",           coords: [ 33.9,   9.6 ] },
     venezuela:         { iso: "VE", flag: "🇻🇪", name: "Venezuela",       coords: [  6.4, -66.6 ] },
     yibuti:            { iso: "DJ", flag: "🇩🇯", name: "Yibuti",          coords: [ 11.8,  42.6 ] },
+
+    // Países sólo-pool (distractores conocidos; todavía sin comida propia).
+    cuba:                     { iso: "CU", flag: "🇨🇺", name: "Cuba",                    coords: [ 21.5, -77.8 ] },
+    "republica dominicana":   { iso: "DO", flag: "🇩🇴", name: "República Dominicana",   coords: [ 18.7, -70.2 ] },
+    "paises bajos":           { iso: "NL", flag: "🇳🇱", name: "Países Bajos",           coords: [ 52.1,   5.3 ] },
+    croacia:                  { iso: "HR", flag: "🇭🇷", name: "Croacia",                coords: [ 45.1,  15.2 ] },
+    serbia:                   { iso: "RS", flag: "🇷🇸", name: "Serbia",                 coords: [ 44.0,  21.0 ] },
+    indonesia:                { iso: "ID", flag: "🇮🇩", name: "Indonesia",              coords: [ -2.5, 118.0 ] },
+    filipinas:                { iso: "PH", flag: "🇵🇭", name: "Filipinas",              coords: [ 12.9, 121.8 ] },
+    iran:                     { iso: "IR", flag: "🇮🇷", name: "Irán",                   coords: [ 32.4,  53.7 ] },
+    "sri lanka":              { iso: "LK", flag: "🇱🇰", name: "Sri Lanka",              coords: [  7.9,  80.7 ] },
+    mongolia:                 { iso: "MN", flag: "🇲🇳", name: "Mongolia",               coords: [ 46.9, 103.8 ] },
+    "arabia saudita":         { iso: "SA", flag: "🇸🇦", name: "Arabia Saudita",         coords: [ 23.9,  45.1 ] },
+    "emiratos arabes unidos": { iso: "AE", flag: "🇦🇪", name: "Emiratos Árabes Unidos", coords: [ 23.4,  53.8 ] },
+    sudafrica:                { iso: "ZA", flag: "🇿🇦", name: "Sudáfrica",              coords: [-30.6,  22.9 ] },
+    kenia:                    { iso: "KE", flag: "🇰🇪", name: "Kenia",                  coords: [ -0.0,  37.9 ] },
+    "nueva zelanda":          { iso: "NZ", flag: "🇳🇿", name: "Nueva Zelanda",          coords: [-40.9, 174.9 ] },
   };
 
   const SMALL_COUNTRY_CODES = new Set([
@@ -246,6 +270,79 @@
     if (meta && meta.name) tooltip.text(meta.name);
   }
 
+  // ── Continente por país + pool de distractores ────────────────────────────
+  // La dificultad ya NO depende de los distractores: en cada ronda se generan
+  // 2 distractores (1 del mismo continente que el país correcto y 1 de otro),
+  // al azar desde este pool. Modelo escolar de 5 continentes, con América como
+  // un solo continente. Los países que NO figuran acá quedan fuera del pool de
+  // distractores (p. ej. Escocia —comparte ISO con Reino Unido— y algunos países
+  // poco conocidos para un chico: Cabo Verde, Eritrea, Liberia, Sierra Leona,
+  // Yibuti). Siguen disponibles para el mapa y el comodín de banderas.
+  const CONTINENT_BY_COUNTRY = {
+    // Europa
+    espana: "Europa", italia: "Europa", francia: "Europa", alemania: "Europa",
+    hungria: "Europa", grecia: "Europa", ucrania: "Europa", "reino unido": "Europa",
+    suecia: "Europa", austria: "Europa", belgica: "Europa", bielorrusia: "Europa",
+    bulgaria: "Europa", chipre: "Europa", dinamarca: "Europa", eslovaquia: "Europa",
+    finlandia: "Europa", irlanda: "Europa", islandia: "Europa", lituania: "Europa",
+    noruega: "Europa", polonia: "Europa", portugal: "Europa", "republica checa": "Europa",
+    rumania: "Europa", rusia: "Europa", suiza: "Europa", "paises bajos": "Europa",
+    croacia: "Europa", serbia: "Europa",
+    // Asia
+    japon: "Asia", india: "Asia", tailandia: "Asia", vietnam: "Asia",
+    "corea del sur": "Asia", china: "Asia", israel: "Asia", turquia: "Asia",
+    bangladesh: "Asia", camboya: "Asia", "corea del norte": "Asia", jordania: "Asia",
+    laos: "Asia", libano: "Asia", malasia: "Asia", nepal: "Asia", pakistan: "Asia",
+    singapur: "Asia", siria: "Asia", taiwan: "Asia", indonesia: "Asia",
+    filipinas: "Asia", iran: "Asia", "sri lanka": "Asia", mongolia: "Asia",
+    "arabia saudita": "Asia", "emiratos arabes unidos": "Asia",
+    // África
+    marruecos: "África", etiopia: "África", nigeria: "África", angola: "África",
+    argelia: "África", egipto: "África", ghana: "África", senegal: "África",
+    somalia: "África", sudan: "África", tunez: "África", sudafrica: "África",
+    kenia: "África",
+    // América
+    brasil: "América", argentina: "América", peru: "América", mexico: "América",
+    canada: "América", "estados unidos": "América", paraguay: "América",
+    "el salvador": "América", "costa rica": "América", uruguay: "América",
+    colombia: "América", bolivia: "América", chile: "América", ecuador: "América",
+    guatemala: "América", honduras: "América", nicaragua: "América", panama: "América",
+    venezuela: "América", cuba: "América", "republica dominicana": "América",
+    // Oceanía
+    australia: "Oceanía", "nueva zelanda": "Oceanía",
+  };
+
+  // Mezclar el continente dentro de COUNTRY_META. Los países que no figuran en
+  // CONTINENT_BY_COUNTRY quedan sin continente y, por lo tanto, fuera del pool.
+  Object.entries(CONTINENT_BY_COUNTRY).forEach(([key, continent]) => {
+    if (COUNTRY_META[key]) COUNTRY_META[key].continent = continent;
+  });
+
+  // Pool de distractores: entradas de COUNTRY_META con continente asignado.
+  const DISTRACTOR_POOL = Object.entries(COUNTRY_META)
+    .filter(([, meta]) => Boolean(meta.continent))
+    .map(([key, meta]) => ({ key, name: meta.name, continent: meta.continent }));
+
+  /** Elige 2 distractores para una comida: 1 del mismo continente que el país
+   *  correcto y 1 de otro continente, al azar. Devuelve nombres de país. */
+  function pickDistractors(correctCountryName) {
+    const correctKey = normalizeCountry(correctCountryName);
+    const continent  = COUNTRY_META[correctKey]?.continent || null;
+
+    const candidates = DISTRACTOR_POOL.filter((c) => c.key !== correctKey);
+    const sameList   = candidates.filter((c) => c.continent === continent);
+    const otherList  = candidates.filter((c) => c.continent !== continent);
+
+    // Mismo continente (fallback: otro continente si el correcto no tiene pares).
+    const same = randomItem(sameList.length ? sameList : otherList);
+    // Otro continente, distinto del primero (fallback: cualquiera distinto).
+    let otherPool = otherList.filter((c) => c.key !== same.key);
+    if (!otherPool.length) otherPool = candidates.filter((c) => c.key !== same.key);
+    const other = randomItem(otherPool);
+
+    return { same: same?.name || null, other: other?.name || null };
+  }
+
   // ── Estado ────────────────────────────────────────────────────────────────
   const state = {
     startLevel: "easy",
@@ -266,6 +363,7 @@
     pendingFinish: false,
     mapInstance: null,
     playerCountry: "argentina",
+    playerAge: null,
     sessionId: null,
     questionStartedAt: 0,
     seenFoods: [],
@@ -297,6 +395,7 @@
     difficultyOptions:    Array.from(document.querySelectorAll(".difficulty-option")),
     difficultyInputs:     Array.from(document.querySelectorAll('input[name="difficulty"]')),
     playerCountry:        document.getElementById("player-country"),
+    playerAge:            document.getElementById("player-age"),
     levelPill:            document.getElementById("level-pill"),
     progressFill:         document.getElementById("progress-fill"),
     foodImage:            document.getElementById("food-image"),
@@ -628,6 +727,18 @@
 
   // ── Flujo del juego ───────────────────────────────────────────────────────
   function startGame() {
+    // Edad obligatoria: validar antes de arrancar; si falta o es inválida,
+    // sacudir el campo y no empezar (mismo patrón que saveSuggestion).
+    const age = parseInt(refs.playerAge?.value ?? "", 10);
+    if (!Number.isInteger(age) || age < AGE_MIN || age > AGE_MAX) {
+      if (refs.playerAge) {
+        refs.playerAge.classList.add("shake");
+        setTimeout(() => refs.playerAge.classList.remove("shake"), 400);
+        refs.playerAge.focus();
+      }
+      return;
+    }
+
     const selectedLevel =
       refs.difficultyInputs.find((input) => input.checked)?.value || "easy";
     const selectedIndex = LEVEL_ORDER.indexOf(selectedLevel);
@@ -652,6 +763,7 @@
     state.wildcardCorrect = null;
     state.correctFoodNames = new Set();
     state.playerCountry   = refs.playerCountry?.value || "argentina";
+    state.playerAge       = age;
 
     // Cancelar cualquier temporizador pendiente de una partida anterior
     clearAutoAdvance();
@@ -668,6 +780,7 @@
         session_id:    state.sessionId,
         player_country: state.playerCountry,
         start_level:   selectedLevel,
+        age:           state.playerAge,
       }]));
     }
 
@@ -678,9 +791,10 @@
 
   function buildQuestionsForCurrentLevel() {
     const levelKey = LEVEL_ORDER[state.levelIndex];
-    const distractorKey = LEVELS[levelKey].distractors;
+    // Cualquier comida cuyo país esté en el pool (tenga continente) sirve: los
+    // distractores se generan, ya no dependen de columnas en el dataset.
     const pool = window.FOODS_DATA.filter(
-      (food) => food?.country && food?.distractors?.[distractorKey]?.length >= 2
+      (food) => food?.country && COUNTRY_META[normalizeCountry(food.country)]?.continent
     );
 
     if (pool.length === 0) { state.questions = []; return; }
@@ -716,27 +830,17 @@
   }
 
   function createQuestion(food, levelKey) {
-    const distractorKey = LEVELS[levelKey].distractors;
-    const levelDistractors = Array.isArray(food.distractors?.[distractorKey])
-      ? [...food.distractors[distractorKey]]
-      : [];
-    const uniqueDistractors = Array.from(
-      new Set(levelDistractors.filter((country) => country !== food.country))
-    );
-    const fallback = getFallbackCountries(food.country, uniqueDistractors, 2);
-    const selectedDistractors = shuffle([...uniqueDistractors, ...fallback]).slice(0, 2);
-    const options = shuffle([food.country, ...selectedDistractors]);
-    return { food, level: levelKey, options, correctCountry: food.country };
-  }
-
-  function getFallbackCountries(correctCountry, usedDistractors, needed) {
-    const allCountries = Array.from(
-      new Set(window.FOODS_DATA.map((food) => food.country))
-    );
-    const available = allCountries.filter(
-      (country) => country !== correctCountry && !usedDistractors.includes(country)
-    );
-    return shuffle(available).slice(0, needed);
+    // Distractores generados (1 mismo continente + 1 otro), invariantes al nivel.
+    const { same, other } = pickDistractors(food.country);
+    const options = shuffle([food.country, same, other].filter(Boolean));
+    return {
+      food,
+      level: levelKey,
+      options,
+      correctCountry: food.country,
+      distractorSame: same,    // se loguea en sdm_answers
+      distractorOther: other,
+    };
   }
 
   function renderQuestion() {
@@ -752,7 +856,10 @@
     refs.scoreLabel.textContent = "Puntaje: " + String(state.score);
     refs.livesLabel.textContent = state.lives + " ❤️";
     parseEmoji(refs.livesLabel);
+    const cues = LEVELS[level] || {};
     refs.foodName.textContent   = food.food_name;
+    // Pista "nombre": en Difícil se oculta sin desplazar el layout (reserva alto).
+    refs.foodName.style.visibility = cues.showName === false ? "hidden" : "visible";
     setFoodImage(food.image, food.food_name);
     updateLevelProgress();
 
@@ -762,7 +869,8 @@
       button.type = "button";
       button.className = "option-btn";
       button.dataset.country = option;
-      const flag = getFlag(option);
+      // Pista "bandera": se omite cuando el nivel no la muestra (Intermedio/Difícil).
+      const flag = cues.showFlags === false ? "" : getFlag(option);
       button.textContent = flag ? flag + " " + option : option;
       parseEmoji(button);
       button.addEventListener("click", () => handleAnswer(option, button));
@@ -856,6 +964,10 @@
         is_correct:      isCorrect,
         is_wildcard:     false,
         wildcard_type:   null,
+        // Los 2 distractores mostrados (mismo continente / otro). Factor
+        // aleatorio y ortogonal al nivel; permite estimar su efecto aparte.
+        distractor_same:  question.distractorSame || null,
+        distractor_other: question.distractorOther || null,
         reaction_time_ms: reactionTimeMs,
         lives_after:     state.lives,
       }]));

@@ -25,7 +25,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="vendor/jsvectormap/css/jsvectormap.min.css" />
-    <link rel="stylesheet" href="styles.css?v=21" />
+    <link rel="stylesheet" href="styles.css?v=22" />
     <script>
       // iOS Safari/Chrome: 100vh mide el viewport máximo (sin chrome visible),
       // no el área visible real. window.innerHeight siempre es el área visible.
@@ -86,12 +86,29 @@
           </div>
 
           <div class="country-picker">
-            <label for="player-country" class="country-picker-label">
-              ¿De qué país sos?
-            </label>
-            <select id="player-country" class="country-select">
-              <!-- poblado por JS -->
-            </select>
+            <div class="picker-field">
+              <label for="player-country" class="country-picker-label">
+                ¿De qué país sos?
+              </label>
+              <select id="player-country" class="country-select">
+                <!-- poblado por JS -->
+              </select>
+            </div>
+            <div class="picker-field">
+              <label for="player-age" class="country-picker-label">
+                ¿Qué edad tenés?
+              </label>
+              <input
+                id="player-age"
+                class="country-select age-input"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max="120"
+                step="1"
+                aria-label="Edad"
+              />
+            </div>
           </div>
 
           <button id="start-game-btn" class="btn btn-primary btn-xl">
@@ -288,10 +305,10 @@
 
     <script defer src="vendor/jsvectormap/js/jsvectormap.min.js"></script>
     <script defer src="vendor/jsvectormap/maps/world-merc.js"></script>
-    <script defer src="data/foods.js?v=2"></script>
+    <script defer src="data/foods.js?v=3"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script async src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
-    <script defer src="app.js?v=19"></script>
+    <script defer src="app.js?v=20"></script>
 
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "654200a8331a40eb9d7d42c459a5d9d9"}'></script>

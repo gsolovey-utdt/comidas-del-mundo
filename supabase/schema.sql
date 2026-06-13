@@ -6,6 +6,7 @@ create table if not exists sdm_sessions (
   session_id   uuid        primary key,
   player_country text,
   start_level  text,
+  age          integer,
   created_at   timestamptz default now()
 );
 
@@ -22,6 +23,10 @@ create table if not exists sdm_answers (
   is_wildcard      boolean default false,
   -- 'food_from_description' | 'country_from_flag' | null
   wildcard_type    text,
+  -- Los 2 distractores mostrados (1 del mismo continente, 1 de otro). NULL en
+  -- filas de comodín. Permiten estimar el efecto del distractor por separado.
+  distractor_same  text,
+  distractor_other text,
   reaction_time_ms integer not null,
   lives_after      integer not null,
   created_at       timestamptz default now()
@@ -44,6 +49,13 @@ create table if not exists sdm_suggestions (
   country      text    not null,
   created_at   timestamptz default now()
 );
+
+-- ── Migraciones para bases ya creadas (idempotentes) ──────────────────────────
+-- `create table if not exists` no agrega columnas si la tabla ya existía.
+-- Correr estos ALTER una vez en proyectos que ya tenían las tablas:
+alter table sdm_sessions add column if not exists age              integer;
+alter table sdm_answers  add column if not exists distractor_same  text;
+alter table sdm_answers  add column if not exists distractor_other text;
 
 -- ── Row Level Security ────────────────────────────────────────────────────────
 alter table sdm_sessions     enable row level security;

@@ -14,16 +14,16 @@ Uso:
     python scripts/build_foods.py "https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv"
 
 Columnas esperadas en el CSV (header en la primera fila):
-    food_name, country, image, answer_label,
-    fun_fact,
-    distractors_easy, distractors_medium, distractors_hard
+    food_name, country, image, answer_label, fun_fact
 
 `answer_label` es la frase corta de feedback, ej. "La Paella es de".
-`distractors_*` acepta exactamente 2 valores separados por `|`
-(con espacios opcionales alrededor).
+
+Los distractores ya NO se autoran: se generan en runtime por continente
+(ver CONTINENT_BY_COUNTRY / pickDistractors en app.js). Las columnas
+`distractors_*` quedan ignoradas si todavía están en el CSV/Sheet.
 
 Columnas ignoradas si están presentes (legacy): type, food_familiarity,
-extra_fun_facts, notes.
+extra_fun_facts, notes, distractors_easy, distractors_medium, distractors_hard.
 """
 from __future__ import annotations
 
@@ -49,9 +49,6 @@ REQUIRED_COLUMNS = [
     "image",
     "answer_label",
     "fun_fact",
-    "distractors_easy",
-    "distractors_medium",
-    "distractors_hard",
 ]
 LIST_SPLIT_RE = re.compile(r"\s*\|\s*")
 
@@ -138,17 +135,6 @@ def validate_row(row: dict, idx: int, country_keys: set[str]) -> tuple[dict | No
     if not fun_fact:
         errors.append("fun_fact vacío")
 
-    distractors = {}
-    for lvl in ("easy", "medium", "hard"):
-        col = f"distractors_{lvl}"
-        items = split_list(field(col))
-        if len(items) != 2:
-            errors.append(f"{col} debe tener 2 elementos (encontrados {len(items)})")
-        for d in items:
-            if normalize_country(d) == normalize_country(country):
-                errors.append(f"{col}: '{d}' es igual al país correcto")
-        distractors[lvl] = items
-
     if errors:
         return None, errors
 
@@ -158,7 +144,6 @@ def validate_row(row: dict, idx: int, country_keys: set[str]) -> tuple[dict | No
         "image": image,
         "answer_label": answer_label,
         "fun_fact": fun_fact,
-        "distractors": distractors,
     }
     return food, []
 
@@ -181,12 +166,6 @@ def emit_foods_js(foods: list[dict]) -> str:
         lines.append(f'    image: {js_string(food["image"])},')
         lines.append(f'    answer_label: {js_string(food["answer_label"])},')
         lines.append(f'    fun_fact: {js_string(food["fun_fact"])},')
-        d = food["distractors"]
-        lines.append("    distractors: {")
-        for lvl in ("easy", "medium", "hard"):
-            items = ", ".join(js_string(x) for x in d[lvl])
-            lines.append(f"      {lvl}: [{items}],")
-        lines.append("    },")
         lines.append("  },")
     lines.append("];")
     lines.append("")
