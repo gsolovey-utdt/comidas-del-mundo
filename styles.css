@@ -721,6 +721,15 @@ img.emoji {
 .country-picker {
   margin: 16px 0 20px;
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 10px 18px;
+}
+
+.picker-field {
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
@@ -757,6 +766,39 @@ img.emoji {
   outline: none;
   transform: translate(-1px, -2px);
   box-shadow: 4px 5px 0 var(--ink-black);
+}
+
+/* Campo de edad: reusa el look de .country-select pero angosto y sin la flecha
+   de desplegable ni los spinners del number. */
+.age-input {
+  min-width: 0;
+  width: 120px;
+  text-align: center;
+  background: #fff8e7;
+  padding: 10px 14px;
+  -moz-appearance: textfield;
+}
+.age-input::-webkit-outer-spin-button,
+.age-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.age-input.shake {
+  animation: shake 0.35s ease;
+}
+
+/* Mobile: país + edad lado a lado sin desbordar la caja fija. El select de país
+   se fija angosto (los nombres largos se truncan en el campo; el desplegable
+   nativo igual muestra el nombre completo al abrirlo). `min-width:0` evita que
+   el input de edad herede el min-width de `.country-select`. */
+@media (max-width: 560px) {
+  .start-card .country-picker { gap: 8px 10px; }
+  .start-card .country-select { min-width: 0; width: 145px; font-size: 1.02rem; }
+  .start-card .age-input { min-width: 0; width: 72px; }
+  .start-card .country-picker-label { font-size: 0.85rem; }
+  /* "Relámpago ⚡" no entra a 1.1rem en botones de ~130px: achicar y forzar
+     una sola línea (si parte a 2 líneas crece el alto y empuja el layout). */
+  .start-card .difficulty-compact .difficulty-name { font-size: 0.9rem; white-space: nowrap; }
 }
 
 /* ── Level-up screen ── */

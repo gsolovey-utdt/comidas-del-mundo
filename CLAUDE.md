@@ -52,9 +52,10 @@ La app es completamente estática: no requiere build, bundler ni servidor. Se de
 | `ROUNDS_PER_LEVEL` | Rondas por nivel | 10 |
 | `POINTS_PER_HIT` | Puntos por acierto | 10 |
 | `LEVEL_ORDER` | Orden de niveles | `["easy", "medium", "hard", "flash"]` |
-| `LEVELS` | Config por nivel: `{ label, distractors, timeLimitMs }`. `flash` reusa distractores `hard` + límite de 3000 ms por pregunta | ver `app.js` |
-| `COUNTRY_META` | ISO + coordenadas por país | ver `app.js` |
-| `SMALL_COUNTRY_CODES` | Países marcados con pin en vez de región coloreada | `KR, GB, IE, PT, BE, NL, UY, SV, CR, IL` |
+| `LEVELS` | Config por nivel: `{ label, showName, showFlags, timeLimitMs }`. La dificultad se escalona por **pistas** (nombre / bandera), no por distractores. `flash` (Relámpago) muestra todas las pistas + 4000 ms por pregunta | ver `app.js` |
+| `COUNTRY_META` | ISO + bandera + nombre + coords (+ `continent`, inyectado desde `CONTINENT_BY_COUNTRY` al cargar) por país | ver `app.js` |
+| `CONTINENT_BY_COUNTRY` / `DISTRACTOR_POOL` | Continente por país (5 continentes, América única) y pool de ~95 países conocidos para generar distractores. Los países sin continente quedan fuera del pool | ver `app.js` |
+| `SMALL_COUNTRY_CODES` | Países marcados con pin en vez de región coloreada | `KR, GB, IE, PT, BE, NL, UY, SV, CR, IL, …` |
 
 ---
 
@@ -71,19 +72,16 @@ La app es completamente estática: no requiere build, bundler ni servidor. Se de
 | `food_name` | Nombre de la comida |
 | `country` | País correcto (debe normalizar a una clave de `COUNTRY_META` en `app.js`) |
 | `image` | Ruta relativa a la imagen (`images/foods/...`) |
+| `answer_label` | Frase corta de feedback, ej. "La paella es de" |
 | `fun_fact` | Dato curioso |
-| `distractors_easy` | 2 países separados con ` \| ` |
-| `distractors_medium` | 2 países separados con ` \| ` |
-| `distractors_hard` | 2 países separados con ` \| ` |
 
-El separador es **pipe** (`|`) con espacios opcionales alrededor. Se eligió porque los `fun_facts` ya usan `,` y `;` con frecuencia.
+**Los distractores ya no se cargan en el CSV.** Se generan en runtime por continente (1 del mismo continente que el país correcto + 1 de otro), desde `DISTRACTOR_POOL` en `app.js`. Si el CSV/Sheet todavía tiene columnas `distractors_*`, `build_foods.py` las ignora.
 
 ### Validaciones que hace `build_foods.py`
 
 - Cada `country` (correcto) normaliza a una clave de `COUNTRY_META` en `app.js`. Si no está, el script falla pidiendo agregar el país.
-- Cada `distractors_*` tiene exactamente 2 elementos.
-- Ningún distractor es igual al país correcto.
 - Si una imagen del campo `image` no existe en disco, sale un warning (no falla).
+- Las columnas `distractors_*` se ignoran si todavía están presentes (legacy).
 
 ### Workflow recomendado
 
@@ -111,22 +109,24 @@ El separador es **pipe** (`|`) con espacios opcionales alrededor. Se eligió por
 
 ## Agregar una comida nueva
 
-1. Agregar una fila en el Google Sheet con todos los campos (ver tabla arriba).
-2. Completar los 3 niveles de distractors (2 países cada uno, separados con ` | `).
-3. Copiar imagen en `images/foods/` y referenciarla en `image`.
-4. Si el país correcto no está en `COUNTRY_META`, agregarlo en `app.js` con código ISO y coords (ver sección siguiente).
-5. Si el país es visualmente pequeño en el mapa, agregar su ISO a `SMALL_COUNTRY_CODES`.
-6. Bajar el CSV actualizado y correr `python scripts/build_foods.py`.
+1. Agregar una fila en el Google Sheet con todos los campos (ver tabla arriba). **Ya no hay que cargar distractores.**
+2. Copiar imagen en `images/foods/` y referenciarla en `image`.
+3. Si el país correcto no está en `COUNTRY_META`, agregarlo en `app.js` con ISO, bandera, nombre y coords, **y asignarle continente en `CONTINENT_BY_COUNTRY`** (si no, queda fuera del pool de distractores; ver sección siguiente).
+4. Si el país es visualmente pequeño en el mapa, agregar su ISO a `SMALL_COUNTRY_CODES`.
+5. Bajar el CSV actualizado y correr `python scripts/build_foods.py`.
 
 ---
 
 ## Agregar un país nuevo al mapa
 
-En `app.js`, agregar una entrada en `COUNTRY_META`:
-```js
-"nombre normalizado": { iso: "XX", coords: [lat, lng] }
-```
-El nombre normalizado es el `country` del dataset sin tildes, en minúsculas.
+En `app.js`:
+1. Agregar una entrada en `COUNTRY_META`:
+   ```js
+   "nombre normalizado": { iso: "XX", flag: "🏳️", name: "Nombre", coords: [lat, lng] }
+   ```
+2. Asignarle continente en `CONTINENT_BY_COUNTRY` (`"América" | "Europa" | "Asia" | "África" | "Oceanía"`). Sin continente, el país **no** entra al pool de distractores (queda disponible sólo para el mapa y el comodín de banderas).
+
+El nombre normalizado es el `country` del dataset sin tildes, en minúsculas (lo que devuelve `normalizeCountry()`).
 
 ---
 
@@ -163,15 +163,16 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 
 | Tabla | Contenido |
 |-------|-----------|
-| `sdm_sessions` | Una fila por partida: `session_id` (UUID), `player_country`, `start_level` |
-| `sdm_answers` | Una fila por respuesta (incluye comodines): tiempos de reacción, `is_wildcard`, `wildcard_type` |
+| `sdm_sessions` | Una fila por partida: `session_id` (UUID), `player_country`, `start_level`, `age` (edad obligatoria del jugador) |
+| `sdm_answers` | Una fila por respuesta (incluye comodines): tiempos de reacción, `is_wildcard`, `wildcard_type`, y `distractor_same` / `distractor_other` (los 2 distractores mostrados: mismo continente / otro; `NULL` en comodines) |
 | `sdm_final_writeups` | Texto creativo final (opcional) |
 | `sdm_suggestions` | Sugerencias de países a agregar (una fila por envío): `session_id`, `country`. **Requiere correr el SQL nuevo de `schema.sql` una vez** para que persista. |
 
 - **Cliente:** UMD vía CDN (`async` para no bloquear scripts diferidos). Inicialización lazy: `getDb()` crea el cliente la primera vez que se necesita.
 - **Estrategia:** fire-and-forget con `saveQuiet()`. Si Supabase no está disponible (offline, CDN lento), el juego continúa sin interrupciones.
-- **RLS:** `anon_insert` policies en las 3 tablas. Sólo inserts desde el browser anónimo.
+- **RLS:** `anon_insert` policies en las 4 tablas. Sólo inserts desde el browser anónimo.
 - **session_id:** `crypto.randomUUID()` en memoria, no persiste entre recargas.
+- **Migración:** `age` (en `sdm_sessions`) y `distractor_same`/`distractor_other` (en `sdm_answers`) requieren correr los `ALTER TABLE ... add column if not exists` de `schema.sql` una vez en el proyecto, que ya tenía las tablas creadas.
 
 ---
 
@@ -203,6 +204,9 @@ La app tiene estética **cómic / pop-art** inspirada en juegos infantiles tipo 
 | 2026-06 | Resumen final preciso | Antes decía siempre "¡Completaste todos los niveles!" aunque el jugador hubiera arrancado en un nivel avanzado o terminado antes. Ahora: game over → mensaje de game over; `completedAll` (arrancó en el primero **y** llegó al último) → "todos los niveles"; en otro caso → "¡Completaste el nivel [X]!". |
 | 2026-06 | Racha eliminada; puntaje al centro-abajo del header | La pastilla de racha 🔥 (decorativa) se sacó por completo (HTML, CSS, `state.streak`, `updateStreakDisplay`). El `#score-label` se movió a la celda central de la fila inferior del grid del header (donde estaba la racha). |
 | 2026-06 | 5ª página final: sugerir un país | Desplegable con **todos** los países del mundo (`ALL_COUNTRIES_ES` en `app.js`, ~191); los que ya tienen comida (detectados normalizando contra `FOODS_DATA`) aparecen deshabilitados con "✓ (ya está)". Se guarda en `sdm_suggestions` (fire-and-forget). Se eligió "todos marcando los presentes" sobre "solo los faltantes" para que el chico vea el panorama completo. |
+| 2026-06 | Dificultad por **pistas**, no por distractores | Antes Fácil/Intermedio/Difícil sólo cambiaban los distractores: un eje poco perceptible para un chico, costoso de autorear (6 países/comida), y que **confunde** el efecto del nivel con el del distractor en los datos. Ahora se escalonan pistas: Fácil = foto+nombre+bandera · Intermedio = sin bandera · Difícil = sólo foto. Relámpago = todas las pistas (= Fácil) + reloj. `LEVELS` pasó de `distractors` a `{ showName, showFlags, timeLimitMs }`; `renderQuestion` gatea `#food-name` (con `visibility:hidden` para reservar el alto) y la bandera de cada opción. |
+| 2026-06 | Distractores **generados por continente**, invariantes al nivel | 1 distractor del mismo continente que el país correcto + 1 de otro, al azar, desde `DISTRACTOR_POOL` (~95 países conocidos de `COUNTRY_META` con `continent`). Se eliminaron los autorados (`distractors_*` del CSV). Ventaja: el distractor queda **ortogonal al nivel** (identificación limpia para medir el efecto de las pistas) y se acaba la curaduría por comida. Pool acotado a países conocidos para que ningún distractor sea ininteligible; América es un solo continente (modelo escolar). Cada distractor mostrado se loguea (`distractor_same`/`distractor_other`) para estimar su efecto por separado. Trade-off: se pierden las "trampas" culinarias autoradas (ej. España para empanadas). |
+| 2026-06 | Relámpago a 4 s (era 3 s) + edad obligatoria | Relámpago: +1 s para que exija sin frustrar; con todas las pistas visibles, la única dificultad es el reloj. Edad: campo numérico **obligatorio** al lado del país en el inicio (para el análisis); `startGame` valida y sacude el campo si falta o está fuera de `[AGE_MIN, AGE_MAX]`. |
 
 ---
 
@@ -229,8 +233,18 @@ Ideas surgidas de una revisión de diseño (mayo 2026), en orden de impacto esti
 
 ## Estado actual
 
-**Fase:** Producción / v1.3 (pendiente deploy)  
-App desplegada en GitHub Pages. Dataset con **48 comidas** de **31 países**. En mayo 2026 se agregaron: banderas emoji en botones y mapa, dropdown de país del jugador, pantalla animada de transición de nivel, comodín de vidas (bandera→país o descripción→comida), medición de tiempos de respuesta con Supabase, y texto creativo al final. En v1.3: vidas iniciales aumentadas de 3 a 5; pantalla final convertida en carrusel de 4 páginas (resultado → colección de comidas aprendidas → mapa de países visitados → texto creativo).
+**Fase:** Producción / v1.10 (pendiente deploy)  
+App desplegada en GitHub Pages. Dataset con **49 comidas** de **31 países**. En mayo 2026 se agregaron: banderas emoji en botones y mapa, dropdown de país del jugador, pantalla animada de transición de nivel, comodín de vidas (bandera→país o descripción→comida), medición de tiempos de respuesta con Supabase, y texto creativo al final. En v1.3: vidas iniciales aumentadas de 3 a 5; pantalla final convertida en carrusel de 4 páginas (resultado → colección de comidas aprendidas → mapa de países visitados → texto creativo). En v1.10 (junio 2026): la dificultad pasó a escalonarse por **pistas** (no por distractores); los distractores se **generan por continente** desde un pool de ~95 países conocidos; Relámpago subió a 4 s; se pide la **edad** (obligatoria) del jugador; y se loguean los distractores mostrados en `sdm_answers`.
+
+---
+
+## Prompt rápido para actualizar el dataset
+
+Cuando Guillermo cambia `data/foods.csv` (ya sea editando el archivo directamente o trayendo un CSV nuevo), el prompt para Claude es:
+
+> "Actualicé `data/foods.csv`, regenerá `foods.js` y pusheá."
+
+Claude debe: (1) correr `python scripts/build_foods.py`, (2) commitear `data/foods.csv` + `data/foods.js` juntos, (3) pushear a `main`.
 
 ---
 

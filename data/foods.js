@@ -7,11 +7,6 @@ window.FOODS_DATA = [
     image: "images/foods/pretzel.jpg",
     answer_label: "El pretzel es de",
     fun_fact: "Es un pan que tiene una forma entrelazada que lo hace original y reconocible.",
-    distractors: {
-      easy: ["Perú", "Japón"],
-      medium: ["Polonia", "Austria"],
-      hard: ["Suiza", "República Checa"],
-    },
   },
   {
     food_name: "Wurst",
@@ -19,11 +14,6 @@ window.FOODS_DATA = [
     image: "images/foods/wurst.jpg",
     answer_label: "El wurst es de",
     fun_fact: "Es una salchicha, pero en Alemania hay tantas versiones (¡dicen que más de 1000!) que podrías comer una distinta cada día.",
-    distractors: {
-      easy: ["Argentina", "Brasil"],
-      medium: ["China", "Corea del Sur"],
-      hard: ["Estados Unidos", "Ucrania"],
-    },
   },
   {
     food_name: "Chucrut",
@@ -31,11 +21,6 @@ window.FOODS_DATA = [
     image: "images/foods/chucrut.jpg",
     answer_label: "El chucrut es de",
     fun_fact: "Es una preparación de repollo fermentado con sal y algunos condimentos que desafía el tiempo: puede durar meses en la heladera.",
-    distractors: {
-      easy: ["Camboya", "Paraguay"],
-      medium: ["Reino Unido", "Guatemala"],
-      hard: ["Nigeria", "Singapur"],
-    },
   },
   {
     food_name: "Schnitzel",
@@ -43,11 +28,6 @@ window.FOODS_DATA = [
     image: "images/foods/schnitzel.jpg",
     answer_label: "El schnitzel es de",
     fun_fact: "Es la prima alemana de la milanesa: fina, crocante y muy querida.",
-    distractors: {
-      easy: ["Ghana", "Costa Rica"],
-      medium: ["Islandia", "Marruecos"],
-      hard: ["Austria", "República Checa"],
-    },
   },
   {
     food_name: "Strudel",
@@ -55,11 +35,6 @@ window.FOODS_DATA = [
     image: "images/foods/strudel.jpg",
     answer_label: "El strudel es de",
     fun_fact: "Es un postre típico alemán que se parece a un arrollado de manzana. Se come tibio y pide a gritos sumarle un poco de crema.",
-    distractors: {
-      easy: ["China", "Japón"],
-      medium: ["Brasil", "Guatemala"],
-      hard: ["Austria", "Hungría"],
-    },
   },
   {
     food_name: "Empanadas",
@@ -67,11 +42,6 @@ window.FOODS_DATA = [
     image: "images/foods/empanadas.jpg",
     answer_label: "Las empanadas son de",
     fun_fact: "En Argentina hay versiones regionales distintas, que pueden incluir papa o pasas de uva, y todas defienden la suya como la mejor.",
-    distractors: {
-      easy: ["Japón", "Suecia"],
-      medium: ["Chile", "Bolivia"],
-      hard: ["Uruguay", "Paraguay"],
-    },
   },
   {
     food_name: "Feijoada",
@@ -79,11 +49,6 @@ window.FOODS_DATA = [
     image: "images/foods/feijoada.jpg",
     answer_label: "La feijoada es de",
     fun_fact: "Es un guiso con porotos y carne tan popular que en Brasil se come también cuando hace un calor tremendo.",
-    distractors: {
-      easy: ["Japón", "Suecia"],
-      medium: ["Portugal", "Argentina"],
-      hard: ["Angola", "Cabo Verde"],
-    },
   },
   {
     food_name: "Poutine",
@@ -91,11 +56,6 @@ window.FOODS_DATA = [
     image: "images/foods/poutine.jpg",
     answer_label: "La poutine es de",
     fun_fact: "Nació en Quebec y es un tipo de comida rápida  muy deliciosa que combina papas fritas, queso en grumos y salsa caliente.",
-    distractors: {
-      easy: ["India", "Marruecos"],
-      medium: ["Estados Unidos", "Reino Unido"],
-      hard: ["Francia", "Bélgica"],
-    },
   },
   {
     food_name: "Mapo tofu",
@@ -103,11 +63,6 @@ window.FOODS_DATA = [
     image: "images/foods/mapo-tofu.jpg",
     answer_label: "El mapo tofu es de",
     fun_fact: "Es un plato picante con tofu y salsa de carne que nació en Sichuan y es muy popular de la cocina china.",
-    distractors: {
-      easy: ["Argentina", "Canadá"],
-      medium: ["Japón", "Corea del Sur"],
-      hard: ["Taiwán", "Singapur"],
-    },
   },
   {
     food_name: "Arrolladitos primavera",
@@ -115,11 +70,6 @@ window.FOODS_DATA = [
     image: "images/foods/spring-roll.jpg",
     answer_label: "Los arrolladitos primavera son de",
     fun_fact: "Son unos paquetitos de masa fritos rellenos de carne o verduras. Se acompañan de una salsa roja que siempre logra manchar la ropa.",
-    distractors: {
-      easy: ["Argentina", "Canadá"],
-      medium: ["Vietnam", "Tailandia"],
-      hard: ["Corea del Sur", "Singapur"],
-    },
   },
   {
     food_name: "Arepa",
@@ -127,11 +77,6 @@ window.FOODS_DATA = [
     image: "images/foods/arepa.jpg",
     answer_label: "La arepa es de",
     fun_fact: "Es una especie de pan redondo de maíz que puede comerse solo o relleno de carne, quesos, verduras y aderezos.",
-    distractors: {
-      easy: ["Japón", "Suecia"],
-      medium: ["Venezuela", "Perú"],
-      hard: ["Ecuador", "Panamá"],
-    },
   },
   {
     food_name: "Kimchi",
@@ -139,11 +84,6 @@ window.FOODS_DATA = [
     image: "images/foods/kimchi.jpg",
     answer_label: "El kimchi es de",
     fun_fact: "Se elabora con vegetales fermentados, especialmente repollo y condimentos picantes. Es intenso y saludable.",
-    distractors: {
-      easy: ["Uruguay", "Marruecos"],
-      medium: ["Japón", "Taiwán"],
-      hard: ["Corea del Norte", "China"],
-    },
   },
   {
     food_name: "Gallo pinto",
@@ -151,11 +91,6 @@ window.FOODS_DATA = [
     image: "images/foods/gallo-pinto.jpg",
     answer_label: "El gallo pinto es de",
     fun_fact: "Es una mezcla de arroz y porotos muy común y potente para arrancar el día.",
-    distractors: {
-      easy: ["Japón", "Suecia"],
-      medium: ["Nicaragua", "El Salvador"],
-      hard: ["Panamá", "Honduras"],
-    },
   },
   {
     food_name: "Pupusas",
@@ -163,11 +98,6 @@ window.FOODS_DATA = [
     image: "images/foods/pupusas.jpg",
     answer_label: "Las pupusas son de",
     fun_fact: "Son tortillas gruesas de maíz rellenas de queso, porotos u otros ingredientes.",
-    distractors: {
-      easy: ["Suecia", "Canadá"],
-      medium: ["Guatemala", "Honduras"],
-      hard: ["Nicaragua", "Costa Rica"],
-    },
   },
   {
     food_name: "Paella",
@@ -175,11 +105,6 @@ window.FOODS_DATA = [
     image: "images/foods/paella.jpg",
     answer_label: "La paella es de",
     fun_fact: "La paella nació en Valencia y suele cocinarse en una sartén ancha y baja. Cada región le incorpora sus ingredientes más típicos y accesibles.",
-    distractors: {
-      easy: ["Canadá", "Japón"],
-      medium: ["Italia", "Portugal"],
-      hard: ["Francia", "Marruecos"],
-    },
   },
   {
     food_name: "Hamburguesa",
@@ -187,11 +112,6 @@ window.FOODS_DATA = [
     image: "images/foods/hamburger.jpg",
     answer_label: "La hamburguesa es de",
     fun_fact: "Las hamburguesas conquistaron el mundo entre panes y cadenas de comida rápida.",
-    distractors: {
-      easy: ["Marruecos", "Japón"],
-      medium: ["Canadá", "Alemania"],
-      hard: ["Reino Unido", "Australia"],
-    },
   },
   {
     food_name: "Mac and cheese",
@@ -199,11 +119,6 @@ window.FOODS_DATA = [
     image: "images/foods/mac-and-cheese.jpg",
     answer_label: "El mac and cheese es de",
     fun_fact: "Es una mezcla cremosa de pasta con queso, muy popular en todas las generaciones: fácil de prepar, difícil de dejar.",
-    distractors: {
-      easy: ["Japón", "Marruecos"],
-      medium: ["Canadá", "Reino Unido"],
-      hard: ["Australia", "Irlanda"],
-    },
   },
   {
     food_name: "Injera",
@@ -211,11 +126,6 @@ window.FOODS_DATA = [
     image: "images/foods/injera.jpg",
     answer_label: "La injera es de",
     fun_fact: "Es un pan esponjoso y ácido que también se usa como base para comer otros platos.",
-    distractors: {
-      easy: ["Canadá", "Japón"],
-      medium: ["Eritrea", "Somalia"],
-      hard: ["Yibuti", "Sudán"],
-    },
   },
   {
     food_name: "Croissant",
@@ -223,11 +133,6 @@ window.FOODS_DATA = [
     image: "images/foods/croissant.jpg",
     answer_label: "El croissant es de",
     fun_fact: "Su textura en capas se logra doblando la masa muchas veces con manteca.",
-    distractors: {
-      easy: ["México", "India"],
-      medium: ["Italia", "España"],
-      hard: ["Bélgica", "Austria"],
-    },
   },
   {
     food_name: "Vichyssoise",
@@ -235,11 +140,6 @@ window.FOODS_DATA = [
     image: "images/foods/vichyssoise.jpg",
     answer_label: "La vichyssoise es de",
     fun_fact: "Es una sopa cremosa de puerro y papa, elegante y llenadora.",
-    distractors: {
-      easy: ["México", "Brasil"],
-      medium: ["España", "Italia"],
-      hard: ["Bélgica", "Suiza"],
-    },
   },
   {
     food_name: "Moussaka",
@@ -247,11 +147,6 @@ window.FOODS_DATA = [
     image: "images/foods/moussaka.jpg",
     answer_label: "La moussaka es de",
     fun_fact: "Se prepara en capas y suele llevar berenjena, carne y una cobertura cremosa. Como una lasagna, pero en modo griego.",
-    distractors: {
-      easy: ["México", "Japón"],
-      medium: ["Turquía", "Italia"],
-      hard: ["Chipre", "Bulgaria"],
-    },
   },
   {
     food_name: "Goulash",
@@ -259,11 +154,6 @@ window.FOODS_DATA = [
     image: "images/foods/goulash.jpg",
     answer_label: "El goulash es de",
     fun_fact: "Es un guiso con paprika y la rockstar de la cocina húngara.",
-    distractors: {
-      easy: ["Brasil", "Canadá"],
-      medium: ["Polonia", "Rumania"],
-      hard: ["Austria", "Eslovaquia"],
-    },
   },
   {
     food_name: "Butter chicken",
@@ -271,11 +161,6 @@ window.FOODS_DATA = [
     image: "images/foods/butter-chicken.jpg",
     answer_label: "El butter chicken es de",
     fun_fact: "Es un plato cremoso y especiado que suele acompañarse con arroz o pan naan.",
-    distractors: {
-      easy: ["Chile", "Canadá"],
-      medium: ["Pakistán", "Bangladesh"],
-      hard: ["Nepal", "Reino Unido"],
-    },
   },
   {
     food_name: "Kneidalaj",
@@ -283,11 +168,6 @@ window.FOODS_DATA = [
     image: "images/foods/kneidalaj.jpg",
     answer_label: "Los kneidalaj son de",
     fun_fact: "Son bolitas tiernas de harina de matzá que suelen servirse en sopa y se pasan de generación en generación.",
-    distractors: {
-      easy: ["Brasil", "Canadá"],
-      medium: ["Polonia", "Alemania"],
-      hard: ["Líbano", "Turquía"],
-    },
   },
   {
     food_name: "Knishes",
@@ -295,11 +175,6 @@ window.FOODS_DATA = [
     image: "images/foods/knishes.jpg",
     answer_label: "Los knishes son de",
     fun_fact: "Son masas rellenas que pueden llevar papa, cebolla u otros ingredientes.",
-    distractors: {
-      easy: ["Argentina", "Canadá"],
-      medium: ["Polonia", "Hungría"],
-      hard: ["Ucrania", "Lituania"],
-    },
   },
   {
     food_name: "Falafel",
@@ -307,11 +182,6 @@ window.FOODS_DATA = [
     image: "images/foods/falafel.jpg",
     answer_label: "El falafel es de",
     fun_fact: "Son croquetas hechas con legumbres y especias, quedan muy bien en pan pita con pepino, yogur y otras magias.",
-    distractors: {
-      easy: ["Canadá", "Suecia"],
-      medium: ["Turquía", "Grecia"],
-      hard: ["Líbano", "Jordania"],
-    },
   },
   {
     food_name: "Hummus",
@@ -319,11 +189,6 @@ window.FOODS_DATA = [
     image: "images/foods/hummus.jpg",
     answer_label: "El hummus es de",
     fun_fact: "Es una pasta suave de garbanzos que se come como dip o acompañamiento y, en algunas regiones, a toda hora.",
-    distractors: {
-      easy: ["Canadá", "Brasil"],
-      medium: ["Grecia", "Turquía"],
-      hard: ["Líbano", "Siria"],
-    },
   },
   {
     food_name: "Gefilte fish",
@@ -331,11 +196,6 @@ window.FOODS_DATA = [
     image: "images/foods/gefilte-fish.jpg",
     answer_label: "El gefilte fish es de",
     fun_fact: "Es un \"pan de pescado\", frío o caliente, más dulce o más salado, dependiendo de la receta de cada familia.",
-    distractors: {
-      easy: ["Brasil", "Canadá"],
-      medium: ["Polonia", "Alemania"],
-      hard: ["Lituania", "Ucrania"],
-    },
   },
   {
     food_name: "Pizza",
@@ -343,11 +203,6 @@ window.FOODS_DATA = [
     image: "images/foods/pizza.jpg",
     answer_label: "La pizza es de",
     fun_fact: "La pizza moderna se hizo famosa en Nápoles pero hoy tiene estilos y ultrafanáticos en todo el mundo.",
-    distractors: {
-      easy: ["Suecia", "Paraguay"],
-      medium: ["España", "Francia"],
-      hard: ["Argentina", "Estados Unidos"],
-    },
   },
   {
     food_name: "Ramen",
@@ -355,11 +210,6 @@ window.FOODS_DATA = [
     image: "images/foods/ramen.jpg",
     answer_label: "El ramen es de",
     fun_fact: "Es una sopa de fideos muy popular en Japón y tiene muchas variedades regionales.",
-    distractors: {
-      easy: ["Argentina", "Canadá"],
-      medium: ["India", "Vietnam"],
-      hard: ["China", "Corea del Sur"],
-    },
   },
   {
     food_name: "Sushi",
@@ -367,11 +217,6 @@ window.FOODS_DATA = [
     image: "images/foods/sushi.jpg",
     answer_label: "El sushi es de",
     fun_fact: "¿Sabías que aunque muchos piensan solo en pescado, también hay sushi con verduras, hongos o huevo?",
-    distractors: {
-      easy: ["Brasil", "Marruecos"],
-      medium: ["China", "Corea del Sur"],
-      hard: ["Vietnam", "Tailandia"],
-    },
   },
   {
     food_name: "Couscous",
@@ -379,11 +224,6 @@ window.FOODS_DATA = [
     image: "images/foods/couscous.jpg",
     answer_label: "El couscous es de",
     fun_fact: "Se hace con sémola de trigo en granitos pequeños y se cocina al vapor, en preparaciones frías y calientes.",
-    distractors: {
-      easy: ["Canadá", "Suecia"],
-      medium: ["Argelia", "Túnez"],
-      hard: ["Turquía", "Egipto"],
-    },
   },
   {
     food_name: "Tacos",
@@ -391,11 +231,6 @@ window.FOODS_DATA = [
     image: "images/foods/tacos.jpg",
     answer_label: "Los tacos son de",
     fun_fact: "Pueden llevar muchos rellenos distintos y es una comida muy versátil.",
-    distractors: {
-      easy: ["Suecia", "Etiopía"],
-      medium: ["Colombia", "Perú"],
-      hard: ["Estados Unidos", "Guatemala"],
-    },
   },
   {
     food_name: "Guacamole",
@@ -403,11 +238,6 @@ window.FOODS_DATA = [
     image: "images/foods/guacamole.jpg",
     answer_label: "El guacamole es de",
     fun_fact: "Se prepara con palta triturada y suele llevar limón, cebolla y cilantro, pero cada uno lo adapta como le gusta.",
-    distractors: {
-      easy: ["Suecia", "India"],
-      medium: ["Perú", "Colombia"],
-      hard: ["Guatemala", "Estados Unidos"],
-    },
   },
   {
     food_name: "Tamal",
@@ -415,11 +245,6 @@ window.FOODS_DATA = [
     image: "images/foods/tamal.jpg",
     answer_label: "El tamal es de",
     fun_fact: "Se hace con masa de maíz rellena y es muy práctico: se cocina con su propio envoltorio de hojas.",
-    distractors: {
-      easy: ["Canadá", "Suecia"],
-      medium: ["Guatemala", "Perú"],
-      hard: ["Colombia", "El Salvador"],
-    },
   },
   {
     food_name: "Chapulines",
@@ -427,11 +252,6 @@ window.FOODS_DATA = [
     image: "images/foods/chapulines.jpg",
     answer_label: "Los chapulines son de",
     fun_fact: "Son grillos sazonados, una preparación tradicional en algunas regiones de México.",
-    distractors: {
-      easy: ["Suecia", "Canadá"],
-      medium: ["Perú", "Colombia"],
-      hard: ["Guatemala", "El Salvador"],
-    },
   },
   {
     food_name: "Arroz Jollof",
@@ -439,11 +259,6 @@ window.FOODS_DATA = [
     image: "images/foods/jollof-rice.jpg",
     answer_label: "El arroz jollof es de",
     fun_fact: "Es un arroz muy popular en África occidental y cada país tiene su versión favorita.",
-    distractors: {
-      easy: ["Japón", "Canadá"],
-      medium: ["Ghana", "Senegal"],
-      hard: ["Sierra Leona", "Liberia"],
-    },
   },
   {
     food_name: "Mbeyú",
@@ -451,11 +266,6 @@ window.FOODS_DATA = [
     image: "images/foods/mbeyu.jpg",
     answer_label: "El mbeyú es de",
     fun_fact: "Es una tortilla de almidón de mandioca y queso, cada vez más conocida en otros países.",
-    distractors: {
-      easy: ["Japón", "Canadá"],
-      medium: ["Argentina", "Uruguay"],
-      hard: ["Bolivia", "Brasil"],
-    },
   },
   {
     food_name: "Chipá",
@@ -463,11 +273,6 @@ window.FOODS_DATA = [
     image: "images/foods/chipa.jpg",
     answer_label: "El chipá es de",
     fun_fact: "Es un pan de harina de mandioca y mucho queso, muy popular y para todas las horas del día.",
-    distractors: {
-      easy: ["Suecia", "India"],
-      medium: ["Argentina", "Brasil"],
-      hard: ["Bolivia", "Uruguay"],
-    },
   },
   {
     food_name: "Ceviche",
@@ -475,11 +280,6 @@ window.FOODS_DATA = [
     image: "images/foods/ceviche.jpg",
     answer_label: "El ceviche es de",
     fun_fact: "Se prepara con pescado fresco marinado en limón, cilantro e ingredientes típicos de la zona.",
-    distractors: {
-      easy: ["Alemania", "Canadá"],
-      medium: ["Chile", "Ecuador"],
-      hard: ["México", "Colombia"],
-    },
   },
   {
     food_name: "Fish and chips",
@@ -487,11 +287,6 @@ window.FOODS_DATA = [
     image: "images/foods/fish-and-chips.jpg",
     answer_label: "El fish and chips es de",
     fun_fact: "Es una combinación clásica e infalible de pescado rebozado y papas fritas servidas calientes.",
-    distractors: {
-      easy: ["India", "Marruecos"],
-      medium: ["Irlanda", "Estados Unidos"],
-      hard: ["Escocia", "Australia"],
-    },
   },
   {
     food_name: "Arenque",
@@ -499,11 +294,6 @@ window.FOODS_DATA = [
     image: "images/foods/arenque.jpg",
     answer_label: "El arenque es de",
     fun_fact: "El arenque encurtido es muy tradicional en la cocina sueca que se pesca en el Mar Báltico.",
-    distractors: {
-      easy: ["México", "Brasil"],
-      medium: ["Noruega", "Finlandia"],
-      hard: ["Dinamarca", "Islandia"],
-    },
   },
   {
     food_name: "Pad thai",
@@ -511,11 +301,6 @@ window.FOODS_DATA = [
     image: "images/foods/pad-thai.jpg",
     answer_label: "El pad thai es de",
     fun_fact: "Es un salteado de fideos de arroz muy solicitado por su equilibrio perfecto de sabores dulces y ácidos. Suele incluir maní.",
-    distractors: {
-      easy: ["Argentina", "Suecia"],
-      medium: ["Vietnam", "Malasia"],
-      hard: ["Laos", "Camboya"],
-    },
   },
   {
     food_name: "Shawarma",
@@ -523,11 +308,6 @@ window.FOODS_DATA = [
     image: "images/foods/shawarma.jpg",
     answer_label: "El shawarma es de",
     fun_fact: "Se prepara con carne asada en un trompo vertical y se sirve en pan con condimentos y aderezos.",
-    distractors: {
-      easy: ["México", "Suecia"],
-      medium: ["Israel", "Grecia"],
-      hard: ["Líbano", "Jordania"],
-    },
   },
   {
     food_name: "Borscht",
@@ -535,11 +315,6 @@ window.FOODS_DATA = [
     image: "images/foods/borscht.jpg",
     answer_label: "El borscht es de",
     fun_fact: "Una sopa bien fucsia gracias a la remolacha, su ingrediente principal.",
-    distractors: {
-      easy: ["Brasil", "Tailandia"],
-      medium: ["Polonia", "Rusia"],
-      hard: ["Lituania", "Bielorrusia"],
-    },
   },
   {
     food_name: "Chivito",
@@ -547,11 +322,6 @@ window.FOODS_DATA = [
     image: "images/foods/chivito.jpg",
     answer_label: "El chivito es de",
     fun_fact: "Es un sándwich uruguayo abundante, con carne y varios acompañamientos. Y también un orgullo nacional.",
-    distractors: {
-      easy: ["Japón", "Suecia"],
-      medium: ["Argentina", "Chile"],
-      hard: ["Paraguay", "Brasil"],
-    },
   },
   {
     food_name: "Pho",
@@ -559,11 +329,6 @@ window.FOODS_DATA = [
     image: "images/foods/pho.jpg",
     answer_label: "El pho es de",
     fun_fact: "Es una sopa aromática con fideos de arroz y hierbas frescas.",
-    distractors: {
-      easy: ["Brasil", "Canadá"],
-      medium: ["Tailandia", "China"],
-      hard: ["Laos", "Camboya"],
-    },
   },
   {
     food_name: "Summer roll",
@@ -571,11 +336,6 @@ window.FOODS_DATA = [
     image: "images/foods/summer-roll.jpg",
     answer_label: "El summer roll es de",
     fun_fact: "Son rollitos frescos envueltos en papel de arroz: cuando los mordés, ¡no podés creer todos los ingredientes apretados que entraron!",
-    distractors: {
-      easy: ["Brasil", "Canadá"],
-      medium: ["Tailandia", "China"],
-      hard: ["Laos", "Camboya"],
-    },
   },
   {
     food_name: "Bao buns",
@@ -583,10 +343,5 @@ window.FOODS_DATA = [
     image: "images/foods/bao-buns.jpg",
     answer_label: "Los bao buns son de",
     fun_fact: "Son unos sanguchitos increíbles de pan cocinado al vapor. ¡Tenés que probarlos!",
-    distractors: {
-      easy: ["Japón", "Suecia"],
-      medium: ["Vietnam", "Japón"],
-      hard: ["Vietnam", "Taiwan"],
-    },
   },
 ];
