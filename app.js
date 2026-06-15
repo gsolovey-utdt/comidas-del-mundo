@@ -223,6 +223,7 @@
     "sierra leona":    { iso: "SL", flag: "🇸🇱", name: "Sierra Leona",    coords: [  8.5, -11.8 ] },
     singapur:          { iso: "SG", flag: "🇸🇬", name: "Singapur",        coords: [  1.3, 103.8 ] },
     siria:             { iso: "SY", flag: "🇸🇾", name: "Siria",           coords: [ 34.8,  38.9 ] },
+    palestina:         { iso: "PS", flag: "🇵🇸", name: "Palestina",       coords: [ 31.9,  35.3 ] },
     somalia:           { iso: "SO", flag: "🇸🇴", name: "Somalia",         coords: [  5.1,  46.2 ] },
     sudan:             { iso: "SD", flag: "🇸🇩", name: "Sudán",           coords: [ 12.9,  30.2 ] },
     suiza:             { iso: "CH", flag: "🇨🇭", name: "Suiza",           coords: [ 46.8,   8.2 ] },
@@ -251,7 +252,7 @@
 
   const SMALL_COUNTRY_CODES = new Set([
     "KR", "GB", "IE", "PT", "BE", "NL", "UY", "SV", "CR", "IL",
-    "CV", "CY", "LB", "SG", "TW", "DJ", "PA",
+    "CV", "CY", "LB", "SG", "TW", "DJ", "PA", "PS",
   ]);
 
   // Lookup inverso ISO → meta, para los tooltips del mapa (mostrar el nombre
@@ -293,7 +294,7 @@
     "corea del sur": "Asia", china: "Asia", israel: "Asia", turquia: "Asia",
     bangladesh: "Asia", camboya: "Asia", "corea del norte": "Asia", jordania: "Asia",
     laos: "Asia", libano: "Asia", malasia: "Asia", nepal: "Asia", pakistan: "Asia",
-    singapur: "Asia", siria: "Asia", taiwan: "Asia", indonesia: "Asia",
+    singapur: "Asia", siria: "Asia", palestina: "Asia", taiwan: "Asia", indonesia: "Asia",
     filipinas: "Asia", iran: "Asia", "sri lanka": "Asia", mongolia: "Asia",
     "arabia saudita": "Asia", "emiratos arabes unidos": "Asia",
     // África
@@ -323,24 +324,43 @@
     .filter(([, meta]) => Boolean(meta.continent))
     .map(([key, meta]) => ({ key, name: meta.name, continent: meta.continent }));
 
-  /** Elige 2 distractores para una comida: 1 del mismo continente que el país
-   *  correcto y 1 de otro continente, al azar. Devuelve nombres de país. */
-  function pickDistractors(correctCountryName) {
+  // Mapa comida → Set de claves normalizadas de TODOS sus países válidos.
+  // Permite excluir países "rivales" del pool de distractores en comidas multi-país.
+  const FOOD_RIVAL_COUNTRIES = {};
+  window.FOODS_DATA.forEach((food) => {
+    const id = getFoodId(food);
+    if (!FOOD_RIVAL_COUNTRIES[id]) FOOD_RIVAL_COUNTRIES[id] = new Set();
+    FOOD_RIVAL_COUNTRIES[id].add(normalizeCountry(food.country));
+  });
+
+  /** Elige 2 distractores para una comida.
+   *  - Excluye el país correcto y todos sus rivales (comidas multi-país).
+   *  - Cada distractor: 75% del mismo continente, 25% de otro (independiente).
+   *    Antes era siempre 1 mismo + 1 otro, lo que permitía descartar el "raro"
+   *    de forma mecánica. */
+  function pickDistractors(correctCountryName, foodName) {
     const correctKey = normalizeCountry(correctCountryName);
+    const rivals     = FOOD_RIVAL_COUNTRIES[getFoodId({ food_name: foodName })] || new Set();
     const continent  = COUNTRY_META[correctKey]?.continent || null;
 
-    const candidates = DISTRACTOR_POOL.filter((c) => c.key !== correctKey);
+    const candidates = DISTRACTOR_POOL.filter((c) => !rivals.has(c.key));
     const sameList   = candidates.filter((c) => c.continent === continent);
     const otherList  = candidates.filter((c) => c.continent !== continent);
 
-    // Mismo continente (fallback: otro continente si el correcto no tiene pares).
-    const same = randomItem(sameList.length ? sameList : otherList);
-    // Otro continente, distinto del primero (fallback: cualquiera distinto).
-    let otherPool = otherList.filter((c) => c.key !== same.key);
-    if (!otherPool.length) otherPool = candidates.filter((c) => c.key !== same.key);
-    const other = randomItem(otherPool);
+    function pickOne(excludeKey) {
+      const useSame  = Math.random() < 0.75;
+      const primary  = useSame ? sameList : otherList;
+      const fallback = useSame ? otherList : sameList;
+      let pool = primary.filter((c) => c.key !== excludeKey);
+      if (!pool.length) pool = fallback.filter((c) => c.key !== excludeKey);
+      if (!pool.length) pool = candidates.filter((c) => c.key !== excludeKey);
+      return randomItem(pool);
+    }
 
-    return { same: same?.name || null, other: other?.name || null };
+    const d1 = pickOne(null);
+    const d2 = pickOne(d1?.key || null);
+
+    return { same: d1?.name || null, other: d2?.name || null };
   }
 
   // ── Estado ────────────────────────────────────────────────────────────────
@@ -800,8 +820,17 @@
     if (pool.length === 0) { state.questions = []; return; }
 
     const selected    = [];
+    // Agrupar por food_name y elegir una variante al azar (país) por grupo.
+    // Garantiza probabilidad uniforme por comida aunque haya filas multi-país.
+    const groupedByName = {};
+    pool.forEach((food) => {
+      const id = getFoodId(food);
+      if (state.usedFoodNames.has(id)) return;
+      if (!groupedByName[id]) groupedByName[id] = [];
+      groupedByName[id].push(food);
+    });
     const unusedPool  = shuffle(
-      pool.filter((food) => !state.usedFoodNames.has(getFoodId(food)))
+      Object.values(groupedByName).map((variants) => randomItem(variants))
     );
 
     for (const food of unusedPool) {
@@ -830,8 +859,7 @@
   }
 
   function createQuestion(food, levelKey) {
-    // Distractores generados (1 mismo continente + 1 otro), invariantes al nivel.
-    const { same, other } = pickDistractors(food.country);
+    const { same, other } = pickDistractors(food.country, food.food_name);
     const options = shuffle([food.country, same, other].filter(Boolean));
     return {
       food,

@@ -1,50 +1,63 @@
 food_name,image,country,answer_label,fun_fact
-Pretzel,images/foods/pretzel.jpg,Alemania,El pretzel es de,Es un pan que tiene una forma entrelazada que lo hace original y reconocible.
-Wurst,images/foods/wurst.jpg,Alemania,El wurst es de,"Es una salchicha, pero en Alemania hay tantas versiones (¡dicen que más de 1000!) que podrías comer una distinta cada día."
-Chucrut,images/foods/chucrut.jpg,Alemania,El chucrut es de,Es una preparación de repollo fermentado con sal y algunos condimentos que desafía el tiempo: puede durar meses en la heladera. 
-Schnitzel,images/foods/schnitzel.jpg,Alemania,El schnitzel es de,"Es la prima alemana de la milanesa: fina, crocante y muy querida."
-Strudel,images/foods/strudel.jpg,Alemania,El strudel es de,Es un postre típico alemán que se parece a un arrollado de manzana. Se come tibio y pide a gritos sumarle un poco de crema. 
-Empanadas,images/foods/empanadas.jpg,Argentina,Las empanadas son de,"En Argentina hay versiones regionales distintas, que pueden incluir papa o pasas de uva, y todas defienden la suya como la mejor."
-Feijoada,images/foods/feijoada.jpg,Brasil,La feijoada es de,Es un guiso con porotos y carne tan popular que en Brasil se come también cuando hace un calor tremendo.
-Poutine,images/foods/poutine.jpg,Canadá,La poutine es de,"Nació en Quebec y es un tipo de comida rápida  muy deliciosa que combina papas fritas, queso en grumos y salsa caliente. "
-Mapo tofu,images/foods/mapo-tofu.jpg,China,El mapo tofu es de,Es un plato picante con tofu y salsa de carne que nació en Sichuan y es muy popular de la cocina china.
-Arrolladitos primavera,images/foods/spring-roll.jpg,China,Los arrolladitos primavera son de,Son unos paquetitos de masa fritos rellenos de carne o verduras. Se acompañan de una salsa roja que siempre logra manchar la ropa. 
-Arepa,images/foods/arepa.jpg,Colombia,La arepa es de,"Es una especie de pan redondo de maíz que puede comerse solo o relleno de carne, quesos, verduras y aderezos."
-Kimchi,images/foods/kimchi.jpg,Corea del Sur,El kimchi es de,"Se elabora con vegetales fermentados, especialmente repollo y condimentos picantes. Es intenso y saludable."
-Gallo pinto,images/foods/gallo-pinto.jpg,Costa Rica,El gallo pinto es de,Es una mezcla de arroz y porotos muy común y potente para arrancar el día.
-Pupusas,images/foods/pupusas.jpg,El Salvador,Las pupusas son de,"Son tortillas gruesas de maíz rellenas de queso, porotos u otros ingredientes."
-Paella,images/foods/paella.jpg,España,La paella es de,La paella nació en Valencia y suele cocinarse en una sartén ancha y baja. Cada región le incorpora sus ingredientes más típicos y accesibles.
-Hamburguesa,images/foods/hamburger.jpg,Estados Unidos,La hamburguesa es de,Las hamburguesas conquistaron el mundo entre panes y cadenas de comida rápida.
-Mac and cheese,images/foods/mac-and-cheese.jpg,Estados Unidos,El mac and cheese es de,"Es una mezcla cremosa de pasta con queso, muy popular en todas las generaciones: fácil de prepar, difícil de dejar."
-Injera,images/foods/injera.jpg,Etiopía,La injera es de,Es un pan esponjoso y ácido que también se usa como base para comer otros platos.
-Croissant,images/foods/croissant.jpg,Francia,El croissant es de,Su textura en capas se logra doblando la masa muchas veces con manteca.
-Vichyssoise,images/foods/vichyssoise.jpg,Francia,La vichyssoise es de,"Es una sopa cremosa de puerro y papa, elegante y llenadora."
-Moussaka,images/foods/moussaka.jpg,Grecia,La moussaka es de,"Se prepara en capas y suele llevar berenjena, carne y una cobertura cremosa. Como una lasagna, pero en modo griego."
-Goulash,images/foods/goulash.jpg,Hungría,El goulash es de,Es un guiso con paprika y la rockstar de la cocina húngara.
-Butter chicken,images/foods/butter-chicken.jpg,India,El butter chicken es de,Es un plato cremoso y especiado que suele acompañarse con arroz o pan naan.
-Kneidalaj,images/foods/kneidalaj.jpg,Israel,Los kneidalaj son de,Son bolitas tiernas de harina de matzá que suelen servirse en sopa y se pasan de generación en generación.
-Knishes,images/foods/knishes.jpg,Israel,Los knishes son de,"Son masas rellenas que pueden llevar papa, cebolla u otros ingredientes."
-Falafel,images/foods/falafel.jpg,Israel,El falafel es de,"Son croquetas hechas con legumbres y especias, quedan muy bien en pan pita con pepino, yogur y otras magias."
-Hummus,images/foods/hummus.jpg,Israel,El hummus es de,"Es una pasta suave de garbanzos que se come como dip o acompañamiento y, en algunas regiones, a toda hora."
-Gefilte fish,images/foods/gefilte-fish.jpg,Israel,El gefilte fish es de,"Es un ""pan de pescado"", frío o caliente, más dulce o más salado, dependiendo de la receta de cada familia."
-Pizza,images/foods/pizza.jpg,Italia,La pizza es de,La pizza moderna se hizo famosa en Nápoles pero hoy tiene estilos y ultrafanáticos en todo el mundo.
-Ramen,images/foods/ramen.jpg,Japón,El ramen es de,Es una sopa de fideos muy popular en Japón y tiene muchas variedades regionales.
-Sushi,images/foods/sushi.jpg,Japón,El sushi es de,"Aunque muchos piensan solo en pescado, también hay sushi con verduras, hongos o huevo."
-Couscous,images/foods/couscous.jpg,Marruecos,El couscous es de,"Se hace con sémola de trigo en granitos pequeños y se cocina al vapor, en preparaciones frías y calientes."
-Tacos,images/foods/tacos.jpg,México,Los tacos son de,Pueden llevar muchos rellenos distintos y es una comida muy versátil.
-Guacamole,images/foods/guacamole.jpg,México,El guacamole es de,"Se prepara con palta triturada y suele llevar limón, cebolla y cilantro, pero cada uno lo adapta como le gusta."
-Tamal,images/foods/tamal.jpg,México,El tamal es de,Se hace con masa de maíz rellena y es muy práctico: se cocina con su propio envoltorio de hojas.
-Chapulines,images/foods/chapulines.jpg,México,Los chapulines son de,"Son grillos sazonados, una preparación tradicional en algunas regiones de México."
-Arroz Jollof,images/foods/jollof-rice.jpg,Nigeria,El arroz jollof es de,Es un arroz muy popular en África occidental y cada país tiene su versión favorita.
-Mbeyú,images/foods/mbeyu.jpg,Paraguay,El mbeyú es de,"Es una tortilla de almidón de mandioca y queso, cada vez más conocida en otros países."
-Chipá,images/foods/chipa.jpg,Paraguay,El chipá es de,"Es un pan de harina de mandioca y mucho queso, muy popular y para todas las horas del día."
-Ceviche,images/foods/ceviche.jpg,Perú,El ceviche es de,"Se prepara con pescado fresco marinado en limón, cilantro e ingredientes típicos de la zona."
-Fish and chips,images/foods/fish-and-chips.jpg,Reino Unido,El fish and chips es de,Es una combinación clásica e infalible de pescado rebozado y papas fritas servidas calientes.
-Arenque,images/foods/arenque.jpg,Suecia,El arenque es de,El arenque encurtido es muy tradicional en la cocina sueca que se pesca en el Mar Báltico.
-Pad thai,images/foods/pad-thai.jpg,Tailandia,El pad thai es de,Es un salteado de fideos de arroz muy solicitado por su equilibrio perfecto de sabores dulces y ácidos. Suele incluir maní.
-Shawarma,images/foods/shawarma.jpg,Turquía,El shawarma es de,Se prepara con carne asada en un trompo vertical y se sirve en pan con condimentos y aderezos.
-Borscht,images/foods/borscht.jpg,Ucrania,El borscht es de,"Una sopa bien fucsia gracias a la remolacha, su ingrediente principal. "
-Chivito,images/foods/chivito.jpg,Uruguay,El chivito es de,"Es un sándwich uruguayo abundante, con carne y varios acompañamientos. Y también un orgullo nacional."
-Pho,images/foods/pho.jpg,Vietnam,El pho es de,Es una sopa aromática con fideos de arroz y hierbas frescas.
-Summer roll,images/foods/summer-roll.jpg,Vietnam,El summer roll es de,"Son rollitos frescos envueltos en papel de arroz: cuando los mordés, ¡no podés creer todos los ingredientes apretados que entraron!"
-Bao buns ,images/foods/bao-buns.jpg,China,Los bao buns son de,Son unos sanguchitos increíbles de pan cocinado al vapor. ¡Tenés que probarlos!
+Arenque,images/foods/arenque.jpg,Suecia,El arenque es típico de,El arenque se pesca en el Mar Báltico y su versión encurtida es un plato típico de la zona.
+Arepa,images/foods/arepa.jpg,Colombia,La arepa es típica de,"Es una especie de pan redondo de maíz que puede comerse solo pero va muy bien con carne, quesos, verduras y aderezos. También es típica de Venezuela."
+Arepa,images/foods/arepa.jpg,Venezuela,La arepa es típica de,"Es una especie de pan redondo de maíz que puede comerse solo pero va muy bien con carne, quesos, verduras y aderezos. También es típica de Colombia."
+Arrolladitos primavera,images/foods/spring-roll.jpg,China,Los arrolladitos primavera son típicos de,Son unos paquetitos rellenos de carne o verduras. Se acompañan de una salsa roja que siempre logra manchar la ropa. 
+Arroz Jollof,images/foods/jollof-rice.jpg,Nigeria,El arroz jollof es típico de,Es un arroz muy popular en África occidental y cada país tiene su versión favorita.
+Bao buns ,images/foods/bao-buns.jpg,China,Los bao buns son típicos de,Son unos sanguchitos increíbles de pan cocinado al vapor. ¡Tenés que probarlos!
+Borscht,images/foods/borscht.jpg,Polonia,El borscht es típico de,"Es una sopa bien fucsia gracias a la remolacha, su ingrediente principal. En Polonia se lo suele servir frio. También es típico de Rusia y de Ucrania."
+Borscht,images/foods/borscht.jpg,Rusia,El borscht es típico de,"Es una sopa bien fucsia gracias a la remolacha, su ingrediente principal. También es típico de Ucrania y de Polonia."
+Borscht,images/foods/borscht.jpg,Ucrania,El borscht es típico de,"Es una sopa bien fucsia gracias a la remolacha, su ingrediente principal. También es típico de Polonia, donde se lo sirve frío, y de Rusia."
+Butter chicken,images/foods/butter-chicken.jpg,India,El butter chicken es típico de,Es un plato cremoso y especiado que suele acompañarse con arroz o pan naan.
+Ceviche,images/foods/ceviche.jpg,Perú,El ceviche es típico de,"Se prepara con pescado crudo marinado en limón, cilantro e ingredientes típicos de la zona."
+Chapulines,images/foods/chapulines.jpg,México,Los chapulines son típicos de,"Son grillos sazonados. si te da impresión comer insectos, pensá que tienen muchas proteínas y minerales."
+Chipá,images/foods/chipa.jpg,Paraguay,El chipá es típico de,"Es un pan de harina de mandioca y mucho queso, delicioso y apto para todas las horas del día."
+Chivito,images/foods/chivito.jpg,Uruguay,El chivito es típico de,Es un sándwich uruguayo abundante de carne y varios acompañamientos. Y también un orgullo nacional.
+Chucrut,images/foods/chucrut.jpg,Alemania,El chucrut es típico de,Es una preparación de repollo fermentado que desafía el tiempo: puede durar meses en la heladera. 
+Couscous,images/foods/couscous.jpg,Argelia,El couscous es típico de,"Se hace con sémola de trigo en granitos pequeños y se cocina al vapor, en preparaciones frías y calientes. También es típico de Marruecos y Túnez"
+Couscous,images/foods/couscous.jpg,Marruecos,El couscous es típico de,"Se hace con sémola de trigo en granitos pequeños y se cocina al vapor, en preparaciones frías y calientes. También es típico de Argelia y Túnez."
+Couscous,images/foods/couscous.jpg,Túnez,El couscous es típico de,"Se hace con sémola de trigo en granitos pequeños y se cocina al vapor, en preparaciones frías y calientes. También es típico de Marruecos y Argelia."
+Croissant,images/foods/croissant.jpg,Francia,El croissant es típico de,Su textura en capas se logra doblando la masa muchas veces con manteca.
+Empanadas,images/foods/empanadas.jpg,Argentina,Las empanadas son típicas de,En Argentina hay versiones distintas según la región y todas defienden la suya como la mejor. También se comen mucho en Chile.
+Empanadas,images/foods/empanadas.jpg,Chile,Las empanadas son típicas de,"En Chile, las tradicionales son las de pino, que llevan carne, huevo, pasa de uva y aceitunas. Las empanadas también son típicas de Argentina."
+Falafel,images/foods/falafel.jpg,Egipto,El falafel es típico de,"Son croquetas hechas con legumbres y especias, quedan muy bien en pan pita con pepino, yogur y otras magias."
+Feijoada,images/foods/feijoada.jpg,Brasil,La feijoada es típica de,Es un guiso con porotos y carne tan popular que en Brasil se come incluso cuando hace un calor tremendo.
+Fish and chips,images/foods/fish-and-chips.jpg,Reino Unido,El fish and chips es típico de,Es una combinación clásica e infalible de pescado rebozado y papas fritas servidas calientes.
+Gallo pinto,images/foods/gallo-pinto.jpg,Costa Rica,El gallo pinto es típico de,Es una mezcla de arroz y porotos muy potente para arrancar el día.
+Gallo pinto,images/foods/gallo-pinto.jpg,Nicaragua,El gallo pinto es típico de,Es una mezcla de arroz y porotos muy potente para arrancar el día.
+Gefilte fish,images/foods/gefilte-fish.jpg,Polonia,El gefilte fish es típico de,"Es un pan de pescado, frío o caliente, más dulce o más salado, dependiendo de la receta de cada familia. También es típico en Rusia y Ucrania."
+Gefilte fish,images/foods/gefilte-fish.jpg,Rusia,El gefilte fish es típico de,"Es un pan de pescado, frío o caliente, más dulce o más salado, dependiendo de la receta de cada familia. También es típico en Polonia y Ucrania."
+Gefilte fish,images/foods/gefilte-fish.jpg,Ucrania,El gefilte fish es típico de,"Es un pan de pescado, frío o caliente, más dulce o más salado, dependiendo de la receta de cada familia. También es típico en Rusia y Polonia."
+Goulash,images/foods/goulash.jpg,Hungría,El goulash es típico de,Es un guiso con paprika y la rockstar de la cocina húngara.
+Guacamole,images/foods/guacamole.jpg,México,El guacamole es típico de,"Se prepara con palta triturada y lleva limón y cilantro, pero cada uno lo adapta como le gusta."
+Hamburguesa,images/foods/hamburger.jpg,Estados Unidos,La hamburguesa es típica de,Las hamburguesas conquistaron el mundo entre panes y cadenas de comida rápida.
+Hummus,images/foods/hummus.jpg,Israel,El hummus es típico de,"Es una pasta suave de garbanzos que se come como dip o acompañamiento y a toda hora. Es típico de varios países de Medio Oriente como Líbano, Palestina y Siria."
+Hummus,images/foods/hummus.jpg,Líbano,El hummus es típico de,"Es una pasta suave de garbanzos que se come como dip o acompañamiento y a toda hora. Es típico de varios países de Medio Oriente como Israel, Palestina y Siria."
+Hummus,images/foods/hummus.jpg,Palestina,El hummus es típico de,"Es una pasta suave de garbanzos que se come como dip o acompañamiento y a toda hora. Es típico de varios países de Medio Oriente como Líbano, Israel y Siria."
+Hummus,images/foods/hummus.jpg,Siria,El hummus es típico de,"Es una pasta suave de garbanzos que se come como dip o acompañamiento y a toda hora. Es típico de varios países de Medio Oriente como Líbano, Palestina y Israel."
+Injera,images/foods/injera.jpg,Etiopía,La injera es típica de,Es un pan esponjoso y ácido que también se usa como base para comer otros platos.
+Kimchi,images/foods/kimchi.jpg,Corea del Sur,El kimchi es típico de,"Se elabora con vegetales fermentados, especialmente repollo y condimentos picantes. Muy intenso y saludable."
+Kneidalaj,images/foods/kneidalaj.jpg,Israel,Los kneidalaj son típicos de,Son bolitas de harina de matzá que se sirven en sopa y se pasan de generación en generación.
+Knishes,images/foods/knishes.jpg,Polonia,Los knishes son típicos de,"Son unas empanaditas redondas rellenas de papa y cebolla. Si bien surgieron en Europa del Este, hoy se comen en los lugares donde hay una comunidad judía numerosa"
+Mac and cheese,images/foods/mac-and-cheese.jpg,Estados Unidos,El mac and cheese es típico de,"Es una mezcla cremosa de pasta con queso: fácil de prepar, difícil de dejar."
+Mapo tofu,images/foods/mapo-tofu.jpg,China,El mapo tofu es típico de,Es un plato picante con tofu y salsa de carne que nació en Sichuan y es muy popular de la cocina china.
+Mbeyú,images/foods/mbeyu.jpg,Paraguay,El mbeyú es típico de,"Es una tortilla de almidón de mandioca y queso, cada vez más conocida en otros países."
+Moussaka,images/foods/moussaka.jpg,Grecia,La moussaka es típica de,"Es como una lasagna pero en modo griego, con berenjena, carne y una cobertura cremosa. "
+Pad thai,images/foods/pad-thai.jpg,Tailandia,El pad thai es típico de,"Es un salteado de fideos de arroz que mezcla sabores dulces y ácidos, texturas suaves y crocantes."
+Paella,images/foods/paella.jpg,España,La paella es típica de,La paella nació en Valencia y suele cocinarse en una sartén ancha y baja. Lleva arroz los ingredientes típicos de cada región.
+Pho,images/foods/pho.jpg,Vietnam,El pho es típico de,Es una sopa aromática con fideos de arroz y hierbas frescas.
+Pizza,images/foods/pizza.jpg,Italia,La pizza es típica de,La pizza moderna se hizo famosa en Nápoles pero hoy tiene estilos y ultrafanáticos en todo el mundo.
+Poutine,images/foods/poutine.jpg,Canadá,La poutine es típica de,"Nació en Quebec y es un plato muy delicioso –y no especialmente liviano– de papas fritas, queso y salsa de carne. "
+Pretzel,images/foods/pretzel.jpg,Alemania,El pretzel es típico de,"Es un pan que tiene una forma entrelazada, original y reconocible."
+Pupusas,images/foods/pupusas.jpg,El Salvador,Las pupusas son típicas de,"Son tortillas gruesas de maíz rellenas de queso, porotos u otros ingredientes."
+Ramen,images/foods/ramen.jpg,Japón,El ramen es típico de,Es una sopa de fideos con muchos ingredientes y lleva un narutomaki –inspirado en los remolinos de agua del estrecho de Naruto– como decoración característica.
+Schnitzel,images/foods/schnitzel.jpg,Alemania,El schnitzel es típico de,Es la prima alemana de la milanesa.
+Shawarma,images/foods/shawarma.jpg,Turquía,El shawarma es típico de,Se prepara con carne asada en un trompo vertical y se sirve en pan con condimentos y aderezos.
+Strudel,images/foods/strudel.jpg,Alemania,El strudel es típico de,Es un arrollado de manzana que se come tibio y pide a gritos sumarle un poco de crema. 
+Summer roll,images/foods/summer-roll.jpg,Vietnam,El summer roll es típico de,"Son rollitos frescos envueltos en papel de arroz: cuando los mordés, ¡no podés creer todos los ingredientes apretados que entraron!"
+Sushi,images/foods/sushi.jpg,Japón,El sushi es típico de,"Aunque muchos piensan solo en pescado, también hay sushi con verduras, hongos o huevo."
+Tacos,images/foods/tacos.jpg,México,Los tacos son típicos de,"Pueden llevar muchos rellenos. Los más populares son los ""al pastor"", con cerdo y ananá, o el de cochinita pibil, típico de Yucatán."
+Tamal,images/foods/tamal.jpg,México,El tamal es típico de,Se hace con masa de maíz rellena y es muy práctico: se cocina con su propio envoltorio de hojas.
+Vichyssoise,images/foods/vichyssoise.jpg,Francia,La vichyssoise es típica de,"Es una sopa cremosa de puerro y papa, elegante y llenadora."
+Wurst,images/foods/wurst.jpg,Alemania,El wurst es típico de,"Es una salchicha, pero en Alemania hay tantas versiones (¡dicen que más de 1000!) que podrías comer una distinta cada día."
+Locos,images/foods/locos.jpg,Chile,Los locos son típicos de,Los locos son un marisco típico de Chile. Viven pegados a las rocas del mar y se parecen un poco a un caracol grande de mar. 
