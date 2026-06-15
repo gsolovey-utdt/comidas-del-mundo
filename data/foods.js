@@ -174,14 +174,14 @@ window.FOODS_DATA = [
     country: "Costa Rica",
     image: "images/foods/gallo-pinto.jpg",
     answer_label: "El gallo pinto es típico de",
-    fun_fact: "Es una mezcla de arroz y porotos muy potente para arrancar el día.",
+    fun_fact: "Es una mezcla de arroz y porotos muy potente para arrancar el día. También es un plato típico de Nicaragua.",
   },
   {
     food_name: "Gallo pinto",
     country: "Nicaragua",
     image: "images/foods/gallo-pinto.jpg",
     answer_label: "El gallo pinto es típico de",
-    fun_fact: "Es una mezcla de arroz y porotos muy potente para arrancar el día.",
+    fun_fact: "Es una mezcla de arroz y porotos muy potente para arrancar el día. También es un plato típico de Costa Rica.",
   },
   {
     food_name: "Gefilte fish",
