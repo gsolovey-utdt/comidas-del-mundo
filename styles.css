@@ -1403,6 +1403,9 @@ img.emoji {
 /* ── Animación +puntaje flotante ── */
 .score-float {
   position: fixed;
+  left: 0;
+  width: 100%;
+  text-align: center;
   pointer-events: none;
   z-index: 9999;
   font-family: var(--font-display);
@@ -1413,15 +1416,14 @@ img.emoji {
    -2px -2px 0 #1a1a1a,
     2px -2px 0 #1a1a1a,
    -2px  2px 0 #1a1a1a;
-  transform: translateX(-50%);
   white-space: nowrap;
   animation: score-float-up 1.6s ease-out forwards;
 }
 
 @keyframes score-float-up {
-  0%   { transform: translateX(-50%) translateY(0);     opacity: 1; }
-  70%  { transform: translateX(-50%) translateY(-70px);  opacity: 1; }
-  100% { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+  0%   { transform: translateY(0);      opacity: 1; }
+  70%  { transform: translateY(-70px);  opacity: 1; }
+  100% { transform: translateY(-100px); opacity: 0; }
 }
 
 /* ── Warning de última vida ── */

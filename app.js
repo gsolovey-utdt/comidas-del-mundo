@@ -472,7 +472,6 @@
     const el = document.createElement("div");
     el.className = "score-float";
     el.textContent = "+" + points;
-    el.style.left = Math.round(rect.left + rect.width / 2) + "px";
     el.style.top  = Math.round(rect.top - 4) + "px";
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1700);
