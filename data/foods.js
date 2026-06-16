@@ -6,7 +6,7 @@ window.FOODS_DATA = [
     country: "Suecia",
     image: "images/foods/arenque.jpg",
     answer_label: "El arenque es típico de",
-    fun_fact: "El arenque se pesca en el Mar Báltico y su versión encurtida es un plato típico de la zona.",
+    fun_fact: "Durante siglos se comía en las ciudades cercanas al mar en Europa. Se lo sala y encurte para preservarlo sin heladeras. Hoy sigue siendo una comida riquísima y popular.",
   },
   {
     food_name: "Arepa",
@@ -370,7 +370,7 @@ window.FOODS_DATA = [
     country: "Alemania",
     image: "images/foods/schnitzel.jpg",
     answer_label: "El schnitzel es típico de",
-    fun_fact: "Es la prima alemana de la milanesa.",
+    fun_fact: "Es la prima alemana de la milanesa que se come en Argentina.",
   },
   {
     food_name: "Shawarma",
@@ -434,5 +434,12 @@ window.FOODS_DATA = [
     image: "images/foods/locos.jpg",
     answer_label: "Los locos son típicos de",
     fun_fact: "Los locos son un marisco típico de Chile. Viven pegados a las rocas del mar y se parecen un poco a un caracol grande de mar.",
+  },
+  {
+    food_name: "Cachupa",
+    country: "Cabo Verde",
+    image: "images/foods/cachupa.jpg",
+    answer_label: "La cachupa es típica de",
+    fun_fact: "Es un guiso muy completo, calentito y casero, que se hace con maíz, porotos, verduras y a veces carne o salchicha. Es ideal para compartir con amigos y familia.",
   },
 ];
